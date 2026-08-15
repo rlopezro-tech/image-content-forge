@@ -1,0 +1,772 @@
+# AWS Application Architecture Diagram Rules
+
+Use this rule set to generate complete, real AWS application architecture diagrams for LinkedIn publishing. These diagrams are different from the AWS service card series: they must represent an end-to-end application, workload, platform, or system architecture running in production, with accurate AWS service relationships, network boundaries, traffic flows, data flows, security controls, observability, and operational context.
+
+## Master Prompt
+
+You are an expert AWS solutions architect and technical diagram designer. Create a complete AWS architecture diagram for the application or workload: **{APP_OR_WORKLOAD_NAME}**.
+
+Before writing or designing the diagram, research every AWS service, icon, pattern, integration, and architectural claim directly from official AWS sources only:
+
+- AWS Documentation: `https://docs.aws.amazon.com/`
+- AWS service product pages: `https://aws.amazon.com/`
+- AWS Architecture Center: `https://aws.amazon.com/architecture/`
+- AWS Architecture Icons: `https://aws.amazon.com/architecture/icons/`
+- AWS Well-Architected Framework: `https://docs.aws.amazon.com/wellarchitected/`
+
+Do not use blogs, third-party tutorials, community summaries, guessed feature behavior, unsupported integrations, outdated screenshots, or non-official service icons. If a service relationship, traffic pattern, security boundary, or operational feature cannot be confirmed from official AWS sources, leave it out or label it as an assumption outside the final image.
+
+## Required Output Language
+
+All visible text in the final diagram must be in English.
+
+User-facing conversation can remain in the user's language.
+
+## Diagram Goal
+
+The diagram must explain how a real production application runs on AWS.
+
+It should make clear:
+
+- Who or what enters the system.
+- Which AWS services receive traffic.
+- Which network, account, region, and availability-zone boundaries exist.
+- Which services process requests synchronously.
+- Which services communicate asynchronously.
+- Where data is stored.
+- How secrets, identity, access, encryption, and security controls are handled.
+- How logs, metrics, alarms, traces, and audit events are collected.
+- Which parts are managed services, compute, networking, data, security, integration, and operations.
+
+The final result must be useful for engineers, architects, technical leads, and stakeholders reviewing a real system design.
+
+## Runtime-Only Default
+
+By default, show only the production runtime architecture: user traffic, service-to-service communication, events, queues, data stores, security controls, observability, and external integrations.
+
+Do not include CI/CD, build, test, artifact, deployment, or repository services unless the user explicitly asks for a deployment, delivery, or CI/CD architecture.
+
+Exclude by default:
+
+- AWS CodeBuild
+- AWS CodePipeline
+- AWS CodeDeploy
+- Amazon ECR
+- GitHub, GitLab, Bitbucket, or source repositories
+- Build artifacts
+- Deployment arrows
+- Environment promotion flows
+- Rollback flows
+
+If a runtime dependency pulls images from Amazon ECR, omit ECR from the visible diagram unless image registry behavior is central to the user's request.
+
+## Relevance Filter
+
+Only include components that materially explain the architecture.
+
+Before placing any visible node, ask:
+
+- Does this component receive traffic, process data, store data, secure the workload, connect systems, or expose an operational signal?
+- Would removing it make the architecture meaningfully less accurate?
+- Is it part of production runtime rather than implementation detail?
+- Can the diagram remain clear with this component included?
+
+If the answer is no, omit it from the PNG.
+
+Omit by default:
+
+- Frameworks and programming languages for general example diagrams.
+- Internal implementation details that do not change the architecture.
+- Nice-to-have AWS services that are not central to the workload.
+- Duplicate services that do not add a new architectural role.
+- Decorative notes, generic best-practice callouts, and filler captions.
+- Marketing claims, benefits, slogans, and learning explanations.
+- Extra metadata chips beyond what helps interpret the diagram.
+
+Keep the PNG focused on the real runtime system. Put assumptions, variants, and optional enhancements in the Markdown prompt instead of the image.
+
+## Required Output Files
+
+Base output folder:
+
+```text
+../series/system-architecture-diagrams
+```
+
+Create files using this naming pattern:
+
+```text
+architecture-diagrams/prompts/{architecture-slug}-architecture-prompt.md
+architecture-diagrams/images/{architecture-slug}-architecture.png
+architecture-diagrams/templates/{architecture-slug}-architecture-diagram.html
+```
+
+Optional files when useful:
+
+```text
+architecture-diagrams/posts/{series-number}-{architecture-slug}-architecture-post.md
+```
+
+Use lowercase slugs in filenames.
+
+Example:
+
+```text
+architecture-diagrams/prompts/serverless-ecommerce-architecture-prompt.md
+architecture-diagrams/images/serverless-ecommerce-architecture.png
+architecture-diagrams/templates/serverless-ecommerce-architecture-diagram.html
+```
+
+Do not save complete architecture diagram outputs in the service-card folders (`prompts`, `images`, `templates`, or `posts`). Keep them inside `architecture-diagrams`.
+
+Do not leave generated HTML files in the `linkedin-content-forge` root.
+
+## Diagram Types
+
+Choose the diagram type that matches the requested workload. If the user does not specify a type, select the smallest type that accurately explains the architecture.
+
+Supported types:
+
+- `Conceptual Architecture`: high-level application components and service responsibilities.
+- `Logical Architecture`: service relationships, core flows, data stores, and security controls.
+- `Runtime Architecture`: production traffic, service relationships, data stores, async processing, security, and operations.
+- `Deployment Topology`: runtime placement with accounts, regions, VPCs, subnets, AZs, and compute placement.
+- `Network Architecture`: VPC, subnets, route paths, gateways, endpoints, load balancers, and security boundaries.
+- `Serverless Architecture`: API Gateway, Lambda, EventBridge, SQS, SNS, Step Functions, DynamoDB, S3, and observability flows.
+- `Container Architecture`: ECS, EKS, Fargate, load balancing, service discovery, autoscaling, runtime networking, and service communication.
+- `Data Pipeline Architecture`: ingestion, queues/streams, processing, storage, catalog, analytics, and governance.
+- `CI/CD Architecture`: source, build, test, artifact, deploy, approval, environment promotion, and rollback paths. Use only when explicitly requested.
+- `Multi-Account Architecture`: AWS Organizations, accounts, shared services, networking, identity, logging, and security tooling.
+
+## Canvas Rules
+
+Default output:
+
+```text
+PNG
+```
+
+Recommended canvas:
+
+```text
+1080 x 1350 px
+```
+
+Use vertical 4:5 format for complete architecture diagrams by default because the primary publishing target is LinkedIn.
+
+Use `1920 x 1080 px` only when the user explicitly requests a landscape format for documentation or presentation.
+
+Use `1080 x 1920 px` for tall story/reel diagrams only when the architecture has a natural vertical flow.
+
+Do not stretch the image non-proportionally. Text, icons, square tiles, and circular badges must keep natural proportions.
+
+For `1080 x 1350 px` diagrams:
+
+- Keep the main content frame about `984-1016 px` wide.
+- Keep the left edge around `x=32-48 px`.
+- Keep the right edge around `x=1032-1048 px`.
+- Use stacked vertical layers instead of a wide horizontal system map.
+- Prefer top-to-bottom flow: external users, edge/API, application services, async/data, security/observability.
+- Keep labels short enough to remain readable on mobile LinkedIn previews.
+- Avoid more than 14-18 visible service nodes unless the user asks for a dense reference diagram.
+
+## Required Diagram Structure
+
+Every complete architecture diagram must include the relevant structure below.
+
+Include only boundaries that apply to the architecture:
+
+1. External actors and systems.
+2. AWS Cloud boundary.
+3. Account boundary when one or more accounts matter.
+4. Region boundary when regional placement matters.
+5. Availability Zone boundaries when subnet or high availability placement matters.
+6. VPC boundary when networking placement matters.
+7. Public subnet and private subnet boundaries when applicable.
+8. Edge/network entry layer.
+9. Application or compute layer.
+10. Integration or async messaging layer.
+11. Data layer.
+12. Security and identity controls.
+13. Observability and audit layer.
+14. Operations support layer when relevant.
+
+Do not force every boundary into every diagram. A diagram is better when it shows the important real architecture clearly instead of including every possible AWS layer.
+
+## Header Standard
+
+Architecture diagrams must use the same visual header standard as the AWS learning cards.
+
+Header requirements:
+
+- Use one compact header container at the top of the canvas.
+- Use the same header rhythm as the learning images: official icon tile on the left, main title next to it, and a compact type badge on the right.
+- Use a light or glass-like header surface with a low-opacity service/category color wash, subtle border, and soft shadow.
+- Do not use a plain text-only header.
+- Do not use a dark navy full-width header.
+- Do not add a subtitle, paragraph, long explanation, or marketing copy inside the header.
+- The header must feel visually connected to the existing AWS service card series.
+
+Header content:
+
+```text
+{APP_OR_WORKLOAD_NAME}
+{DIAGRAM_TYPE_LABEL}
+```
+
+Recommended type badge labels:
+
+```text
+Runtime
+Serverless
+Containers
+Data Pipeline
+Network
+Multi-Account
+```
+
+Optional small metadata chips may appear inside the header only if they fit without crowding:
+
+```text
+Production
+Single Region
+Multi-AZ VPC
+```
+
+Header icon rules:
+
+- If the workload has one dominant AWS service, use that official AWS icon.
+- If the workload is multi-service and no single service owns the architecture, use a neutral AWS Cloud/application icon treatment or the most central runtime service icon.
+- The header icon must be inside a consistent tile.
+- The icon tile must use the same size, shape, padding, background, and border style as the AWS learning card headers.
+- Preserve official AWS icon colors exactly.
+- Center the icon visually and geometrically inside the tile.
+- Do not let the icon touch the tile edges.
+
+Header sizing for `1080 x 1350`:
+
+- Header outer frame: about `984-1016 px` wide.
+- Header left edge: around `x=32-48 px`.
+- Header right edge: around `x=1032-1048 px`.
+- Header height: `96-128 px`.
+- Header icon tile: `56-72 px`.
+- Main title: one line preferred, two lines maximum.
+- Badge/chips must not overlap the title.
+
+If the workload name is too long, shorten the visible title while preserving meaning. Put the full workload name in the Markdown prompt, not necessarily in the PNG.
+
+Do not place long explanations in the header. Keep any description in a short callout panel only if needed.
+
+## AWS Icon Rules
+
+Use official AWS Architecture Icons from:
+
+```text
+assets/aws-icons
+```
+
+Before rendering:
+
+1. Check `shared/assets/aws-icons` for each required service icon.
+2. If an icon is missing, use the official AWS Architecture Icons package/source.
+3. Save missing official SVG icons into `shared/assets/aws-icons`.
+4. Preserve official icon artwork, colors, proportions, and names.
+
+Do not redraw, recolor, simplify, convert to monochrome, or replace AWS service icons with generic icons.
+
+Generic line icons may be used only for non-AWS concepts such as users, mobile app, browser, external SaaS, on-premises system, admin, payment provider, or third-party API.
+
+## Component Node Standard
+
+Every architecture component must use a standardized node style unless it belongs to a boundary container or legend.
+
+Default component node:
+
+- Use a white or near-white rounded rectangle.
+- Corner radius: `8-12 px`.
+- Thin border: `1-1.5 px`.
+- Subtle shadow only; avoid heavy card shadows.
+- Icon tile on the left.
+- Service name on the first text line.
+- Short role label on the second text line.
+- Fixed width and height within each row or section.
+- Consistent icon tile size within the full diagram.
+- Consistent internal padding within the full diagram.
+
+Default node content format:
+
+```text
+{AWS_SERVICE_NAME}
+{SHORT_RUNTIME_ROLE}
+```
+
+Examples:
+
+```text
+Amazon API Gateway
+Public APIs
+
+Amazon ECS
+Microservices
+
+Amazon RDS
+Orders/payments
+```
+
+Component node sizing for `1080 x 1350`:
+
+- Standard node height: `68-84 px`.
+- Compact node height: `56-66 px`.
+- Standard icon tile: `42-52 px`.
+- Icon artwork inside tile: `30-40 px`, depending on the original icon shape.
+- Left padding: `12-16 px`.
+- Text start x-position must be consistent across nodes in the same section.
+- Horizontal gap between nodes: `24-44 px`.
+- Vertical gap between layers: `22-44 px`.
+
+Use one node size per section whenever possible. Do not mix many node widths in the same row unless the content requires it.
+
+## Icon Alignment Rules
+
+Icons must look centered and balanced.
+
+Required checks:
+
+- Center each icon inside its tile using the visible artwork bounds, not the raw SVG viewport if the SVG has padding.
+- Preserve the icon's official aspect ratio.
+- Do not stretch icons.
+- Do not crop official icon artwork.
+- Do not place two unrelated AWS icons in one tile.
+- If a node represents ECS on Fargate, either use a clean paired-icon treatment with two equal tiles or use the primary runtime icon and mention Fargate in the role label.
+- Keep all icon tiles aligned to the same y-position within a row.
+- Keep all icon tiles the same size within a diagram.
+
+If an exported icon appears visually off-center because the SVG has whitespace, trim transparent/empty bounds during rendering while preserving the official artwork.
+
+## Text Fit Rules
+
+Text must never overflow its node, chip, label, boundary, or callout.
+
+Required text rules:
+
+- Every visible text line must fit inside its parent container.
+- Service names should usually be one line.
+- Role labels should usually be one line, two lines maximum.
+- Do not allow long service lists inside a single node if they exceed the node width.
+- Replace long lists with grouped labels such as `Core services`, `Commerce services`, or `Order services`.
+- Use smaller supporting text only when needed, but keep it readable on mobile.
+- Do not scale font size with viewport width.
+- Letter spacing must be `0`.
+- Do not use negative letter spacing.
+- Use text wrapping, shorter labels, or larger containers before reducing text below readable size.
+
+Recommended visible label limits:
+
+- Header title: `32` characters preferred, `44` maximum before wrapping.
+- Node service name: `22` characters preferred, `30` maximum before wrapping.
+- Node role label: `28` characters preferred, `36` maximum before wrapping.
+- Arrow label: `14` characters preferred.
+- Chip label: `16` characters preferred.
+
+If a label would overflow:
+
+1. Shorten the label.
+2. Wrap to a second line if the node height supports it.
+3. Increase the node width within the section grid.
+4. Move detail into the Markdown prompt instead of the image.
+
+Do not let text overlap icons, arrows, section titles, boundaries, other nodes, or footer/legend content.
+
+## Section And Boundary Standard
+
+Boundary containers must be visually distinct from component nodes.
+
+Use boundary containers for:
+
+- AWS Cloud
+- Account
+- Region
+- VPC
+- Public subnet
+- Private subnet
+- External systems
+- Data layer
+- Security and observability layer
+
+Boundary rules:
+
+- Use lighter fills than component nodes.
+- Use thin tinted borders.
+- Use no heavy shadow.
+- Put the boundary title in the top-left with enough padding.
+- Do not place component nodes on top of boundary titles.
+- Do not let arrows or labels cross boundary titles when avoidable.
+- Keep enough internal padding so nodes do not touch boundary edges.
+
+Section titles must be short and functional. Avoid decorative section titles.
+
+## Visual Design Rules
+
+Use the existing AWS series visual core:
+
+- Clean AWS-inspired technical design.
+- Bright canvas with very light neutral background.
+- Polished typography similar to Inter, SF Pro, Manrope, Satoshi, or Avenir Next.
+- Thin borders.
+- Subtle shadows.
+- Refined panels and boundaries.
+- Official AWS icons in consistent tiles or service nodes.
+- Productive whitespace.
+- Clear visual hierarchy.
+- High readability on mobile LinkedIn feeds and desktop previews.
+
+Target visual feel:
+
+- Professional AWS architecture poster.
+- Clean technical diagram, not a slide deck.
+- Editorial layout with restrained density.
+- AWS-native visual language without copying the AWS console.
+- Useful at first glance and still readable when zoomed in.
+
+Use AWS service-category colors as accents, but keep the canvas calm. Do not let the diagram become dominated by a single purple, navy, beige, or orange palette.
+
+Preferred color system:
+
+- Background: white or very light cool neutral.
+- Main boundaries: light blue or light neutral borders.
+- VPC/private runtime area: subtle green or teal tint.
+- Async/event/data area: subtle blue, violet, or neutral tint.
+- Security/observability area: subtle amber or neutral tint.
+- Component nodes: white surfaces with consistent border.
+- Arrows: muted navy for sync, controlled purple for async, muted gray-blue for observability.
+
+Use color to communicate architecture grouping, not decoration.
+
+Professional polish rules:
+
+- Keep shadows subtle and consistent.
+- Avoid heavy borders.
+- Avoid excessive rounded corners.
+- Avoid thick colorful outlines around every node.
+- Avoid oversized icons.
+- Avoid oversized labels.
+- Avoid decorative background patterns.
+- Avoid callout boxes unless they explain a real architecture decision.
+- Avoid footers or source notes that compete with the diagram.
+- If a legend is needed, keep it compact and visually quiet.
+
+Avoid:
+
+- Dark full-canvas backgrounds.
+- Decorative gradient blobs, bokeh, or abstract backgrounds.
+- Generic stock imagery.
+- Blurry icons.
+- Tiny unreadable text.
+- Off-center icons inside tiles.
+- Mixed component box styles without a clear reason.
+- Text that escapes its container.
+- Crowded service clusters.
+- Arrows crossing heavily.
+- Excessive decorative labels.
+- Marketing-style hero layouts.
+- Technology/framework lists for generic example architectures.
+- Repeating the same idea in both a node label and a callout.
+- Adding services only to make the diagram look fuller.
+
+## Layout Rules
+
+Use architecture diagram conventions:
+
+- Place users and external systems on the far left or top.
+- Place edge and ingress services near the entry point.
+- Place compute/application services in the center.
+- Place async/event services between producers and consumers.
+- Place data stores near the services that own or consume them.
+- Place security and identity controls close to the flows they protect.
+- Place observability and audit services as side or lower support layers.
+- Omit CI/CD and deployment paths unless explicitly requested.
+
+Prefer top-to-bottom flow for default LinkedIn architecture diagrams.
+
+Use left-to-right flow only inside a layer when it improves readability.
+
+Use swimlanes, grouped panels, or boundary boxes when they improve clarity.
+
+Do not put UI cards inside other cards. Use boundary containers for architecture zones, not decorative nested cards.
+
+For LinkedIn vertical diagrams, prefer this section order:
+
+1. Header.
+2. External actors and entry points.
+3. AWS edge/API layer.
+4. Runtime compute/application layer.
+5. Events, queues, and data layer.
+6. Security and observability layer.
+7. Optional compact legend.
+
+Do not add an explanatory footer unless required. If sources are needed, keep them in the Markdown prompt, not as prominent visible image text.
+
+Every visible component in the same semantic tier should look homologated:
+
+- Same node height.
+- Same icon tile size.
+- Same border color and radius.
+- Same shadow depth.
+- Same title and role font sizes.
+- Same text alignment.
+
+Use visual differences only to communicate real architecture differences, such as external systems, AWS boundaries, async/event layer, data layer, or security/observability support.
+
+## Flow Line Rules
+
+Use a consistent line system:
+
+- Solid arrow: synchronous request/response or direct invocation.
+- Dashed arrow: asynchronous event, queue, notification, or scheduled flow.
+- Dotted arrow: observability, logs, metrics, traces, audit, or monitoring.
+- Double-line or emphasized arrow: primary user traffic path.
+- Thin gray arrow: secondary operational flow.
+- Red or amber line only for risk, alert, failure, or blocked path.
+
+Include a small legend only when more than two line styles are used.
+
+Keep arrow labels short:
+
+```text
+HTTPS
+REST API
+Events
+Messages
+Logs
+Metrics
+Read/Write
+Auth
+```
+
+Do not over-label obvious flows.
+
+Arrow labels must not overlap nodes, titles, icons, or other arrows. Place labels on short horizontal segments when possible. If a label cannot fit cleanly, remove it or replace it with the legend.
+
+## Architecture Accuracy Rules
+
+The diagram must be architecturally plausible and AWS-aligned.
+
+Required checks:
+
+- Public-facing resources are shown in public-facing layers only when appropriate.
+- Private compute and databases are not shown directly exposed to the internet.
+- Databases are placed in private subnet/data layer when VPC placement applies.
+- Load balancers, API Gateway, CloudFront, Route 53, and WAF are placed in realistic ingress positions.
+- IAM is shown as access control, not as a data-path hop.
+- Secrets Manager and KMS are shown as support/security services, not primary request routers.
+- CloudWatch, CloudTrail, X-Ray, and logging services are shown as observability/audit flows.
+- SQS, SNS, EventBridge, and Step Functions are shown with correct async/orchestration semantics.
+- S3 is shown as object storage, static hosting, artifact storage, or data lake storage only when that role fits.
+- ECR is omitted by default because it belongs to deployment/build context. Show it only when CI/CD or container image supply chain is explicitly requested.
+- VPC endpoints, NAT Gateway, Internet Gateway, Route 53, WAF, and CloudFront are shown only when relevant.
+- Multi-AZ or multi-region claims are only shown when the architecture actually uses them.
+- Serverless services are not incorrectly placed inside subnets unless the AWS service behavior supports that placement.
+
+## Security And Operations Requirements
+
+When relevant, include:
+
+- IAM roles/policies for service permissions.
+- AWS WAF for protected public web/API entry points.
+- AWS KMS for encryption keys.
+- AWS Secrets Manager or Systems Manager Parameter Store for sensitive configuration.
+- Security groups and network ACLs only when network-level detail is part of the diagram.
+- CloudWatch for logs, metrics, dashboards, and alarms.
+- CloudTrail for API audit events.
+- AWS X-Ray or OpenTelemetry collector paths when tracing is relevant.
+- Backup, lifecycle, retention, or disaster recovery notes only when requested or central to the design.
+
+Do not overload the diagram with every possible control. Show controls that materially explain the architecture.
+
+## Content Labels
+
+Keep visible text concise and technical.
+
+For general example diagrams, visible labels should be AWS service + runtime role only. Do not include frameworks, programming languages, libraries, database engines, or vendor products unless the user specifically asks for a real implementation diagram.
+
+Preferred label format:
+
+```text
+Service Name
+Short role label
+```
+
+Examples:
+
+```text
+Amazon API Gateway
+Public REST API
+
+AWS Lambda
+Order processor
+
+Amazon DynamoDB
+Orders table
+
+Amazon SQS
+Retry buffer
+```
+
+Avoid paragraphs inside the diagram. If explanation is necessary, use short callouts.
+
+Avoid using one component node to list many microservices if that list causes overflow. Prefer one of these patterns:
+
+- Use grouped services: `Commerce services`, `Order services`, `Payment service`.
+- Use two or three small service nodes when the individual services are important.
+- Use a short callout outside the node for examples.
+
+Never let a microservice list run past the node border.
+
+## Assumptions
+
+If the user does not provide enough detail, make practical assumptions and include them in the Markdown prompt file under `Assumptions`.
+
+Do not put assumptions as large text blocks in the final image.
+
+Common assumptions may include:
+
+- Single AWS account unless multi-account is requested.
+- One primary AWS Region unless multi-region is requested.
+- Production runtime environment unless the user asks for dev, staging, CI/CD, or deployment architecture.
+- Managed services preferred over self-managed components unless the user specifies otherwise.
+- Private databases and least-privilege IAM roles.
+
+## Markdown Prompt Template
+
+Each generated architecture prompt must use this structure:
+
+```markdown
+# {APP_OR_WORKLOAD_NAME} Architecture Diagram Prompt
+
+## Official AWS Sources
+
+- {SOURCE_1}
+- {SOURCE_2}
+- {SOURCE_3}
+
+## Architecture Context
+
+- Diagram type: {DIAGRAM_TYPE}
+- Workload: {APP_OR_WORKLOAD_NAME}
+- Environment: {ENVIRONMENT}
+- Region model: {REGION_MODEL}
+- Account model: {ACCOUNT_MODEL}
+- Primary pattern: {ARCHITECTURE_PATTERN}
+
+## Assumptions
+
+- {ASSUMPTION_1}
+- {ASSUMPTION_2}
+
+## Image Generation Prompt
+
+Create a complete AWS architecture diagram for {APP_OR_WORKLOAD_NAME}.
+
+Final output format: PNG.
+
+Recommended canvas: 1080 x 1350 px.
+
+All visible text must be in English.
+
+Use official AWS Architecture Icons for all AWS services.
+
+### Required Boundaries
+
+{BOUNDARIES}
+
+### Runtime Flow
+
+{REQUEST_OR_EVENT_FLOW}
+
+### Data Flow
+
+{DATA_FLOW}
+
+### Security And Identity
+
+{SECURITY_CONTROLS}
+
+### Observability And Audit
+
+{OBSERVABILITY_CONTROLS}
+
+### Services To Show
+
+{AWS_AND_EXTERNAL_SERVICES}
+
+### Visual Style
+
+Use a clean professional AWS-inspired technical architecture style with a bright neutral background, official AWS icons, thin boundaries, subtle shadows, clear grouped layers, readable labels, and consistent arrow styles. Keep the diagram polished, restrained, useful, and easy to scan. Do not add decorative filler, marketing copy, framework lists, or services that are not relevant to the runtime architecture.
+
+### Line Legend
+
+- Solid arrow: synchronous request or direct invocation.
+- Dashed arrow: asynchronous event or queue/message flow.
+- Dotted arrow: logs, metrics, traces, audit, or monitoring.
+
+## Accuracy Checklist
+
+- AWS services and integrations are confirmed from official AWS sources.
+- AWS service names use official capitalization.
+- Official AWS Architecture Icons are used when available.
+- Only relevant production runtime components are visible.
+- No decorative filler, marketing copy, or generic framework/technology lists are visible.
+- Color is used for grouping and architecture meaning, not decoration.
+- The visual style is clean, professional, and AWS-inspired.
+- Header follows the same visual standard as the AWS learning cards.
+- Component boxes are homologated within each layer.
+- Icons are visually centered inside their tiles.
+- Icon tiles are aligned consistently.
+- No visible text overflows its container.
+- No visible text overlaps arrows, icons, boundaries, or other text.
+- Network boundaries are realistic.
+- Public and private layers are not confused.
+- Data stores are not directly exposed to the internet.
+- IAM, KMS, and secrets are shown as security controls, not request routers.
+- Observability and audit flows are visually distinct from runtime traffic.
+- Async flows are visually distinct from synchronous flows.
+- All visible text is in English.
+- Final output is PNG.
+- Diagram uses vertical 4:5 LinkedIn format unless another format is explicitly requested.
+- CI/CD, build, artifact, registry, and deployment services are omitted unless explicitly requested.
+```
+
+## Execution Command
+
+From the workspace root:
+
+```bash
+cd ".."
+```
+
+Run this command, replacing the workload name and slug:
+
+```bash
+codex "Use the rules in './series/system-architecture-diagrams/rules.md' to generate a complete real production-runtime AWS architecture diagram for {APP_OR_WORKLOAD_NAME} in vertical LinkedIn format. Do not include CI/CD, build, deployment, repository, or container registry services unless explicitly required by the workload. Research only official AWS documentation, AWS Architecture Center, AWS Well-Architected Framework, and AWS Architecture Icons. Create the Markdown prompt in './series/system-architecture-diagrams/prompts', the render template in './series/system-architecture-diagrams/templates' if HTML/CSS is used, and the final PNG image in './series/system-architecture-diagrams/images'. Use the architecture slug '{architecture-slug}'. All visible diagram text must be in English."
+```
+
+Example:
+
+```bash
+codex "Use the rules in './series/system-architecture-diagrams/rules.md' to generate a complete real production-runtime AWS architecture diagram for a serverless ecommerce checkout app in vertical LinkedIn format. Do not include CI/CD, build, deployment, repository, or container registry services unless explicitly required by the workload. Research only official AWS documentation, AWS Architecture Center, AWS Well-Architected Framework, and AWS Architecture Icons. Create the Markdown prompt in './series/system-architecture-diagrams/prompts', the render template in './series/system-architecture-diagrams/templates' if HTML/CSS is used, and the final PNG image in './series/system-architecture-diagrams/images'. Use the architecture slug 'serverless-ecommerce-checkout'. All visible diagram text must be in English."
+```
+
+## Completion Criteria
+
+The task is complete when:
+
+- The workload architecture has been researched from official AWS sources.
+- The architecture assumptions are documented in the Markdown prompt.
+- The diagram uses official AWS Architecture Icons where available.
+- The final diagram shows realistic boundaries, services, flows, security, and operations.
+- The final diagram includes only relevant production runtime components.
+- The visual design is clean, professional, AWS-inspired, and free of decorative filler.
+- Component boxes are homologated, icons are centered, and text does not overflow.
+- The final PNG is saved in `series/system-architecture-diagrams/images`.
+- Any render template is saved in `series/system-architecture-diagrams/templates`.
+- The final response tells the user the created file paths and mentions the official AWS sources used.

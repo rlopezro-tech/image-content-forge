@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1080, initial-scale=1">
+<title>AWS CodeBuild Overview</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #eef4fb; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #0f1b2d; }
+  .card { width: 1080px; height: 1350px; padding: 30px 38px; background:
+    radial-gradient(circle at 96% 2%, rgba(20,184,166,.12), transparent 300px),
+    linear-gradient(180deg, #f8fbff 0%, #eef5fb 100%); overflow: hidden; }
+  .header { height: 156px; border-radius: 22px; padding: 26px 34px; display: flex; align-items: center; gap: 28px; color: #101b31;
+    background:
+      radial-gradient(circle at 8% 50%, rgba(201,37,209,.20), transparent 260px),
+      linear-gradient(135deg, rgba(255,255,255,.96) 0%, rgba(248,243,255,.94) 58%, rgba(238,247,255,.96) 100%);
+    border: 1.5px solid rgba(201,37,209,.28);
+    box-shadow: 0 18px 40px rgba(77,33,108,.13); }
+  .aws-icon { width: 98px; height: 98px; border-radius: 18px; display: grid; place-items: center; background: rgba(201,37,209,.08); box-shadow: inset 0 0 0 1px rgba(201,37,209,.20), 0 10px 24px rgba(201,37,209,.12); }
+  .aws-icon img { width: 80px; height: 80px; display: block; }
+  .aws-icon svg, .tile svg, .chip svg { width: 62%; height: 62%; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+  .aws-icon svg { color: white; }
+  h1 { font-size: 58px; line-height: 1; margin: 0; font-weight: 800; letter-spacing: 0; }
+  .badge { margin-left: auto; padding: 11px 24px; border: 2px solid #c925d1; border-radius: 999px; color: #9d1aa5; background: rgba(201,37,209,.08); font-size: 25px; font-weight: 800; text-transform: uppercase; }
+  .stack { margin-top: 16px; display: grid; gap: 12px; }
+  .panel { border: 1.5px solid #c7d8ea; border-radius: 18px; background: rgba(255,255,255,.88); box-shadow: 0 9px 22px rgba(19,45,79,.08); }
+  .intro { min-height: 116px; padding: 19px 26px 20px; }
+  .round { display: none; }
+  .round svg { width: 40px; height: 40px; fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+  .section-title { margin: 0; color: #087b83; font-size: 25px; font-weight: 850; text-transform: uppercase; letter-spacing: .02em; }
+  .intro .section-title { margin-bottom: 9px; }
+  .intro b { display: block; font-size: 23px; line-height: 1.12; margin-bottom: 5px; }
+  .intro p { margin: 0; width: 100%; font-size: 20.5px; line-height: 1.18; color: #1c2a3d; }
+  .workflow { padding: 18px 24px 20px; }
+  .workflow .section-title { color: #115fc5; margin-bottom: 8px; }
+  .steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; position: relative; }
+  .step { min-height: 218px; padding: 10px 10px 10px; text-align: center; position: relative; }
+  .num { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; margin: 0 auto 6px; color: white; background: #155fce; font-size: 22px; font-weight: 850; }
+  .tile { width: 68px; height: 68px; margin: 0 auto 7px; border-radius: 18px; display: grid; place-items: center; color: #0d6b76; background: #eef8fb; border: 1px solid #d5e6f3; }
+  .step h3 { margin: 0 0 4px; font-size: 20px; line-height: 1.02; }
+  .step p { margin: 0; font-size: 16px; line-height: 1.12; color: #25334a; }
+  .arrow { position: absolute; top: 57px; right: -16px; width: 30px; height: 2px; background: #1380c9; }
+  .arrow:after { content: ""; position: absolute; right: -2px; top: -5px; border-left: 10px solid #1380c9; border-top: 6px solid transparent; border-bottom: 6px solid transparent; }
+  .rows { display: grid; gap: 12px; }
+  .compact { padding: 15px 24px 17px; }
+  .cards4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 10px; }
+  .mini { min-height: 82px; padding: 12px 14px; border-radius: 15px; border: 1px solid #bfd5ea; background: #fbfdff; display: grid; grid-template-columns: 48px 1fr; gap: 11px; align-items: center; }
+  .mini .tile { width: 48px; height: 48px; border-radius: 12px; margin: 0; color: white; background: linear-gradient(135deg, #2f66e8, #6d5dfc); }
+  .mini:nth-child(2) .tile { background: linear-gradient(135deg, #2f8e45, #6abe4b); }
+  .mini:nth-child(3) .tile { background: linear-gradient(135deg, #df2c6f, #f05293); }
+  .mini:nth-child(4) .tile { background: linear-gradient(135deg, #f97316, #fb923c); }
+  .mini b { display: block; font-size: 18px; line-height: 1.02; }
+  .mini span { display: block; margin-top: 4px; font-size: 15px; line-height: 1.06; color: #26354b; }
+  .benefit { grid-template-columns: 52px 1fr; min-height: 88px; }
+  .benefit .tile, .use .tile { color: #087b83; background: #e6f7f7; }
+  .benefit b { color: #087b83; font-size: 17px; }
+  .use { min-height: 78px; }
+  .use b { font-size: 17px; }
+</style>
+</head>
+<body>
+<main class="card">
+  <section class="header">
+    <div class="aws-icon"><img src="../assets/aws-icons/Arch_AWS-CodeBuild_64.svg" alt="AWS CodeBuild icon"></div>
+    <h1>AWS CodeBuild</h1>
+    <div class="badge">Overview</div>
+  </section>
+  <div class="stack">
+    <section class="panel intro">
+      <h2 class="section-title">Service Focus</h2>
+      <p><b>Build and test code without managing build servers.</b>AWS CodeBuild compiles source code, runs tests, and produces deployable artifacts in managed build environments.</p>
+    </section>
+    <section class="panel intro">
+      <h2 class="section-title">What Is It?</h2>
+      <p>A fully managed cloud build service for CI workflows. Define a build project, point it at source code, and let CodeBuild run commands from a buildspec file.</p>
+    </section>
+    <section class="panel workflow">
+      <h2 class="section-title">How It Works</h2>
+      <div class="steps">
+        <div class="step"><div class="num">1</div><div class="tile"><svg viewBox="0 0 64 64"><path d="M16 8h24l8 8v40H16z"/><path d="M40 8v10h10M25 34l-6 6 6 6M39 34l6 6-6 6"/></svg></div><h3>Source</h3><p>Repo or S3 input enters the build project.</p><span class="arrow"></span></div>
+        <div class="step"><div class="num">2</div><div class="tile"><svg viewBox="0 0 64 64"><rect x="15" y="12" width="34" height="42" rx="4"/><path d="M24 24h16M24 34h16M24 44h16"/></svg></div><h3>Project</h3><p>Selects source, environment, artifacts, and logs.</p><span class="arrow"></span></div>
+        <div class="step"><div class="num">3</div><div class="tile"><svg viewBox="0 0 64 64"><path d="M16 8h24l8 8v40H16z"/><path d="M40 8v10h10M23 35h18M23 44h18"/></svg></div><h3>Buildspec</h3><p>YAML commands define build behavior.</p><span class="arrow"></span></div>
+        <div class="step"><div class="num">4</div><div class="tile"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="10"/><path d="M32 8v8M32 48v8M8 32h8M48 32h8M15 15l6 6M43 43l6 6M49 15l-6 6M21 43l-6 6"/></svg></div><h3>Build</h3><p>Managed environment runs tests and commands.</p><span class="arrow"></span></div>
+        <div class="step"><div class="num">5</div><div class="tile"><svg viewBox="0 0 64 64"><path d="M14 25h36v26H14zM24 25V14h16v11M32 14v25M26 33l6 6 6-6"/></svg></div><h3>Output</h3><p>Artifacts go to S3; logs stream to CloudWatch.</p></div>
+      </div>
+    </section>
+    <section class="panel compact"><h2 class="section-title">Integrates With</h2><div class="cards4">
+      <div class="mini"><div class="tile"><svg viewBox="0 0 64 64"><rect x="13" y="15" width="38" height="34" rx="3"/><path d="M20 25h24M25 34h14"/></svg></div><div><b>CodePipeline</b><span>CI/CD orchestration</span></div></div>
+      <div class="mini"><div class="tile"><svg viewBox="0 0 64 64"><ellipse cx="32" cy="17" rx="18" ry="7"/><path d="M14 17v30c0 4 8 7 18 7s18-3 18-7V17"/></svg></div><div><b>Amazon S3</b><span>source and artifacts</span></div></div>
+      <div class="mini"><div class="tile"><svg viewBox="0 0 64 64"><path d="M21 43a12 12 0 1 1 4-23 15 15 0 0 1 28 8 10 10 0 0 1-2 20H21z"/><circle cx="43" cy="43" r="8"/><path d="M49 49l7 7"/></svg></div><div><b>CloudWatch Logs</b><span>build logs</span></div></div>
+      <div class="mini"><div class="tile"><svg viewBox="0 0 64 64"><path d="M32 7l22 12v26L32 57 10 45V19zM32 7v25M10 19l22 13 22-13"/></svg></div><div><b>Amazon ECR</b><span>container images</span></div></div>
+    </div></section>
+    <section class="panel compact"><h2 class="section-title">Benefits</h2><div class="cards4">
+      <div class="mini benefit"><div class="tile"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="9"/><path d="M32 10v8M32 46v8M10 32h8M46 32h8M16 16l6 6M42 42l6 6M48 16l-6 6M22 42l-6 6"/></svg></div><div><b>MANAGED</b><span>No build servers to patch.</span></div></div>
+      <div class="mini benefit"><div class="tile"><svg viewBox="0 0 64 64"><path d="M12 48h40M18 44V29M32 44V20M46 44V13M20 26l12-8 14-7"/></svg></div><div><b>ON DEMAND</b><span>Scales with build requests.</span></div></div>
+      <div class="mini benefit"><div class="tile"><svg viewBox="0 0 64 64"><path d="M22 42l20-20M18 18l10 10M36 36l10 10M46 18l-6 10 6 6 10-6"/></svg></div><div><b>FLEXIBLE</b><span>Managed images or custom tools.</span></div></div>
+      <div class="mini benefit"><div class="tile"><svg viewBox="0 0 64 64"><path d="M13 50h38M20 45V32M32 45V21M44 45V27"/></svg></div><div><b>OBSERVABLE</b><span>Logs and build details.</span></div></div>
+    </div></section>
+    <section class="panel compact"><h2 class="section-title">Common Use Cases</h2><div class="cards4">
+      <div class="mini use"><div class="tile"><svg viewBox="0 0 64 64"><path d="M25 22l-10 10 10 10M39 22l10 10-10 10M35 18l-6 28"/></svg></div><div><b>Compile applications</b></div></div>
+      <div class="mini use"><div class="tile"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22"/><path d="M22 33l7 7 14-16"/></svg></div><div><b>Run unit tests</b></div></div>
+      <div class="mini use"><div class="tile"><svg viewBox="0 0 64 64"><path d="M32 8l22 12v24L32 56 10 44V20zM10 20l22 12 22-12M32 32v24"/></svg></div><div><b>Package artifacts</b></div></div>
+      <div class="mini use"><div class="tile"><svg viewBox="0 0 64 64"><rect x="13" y="25" width="38" height="19" rx="3"/><path d="M20 25v-8h24v8M22 32h20M22 38h14"/></svg></div><div><b>Build containers</b></div></div>
+    </div></section>
+  </div>
+</main>
+</body>
+</html>

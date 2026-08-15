@@ -1,0 +1,131 @@
+name: AWS Service Cards
+slug: aws-service-cards
+format: linkedin-card
+canvas: 1080x1350
+language: en
+status: active
+items:
+  - number: 1
+    slug: codebuild
+    title: AWS CodeBuild
+    status: ready
+  - number: 2
+    slug: s3
+    title: Amazon S3
+    status: ready
+  - number: 3
+    slug: rds
+    title: Amazon RDS
+    status: ready
+  - number: 4
+    slug: ec2
+    title: Amazon EC2
+    status: ready
+  - number: 5
+    slug: apprunner
+    title: AWS App Runner
+    status: ready
+  - number: 6
+    slug: loadbalancer
+    title: Elastic Load Balancing
+    status: ready
+  - number: 7
+    slug: dynamodb
+    title: Amazon DynamoDB
+    status: ready
+  - number: 8
+    slug: vpc
+    title: Amazon VPC
+    status: ready
+  - number: 9
+    slug: lambda
+    title: AWS Lambda
+    status: ready
+  - number: 10
+    slug: eventbridge
+    title: Amazon EventBridge
+    status: ready
+  - number: 11
+    slug: fargate
+    title: AWS Fargate
+    status: ready
+  - number: 12
+    slug: ecs
+    title: Amazon ECS
+    status: ready
+  - number: 13
+    slug: eks
+    title: Amazon EKS
+    status: ready
+  - number: 14
+    slug: cloudfront
+    title: Amazon CloudFront
+    status: ready
+  - number: 15
+    slug: ecr
+    title: Amazon ECR
+    status: ready
+  - number: 16
+    slug: iam
+    title: AWS IAM
+    status: ready
+  - number: 17
+    slug: cloudwatch
+    title: Amazon CloudWatch
+    status: ready
+  - number: 18
+    slug: sqs
+    title: Amazon SQS
+    status: ready
+  - number: 19
+    slug: sns
+    title: Amazon SNS
+    status: ready
+  - number: 20
+    slug: documentdb
+    title: Amazon DocumentDB
+    status: ready
+  - number: 21
+    slug: apigateway
+    title: Amazon API Gateway
+    status: ready
+  - number: 22
+    slug: route53
+    title: Amazon Route 53
+    status: ready
+  - number: 23
+    slug: secretsmanager
+    title: AWS Secrets Manager
+    status: ready
+  - number: 24
+    slug: bedrock
+    title: Amazon Bedrock
+    status: ready
+  - number: 25
+    slug: cloudformation
+    title: AWS CloudFormation
+    status: ready
+  - number: 26
+    slug: cloudtrail
+    title: AWS CloudTrail
+    status: ready
+  - number: 27
+    slug: aurora
+    title: Amazon Aurora
+    status: ready
+  - number: 28
+    slug: stepfunctions
+    title: AWS Step Functions
+    status: ready
+  - number: 29
+    slug: cognito
+    title: Amazon Cognito
+    status: ready
+  - number: 30
+    slug: autoscaling
+    title: AWS Auto Scaling
+    status: ready
+  - number: 31
+    slug: sagemaker
+    title: Amazon SageMaker AI
+    status: ready

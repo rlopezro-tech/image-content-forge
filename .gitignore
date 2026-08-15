@@ -1,0 +1,19 @@
+.DS_Store
+Thumbs.db
+
+# Local/editor files
+.idea/
+.vscode/
+*.swp
+
+# Generated scratch files
+tmp/
+.tmp/
+*.log
+
+# Generated content images stay local
+series/*/images/*
+!series/*/images/.gitkeep
+
+# OS metadata
+__MACOSX/

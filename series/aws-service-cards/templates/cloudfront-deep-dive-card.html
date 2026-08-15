@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1080, initial-scale=1">
+<title>Amazon CloudFront Deep Dive</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #eef4fb; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #0f1b2d; }
+  .card { width: 1080px; height: 1350px; padding: 30px 38px; background: radial-gradient(circle at 96% 2%, rgba(20,184,166,.12), transparent 300px), linear-gradient(180deg, #f8fbff 0%, #eef5fb 100%); overflow: hidden; }
+  .header { height: 156px; border-radius: 22px; padding: 26px 34px; display: flex; align-items: center; gap: 28px; color: #101b31; background: radial-gradient(circle at 8% 50%, rgba(139,92,246,.18), transparent 260px), linear-gradient(135deg, rgba(255,255,255,.96) 0%, rgba(247,244,255,.94) 58%, rgba(238,247,255,.96) 100%); border: 1.5px solid rgba(139,92,246,.30); box-shadow: 0 18px 40px rgba(70,45,122,.13); }
+  .aws-icon { width: 98px; height: 98px; border-radius: 18px; display: grid; place-items: center; background: rgba(139,92,246,.08); box-shadow: inset 0 0 0 1px rgba(139,92,246,.22), 0 10px 24px rgba(139,92,246,.12); }
+  .aws-icon img { width: 80px; height: 80px; display: block; }
+  svg { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+  h1 { font-size: 54px; line-height: 1; margin: 0; font-weight: 800; letter-spacing: 0; }
+  .badge { margin-left: auto; padding: 11px 24px; border: 2px solid #7c3aed; border-radius: 999px; color: #5b21b6; background: rgba(139,92,246,.08); font-size: 25px; font-weight: 800; text-transform: uppercase; }
+  .grid { margin-top: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .panel { border: 1.5px solid #c7d8ea; border-radius: 18px; background: rgba(255,255,255,.9); box-shadow: 0 9px 22px rgba(19,45,79,.08); padding: 16px 24px; }
+  .wide { grid-column: 1 / -1; }
+  .head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .mark { width: 48px; height: 48px; border-radius: 13px; display: grid; place-items: center; color: white; background: linear-gradient(135deg, #7c3aed, #38bdf8); box-shadow: inset 0 0 0 1px rgba(255,255,255,.28); }
+  .mark svg, .icon svg { width: 28px; height: 28px; stroke-width: 2.6; }
+  h2 { margin: 0; color: #0b1d3a; font-size: 25px; line-height: 1; font-weight: 850; text-transform: uppercase; letter-spacing: .025em; }
+  ul { margin: 0; padding: 0 0 0 24px; }
+  li { margin: 6px 0; font-size: 17.8px; line-height: 1.1; }
+  li::marker { color: #5b21b6; font-size: 20px; }
+  .takeaways { min-height: 248px; }
+  .mental { min-height: 248px; }
+  .formula { margin-top: 12px; padding: 14px; border: 1px solid #bfd5ea; border-radius: 16px; background: linear-gradient(180deg, #f9fbff, #f4efff); }
+  .flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; gap: 10px; align-items: center; }
+  .node { min-height: 92px; display: grid; place-items: center; text-align: center; }
+  .icon { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; margin-bottom: 6px; color: #5b21b6; background: #f4efff; }
+  .node b { font-size: 13.2px; line-height: 1.02; }
+  .op { font-size: 30px; color: #155fce; font-weight: 800; }
+  .twocol { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; grid-column: 1 / -1; }
+  .listrow { display: grid; gap: 8px; }
+  .line { display: grid; grid-template-columns: 44px 1fr; gap: 11px; align-items: center; min-height: 48px; }
+  .line .icon { width: 40px; height: 40px; margin: 0; border-radius: 12px; }
+  .line span { font-size: 17.8px; line-height: 1.08; }
+  .warn .icon { color: #f97316; background: #fff4e8; }
+  .opsmap { margin-top: 4px; display: grid; grid-template-columns: 92px 34px 116px 34px repeat(4, 1fr); align-items: center; gap: 7px; }
+  .svc { text-align: center; font-size: 13.3px; line-height: 1.05; color: #26354b; }
+  .svc .icon { margin: 0 auto 4px; width: 48px; height: 48px; }
+  .svc.main .icon { width: 72px; height: 72px; color: white; background: linear-gradient(135deg, #7c3aed, #38bdf8); }
+  .dash { height: 2px; border-top: 2px dashed #6d8197; position: relative; }
+  .dash:after { content: ""; position: absolute; right: -1px; top: -6px; border-left: 9px solid #6d8197; border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
+  .ops ul { margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; column-gap: 24px; }
+  .ops li { font-size: 17px; margin: 4px 0; }
+  .check { display: grid; gap: 5px; }
+  .checkrow { display: grid; grid-template-columns: 48px 1fr 34px 1.25fr; gap: 12px; align-items: center; min-height: 45px; border-top: 1px solid #d7e4f1; }
+  .checkrow:first-child { border-top: 0; }
+  .checkrow .icon { width: 38px; height: 38px; margin: 0; }
+  .scenario { color: #5b21b6; font-size: 18px; font-weight: 800; }
+  .answer { font-size: 17px; line-height: 1.08; }
+  .arrowtext { color: #5b21b6; font-size: 26px; font-weight: 850; }
+</style>
+</head>
+<body>
+<main class="card">
+  <section class="header">
+    <div class="aws-icon"><img src="../assets/aws-icons/Arch_Amazon-CloudFront_64.svg" alt="Amazon CloudFront icon"></div>
+    <h1>Amazon CloudFront</h1>
+    <div class="badge">Deep Dive</div>
+  </section>
+  <div class="grid">
+    <section class="panel takeaways">
+      <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><rect x="16" y="18" width="32" height="28" rx="4"/><path d="M22 28h20M22 36h14"/></svg></div><h2>Key Takeaways</h2></div>
+      <ul>
+        <li>A distribution is the main configuration object.</li>
+        <li>Origins provide original content.</li>
+        <li>Cache behaviors decide routing and cache policy.</li>
+        <li>Edge locations serve cached objects near viewers.</li>
+        <li>Security can include HTTPS, WAF, signed URLs, and OAC.</li>
+      </ul>
+    </section>
+    <section class="panel mental">
+      <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="18"/><path d="M14 32h36"/></svg></div><h2>Core Mental Model</h2></div>
+      <div class="formula"><div class="flow">
+        <div class="node"><div class="icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="19"/><path d="M20 32h24M32 20v24"/></svg></div><b>viewer<br>request</b></div>
+        <div class="op">+</div>
+        <div class="node"><div class="icon"><svg viewBox="0 0 64 64"><path d="M16 18h32v30H16z"/><path d="M23 28h18M23 36h12"/></svg></div><b>distribution<br>rules</b></div>
+        <div class="op">+</div>
+        <div class="node"><div class="icon"><svg viewBox="0 0 64 64"><rect x="16" y="18" width="32" height="28" rx="4"/><path d="M22 28h20M22 36h14"/></svg></div><b>edge<br>cache</b></div>
+        <div class="op">&rarr;</div>
+        <div class="node"><div class="icon"><svg viewBox="0 0 64 64"><path d="M14 44h36M20 38l8-10 8 6 12-18"/></svg></div><b>fast<br>delivery</b></div>
+      </div></div>
+    </section>
+    <div class="twocol">
+      <section class="panel">
+        <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="23"/><circle cx="32" cy="32" r="8"/><path d="M32 9v10M32 45v10M9 32h10M45 32h10"/></svg></div><h2>When To Use It</h2></div>
+        <div class="listrow">
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="20"/><path d="M14 32h36M32 14v36"/></svg></div><span>Global websites needing lower latency.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><rect x="16" y="18" width="32" height="28" rx="4"/><path d="M22 28h20M22 36h14"/></svg></div><span>Static or dynamic content that benefits from caching.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M20 20h24v24H20z"/><path d="M16 48h32"/></svg></div><span>APIs needing edge routing and protection.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l21 9v14c0 13-8 22-21 27-13-5-21-14-21-27V17z"/></svg></div><span>Private content with controlled viewer access.</span></div>
+        </div>
+      </section>
+      <section class="panel warn">
+        <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><h2>Watch Out</h2></div>
+        <div class="listrow">
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><span>Broad cache keys reduce cache efficiency.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><span>Invalidations and origin changes need deployment care.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><span>Viewer HTTPS and origin protocol must align.</span></div>
+        </div>
+      </section>
+    </div>
+    <section class="panel wide ops">
+      <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><path d="M32 8l21 9v14c0 13-8 22-21 27-13-5-21-14-21-27V17z"/><path d="M24 33h16v14H24z"/></svg></div><h2>Security &amp; Operations</h2></div>
+      <div class="opsmap">
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l21 9v14c0 13-8 22-21 27-13-5-21-14-21-27V17z"/></svg></div>AWS<br>WAF</div>
+        <div class="dash"></div>
+        <div class="svc main"><div class="icon"><svg viewBox="0 0 64 64"><path d="M14 32h36M42 24l8 8-8 8"/><circle cx="20" cy="32" r="5"/></svg></div>CloudFront</div>
+        <div class="dash"></div>
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><ellipse cx="32" cy="18" rx="18" ry="7"/><path d="M14 18v28c0 4 8 7 18 7s18-3 18-7V18"/></svg></div>S3<br>OAC</div>
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><path d="M22 20h20v24H22z"/><path d="M28 30h8M28 38h8"/></svg></div>Signed<br>URLs</div>
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 14v28M22 32l10 10 10-10M18 50h28"/></svg></div>Invalidation<br>or versions</div>
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><path d="M21 43a12 12 0 1 1 4-23 15 15 0 0 1 28 8 10 10 0 0 1-2 20H21z"/><circle cx="43" cy="43" r="8"/></svg></div>Access<br>logs</div>
+      </div>
+      <ul>
+        <li>Protect distributions with AWS WAF web ACLs.</li>
+        <li>Use signed URLs or cookies for private content.</li>
+        <li>Restrict S3 origins with origin access control.</li>
+        <li>Use logs and invalidations deliberately.</li>
+      </ul>
+    </section>
+    <section class="panel wide">
+      <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><path d="M24 25a8 8 0 1 1 11 7c-3 2-4 4-4 8"/><path d="M32 49h.01"/></svg></div><h2>Knowledge Check</h2></div>
+      <div class="check">
+        <div class="checkrow"><div class="icon"><svg viewBox="0 0 64 64"><ellipse cx="32" cy="18" rx="18" ry="7"/><path d="M14 18v28c0 4 8 7 18 7s18-3 18-7V18"/></svg></div><div class="scenario">Need static site</div><div class="arrowtext">&rarr;</div><div class="answer">use an S3 origin with CloudFront.</div></div>
+        <div class="checkrow"><div class="icon"><svg viewBox="0 0 64 64"><path d="M16 18h32v30H16z"/><path d="M23 28h18M23 36h12"/></svg></div><div class="scenario">Need path routing</div><div class="arrowtext">&rarr;</div><div class="answer">configure cache behaviors.</div></div>
+        <div class="checkrow"><div class="icon"><svg viewBox="0 0 64 64"><path d="M25 22l-10 10 10 10M39 22l10 10-10 10"/></svg></div><div class="scenario">Need edge logic</div><div class="arrowtext">&rarr;</div><div class="answer">use CloudFront Functions or Lambda@Edge.</div></div>
+      </div>
+    </section>
+  </div>
+</main>
+</body>
+</html>

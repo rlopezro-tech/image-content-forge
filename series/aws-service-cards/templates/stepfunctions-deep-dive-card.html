@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1080, initial-scale=1">
+<title>AWS Step Functions Deep Dive</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #eef4fb; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #0f1b2d; }
+  .card { width: 1080px; height: 1350px; padding: 26px 38px; background: radial-gradient(circle at 96% 2%, rgba(20,184,166,.12), transparent 300px), linear-gradient(180deg, #f8fbff 0%, #eef5fb 100%); overflow: hidden; }
+  .header { height: 140px; border-radius: 22px; padding: 22px 34px; display: flex; align-items: center; gap: 28px; background: radial-gradient(circle at 8% 50%, rgba(231,21,123,.20), transparent 260px), linear-gradient(135deg, rgba(255,255,255,.96), rgba(255,241,248,.94) 58%, rgba(238,247,255,.96)); border: 1.5px solid rgba(231,21,123,.30); box-shadow: 0 18px 40px rgba(132,24,83,.13); }
+  .aws-icon { width: 90px; height: 90px; border-radius: 18px; display: grid; place-items: center; background: rgba(231,21,123,.08); box-shadow: inset 0 0 0 1px rgba(231,21,123,.22), 0 10px 24px rgba(231,21,123,.12); flex: 0 0 auto; }
+  .aws-icon img { width: 74px; height: 74px; display: block; }
+  h1 { font-size: 48px; line-height: 1; margin: 0; font-weight: 800; letter-spacing: 0; }
+  .badge { margin-left: auto; padding: 11px 24px; border: 2px solid #e7157b; border-radius: 999px; color: #ad0f5d; background: rgba(231,21,123,.08); font-size: 23px; font-weight: 800; text-transform: uppercase; white-space: nowrap; }
+  .grid { margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .panel { border: 1.5px solid #c7d8ea; border-radius: 18px; background: rgba(255,255,255,.91); box-shadow: 0 9px 22px rgba(19,45,79,.08); padding: 14px 24px; }
+  .wide { grid-column: 1 / -1; }
+  .head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .mark { width: 48px; height: 48px; border-radius: 13px; display: grid; place-items: center; color: white; background: linear-gradient(135deg, #e7157b, #f05293); box-shadow: inset 0 0 0 1px rgba(255,255,255,.28); flex: 0 0 auto; }
+  svg { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+  .mark svg, .icon svg { width: 28px; height: 28px; stroke-width: 2.6; }
+  h2 { margin: 0; color: #0b1d3a; font-size: 25px; line-height: 1; font-weight: 850; text-transform: uppercase; letter-spacing: .025em; }
+  ul { margin: 0; padding: 0 0 0 24px; }
+  li { margin: 5px 0; font-size: 17px; line-height: 1.1; }
+  li::marker { color: #ad0f5d; font-size: 20px; }
+  .takeaways, .mental { min-height: 246px; }
+  .formula { margin-top: 10px; padding: 12px; border: 1px solid #bfd5ea; border-radius: 16px; background: linear-gradient(180deg, #f9fbff, #fff1f8); }
+  .flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; gap: 8px; align-items: center; }
+  .node { min-height: 94px; display: grid; place-items: center; text-align: center; }
+  .icon { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; margin-bottom: 5px; color: #ad0f5d; background: #fff1f8; border: 1px solid #ffc9e4; }
+  .node b { font-size: 14px; line-height: 1.02; }
+  .op { font-size: 27px; color: #155fce; font-weight: 800; }
+  .twocol { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; grid-column: 1 / -1; }
+  .listrow { display: grid; gap: 8px; }
+  .line { display: grid; grid-template-columns: 40px 1fr; gap: 10px; align-items: center; min-height: 43px; }
+  .line .icon { width: 36px; height: 36px; margin: 0; border-radius: 12px; }
+  .line span { font-size: 17px; line-height: 1.08; }
+  .warn .icon { color: #f97316; background: #fff4e8; border-color: #fed7aa; }
+  .opsmap { margin-top: 4px; display: grid; grid-template-columns: 96px 38px 118px 38px repeat(4, 1fr); align-items: center; gap: 7px; }
+  .svc { text-align: center; font-size: 13.5px; line-height: 1.05; color: #26354b; }
+  .svc .icon { margin: 0 auto 4px; width: 48px; height: 48px; }
+  .svc.main .icon { width: 72px; height: 72px; color: white; background: linear-gradient(135deg, #e7157b, #f05293); border: 0; }
+  .dash { height: 2px; border-top: 2px dashed #6d8197; position: relative; }
+  .dash:after { content: ""; position: absolute; right: -1px; top: -6px; border-left: 9px solid #6d8197; border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
+  .ops ul { margin-top: 8px; display: grid; grid-template-columns: 1fr 1fr; column-gap: 24px; }
+  .ops li { font-size: 16.5px; margin: 3px 0; }
+  .check { display: grid; gap: 5px; }
+  .checkrow { display: grid; grid-template-columns: 44px 1.05fr 30px 1.25fr; gap: 10px; align-items: center; min-height: 38px; border-top: 1px solid #d7e4f1; }
+  .checkrow:first-child { border-top: 0; }
+  .checkrow .icon { width: 38px; height: 38px; margin: 0; }
+  .scenario { color: #ad0f5d; font-size: 16.5px; font-weight: 800; }
+  .answer { font-size: 16px; line-height: 1.05; }
+  .arrowtext { color: #ad0f5d; font-size: 24px; font-weight: 850; }
+</style>
+</head>
+<body>
+<main class="card">
+  <section class="header">
+    <div class="aws-icon"><img src="../assets/aws-icons/Arch_AWS-Step-Functions_64.svg" alt="AWS Step Functions icon"></div>
+    <h1>AWS Step Functions</h1>
+    <div class="badge">Deep Dive</div>
+  </section>
+  <div class="grid">
+    <section class="panel takeaways">
+      <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><path d="M16 16h32v36H16z"/><path d="M22 26h20M22 34h20M22 42h13"/></svg></div><h2>Key Takeaways</h2></div>
+      <ul>
+        <li>Workflows are state machines defined with ASL.</li>
+        <li>Executions are running state machine instances.</li>
+        <li>Task states call services, functions, or HTTPS APIs.</li>
+        <li>Flow states branch, wait, map, pass, or parallelize.</li>
+        <li>Standard and Express fit different workloads.</li>
+      </ul>
+    </section>
+    <section class="panel mental">
+      <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><circle cx="28" cy="28" r="13"/><path d="M38 38l12 12"/></svg></div><h2>Core Mental Model</h2></div>
+      <div class="formula"><div class="flow">
+        <div class="node"><div class="icon"><svg viewBox="0 0 64 64"><path d="M18 20h28v24H18z"/><path d="M24 30h16"/></svg></div><b>input<br>event</b></div>
+        <div class="op">+</div>
+        <div class="node"><div class="icon"><svg viewBox="0 0 64 64"><rect x="13" y="13" width="16" height="16" rx="3"/><rect x="35" y="35" width="16" height="16" rx="3"/><path d="M29 21h8M32 21v14"/></svg></div><b>state<br>machine</b></div>
+        <div class="op">+</div>
+        <div class="node"><div class="icon"><svg viewBox="0 0 64 64"><path d="M25 18 15 46h12l-3 12 25-34H36l4-14z"/></svg></div><b>task + flow<br>states</b></div>
+        <div class="op">&rarr;</div>
+        <div class="node"><div class="icon"><svg viewBox="0 0 64 64"><path d="M14 44V20h36v24"/><path d="M20 38l7-9 8 6 9-13"/></svg></div><b>history<br>+ result</b></div>
+      </div></div>
+    </section>
+    <div class="twocol">
+      <section class="panel">
+        <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="23"/><circle cx="32" cy="32" r="8"/><path d="M32 9v10M32 45v10M9 32h10M45 32h10"/></svg></div><h2>When To Use It</h2></div>
+        <div class="listrow">
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><circle cx="20" cy="32" r="8"/><circle cx="44" cy="22" r="7"/><circle cx="44" cy="44" r="7"/></svg></div><span>Coordinate multiple services reliably.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M16 16h32v36H16z"/><path d="M22 26h20M22 34h20"/></svg></div><span>Model auditable business processes.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M20 23a14 14 0 1 1-2 18"/><path d="M17 26v15h15"/></svg></div><span>Add retries, waits, and fallback paths.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M14 44V20h36v24"/><path d="M20 38l7-9 8 6 9-13"/></svg></div><span>Orchestrate data or approval pipelines.</span></div>
+        </div>
+      </section>
+      <section class="panel warn">
+        <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><h2>Watch Out</h2></div>
+        <div class="listrow">
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><span>Choose Standard or Express intentionally.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><span>Express supports Request Response integrations.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><span>Retries count as state transitions.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><span>Task tokens must return from same account.</span></div>
+        </div>
+      </section>
+    </div>
+    <section class="panel wide ops">
+      <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><path d="M32 8l21 9v14c0 13-8 22-21 27-13-5-21-14-21-27V17z"/><path d="M24 33h16v14H24z"/></svg></div><h2>Security &amp; Operations</h2></div>
+      <div class="opsmap">
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l21 9v14c0 13-8 22-21 27-13-5-21-14-21-27V17z"/></svg></div>IAM<br>role</div>
+        <div class="dash"></div>
+        <div class="svc main"><div class="icon"><svg viewBox="0 0 64 64"><rect x="13" y="13" width="16" height="16" rx="3"/><rect x="35" y="13" width="16" height="16" rx="3"/><rect x="24" y="37" width="16" height="16" rx="3"/><path d="M29 21h6M32 29v8"/></svg></div>Step<br>Functions</div>
+        <div class="dash"></div>
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 12c-9 0-15 6-15 15v8l-5 9h40l-5-9v-8c0-9-6-15-15-15z"/></svg></div>CloudWatch<br>metrics</div>
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><circle cx="20" cy="32" r="7"/><circle cx="44" cy="20" r="7"/><circle cx="44" cy="44" r="7"/></svg></div>EventBridge<br>events</div>
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><path d="M20 23a14 14 0 1 1-2 18"/><path d="M17 26v15h15"/></svg></div>Retry<br>Catch</div>
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><path d="M16 16h32v36H16z"/><path d="M22 26h20M22 34h20M22 42h13"/></svg></div>Execution<br>history</div>
+      </div>
+      <ul>
+        <li>Use least-privilege execution roles.</li>
+        <li>Let generated IAM templates guide integrations.</li>
+        <li>Monitor executions, errors, and throttles.</li>
+        <li>Handle expected failures with Retry and Catch.</li>
+      </ul>
+    </section>
+    <section class="panel wide">
+      <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><path d="M24 25a8 8 0 1 1 11 7c-3 2-4 4-4 8"/><path d="M32 49h.01"/></svg></div><h2>Knowledge Check</h2></div>
+      <div class="check">
+        <div class="checkrow"><div class="icon"><svg viewBox="0 0 64 64"><path d="M16 16h32v36H16z"/><path d="M22 26h20M22 34h20"/></svg></div><div class="scenario">Long-running auditability</div><div class="arrowtext">&rarr;</div><div class="answer">choose Standard workflows.</div></div>
+        <div class="checkrow"><div class="icon"><svg viewBox="0 0 64 64"><path d="M14 44V20h36v24"/><path d="M20 38l7-9 8 6 9-13"/></svg></div><div class="scenario">High-event-rate short work</div><div class="arrowtext">&rarr;</div><div class="answer">choose Express workflows.</div></div>
+        <div class="checkrow"><div class="icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="18"/><path d="M32 20v12l9 5"/></svg></div><div class="scenario">Wait for a job</div><div class="arrowtext">&rarr;</div><div class="answer">use .sync where supported.</div></div>
+        <div class="checkrow"><div class="icon"><svg viewBox="0 0 64 64"><path d="M18 34l9 9 19-22"/><path d="M18 48h28"/></svg></div><div class="scenario">External approval</div><div class="arrowtext">&rarr;</div><div class="answer">use callback with task token.</div></div>
+      </div>
+    </section>
+  </div>
+</main>
+</body>
+</html>

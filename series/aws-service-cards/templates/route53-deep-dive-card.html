@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1080, initial-scale=1">
+<title>Amazon Route 53 Deep Dive</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #eef4fb; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #0f1b2d; }
+  .card { width: 1080px; height: 1350px; padding: 30px 38px; background: radial-gradient(circle at 96% 2%, rgba(20,184,166,.13), transparent 300px), linear-gradient(180deg, #f8fbff 0%, #eef5fb 100%); overflow: hidden; }
+  .header { height: 156px; border-radius: 22px; padding: 26px 34px; display: flex; align-items: center; gap: 26px; color: #101b31; background: radial-gradient(circle at 8% 50%, rgba(139,92,246,.18), transparent 260px), linear-gradient(135deg, rgba(255,255,255,.96) 0%, rgba(246,242,255,.94) 58%, rgba(238,247,255,.96) 100%); border: 1.5px solid rgba(125,82,220,.30); box-shadow: 0 18px 40px rgba(65,48,128,.13); }
+  .aws-icon { width: 98px; height: 98px; border-radius: 18px; display: grid; place-items: center; background: rgba(125,82,220,.08); box-shadow: inset 0 0 0 1px rgba(125,82,220,.22), 0 10px 24px rgba(65,48,128,.12); flex: 0 0 auto; }
+  .aws-icon img { width: 80px; height: 80px; display: block; }
+  svg { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+  h1 { font-size: 54px; line-height: 1; margin: 0; font-weight: 800; letter-spacing: 0; white-space: nowrap; }
+  .badge { margin-left: auto; padding: 11px 24px; border: 2px solid #7c3aed; border-radius: 999px; color: #5b21b6; background: rgba(124,58,237,.08); font-size: 25px; font-weight: 800; text-transform: uppercase; }
+  .grid { margin-top: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .panel { border: 1.5px solid #c7d8ea; border-radius: 18px; background: rgba(255,255,255,.91); box-shadow: 0 9px 22px rgba(19,45,79,.08); padding: 16px 24px; }
+  .wide { grid-column: 1 / -1; }
+  .head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .mark { width: 48px; height: 48px; border-radius: 13px; display: grid; place-items: center; color: white; background: linear-gradient(135deg, #7c3aed, #2563eb); box-shadow: inset 0 0 0 1px rgba(255,255,255,.28); }
+  .mark svg, .icon svg { width: 28px; height: 28px; stroke-width: 2.6; }
+  h2 { margin: 0; color: #0b1d3a; font-size: 25px; line-height: 1; font-weight: 850; text-transform: uppercase; letter-spacing: .025em; }
+  ul { margin: 0; padding: 0 0 0 24px; }
+  li { margin: 6px 0; font-size: 18.3px; line-height: 1.13; }
+  li::marker { color: #5b21b6; font-size: 20px; }
+  .takeaways { min-height: 248px; }
+  .mental { min-height: 248px; }
+  .formula { margin-top: 12px; padding: 14px; border: 1px solid #bfd5ea; border-radius: 16px; background: linear-gradient(180deg, #f9fbff, #f5f0ff); }
+  .flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; gap: 10px; align-items: center; }
+  .node { min-height: 92px; display: grid; place-items: center; text-align: center; }
+  .icon { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; margin-bottom: 6px; color: #5b21b6; background: #f5f0ff; }
+  .node b { font-size: 14px; line-height: 1.02; }
+  .op { font-size: 30px; color: #155fce; font-weight: 800; }
+  .twocol { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; grid-column: 1 / -1; }
+  .listrow { display: grid; gap: 8px; }
+  .line { display: grid; grid-template-columns: 44px 1fr; gap: 11px; align-items: center; min-height: 48px; }
+  .line .icon { width: 40px; height: 40px; margin: 0; border-radius: 12px; }
+  .line span { font-size: 18.4px; line-height: 1.1; }
+  .warn .icon { color: #f97316; background: #fff4e8; }
+  .opsmap { margin-top: 4px; display: grid; grid-template-columns: 88px 34px 122px 34px repeat(4, 1fr); align-items: center; gap: 7px; }
+  .svc { text-align: center; font-size: 13.5px; line-height: 1.05; color: #26354b; }
+  .svc .icon { margin: 0 auto 4px; width: 48px; height: 48px; }
+  .svc.main .icon { width: 72px; height: 72px; color: white; background: linear-gradient(135deg, #7c3aed, #2563eb); }
+  .dash { height: 2px; border-top: 2px dashed #6d8197; position: relative; }
+  .dash:after { content: ""; position: absolute; right: -1px; top: -6px; border-left: 9px solid #6d8197; border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
+  .ops ul { margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; column-gap: 24px; }
+  .ops li { font-size: 17.3px; margin: 4px 0; }
+  .check { display: grid; gap: 5px; }
+  .checkrow { display: grid; grid-template-columns: 48px 1fr 34px 1.25fr; gap: 12px; align-items: center; min-height: 45px; border-top: 1px solid #d7e4f1; }
+  .checkrow:first-child { border-top: 0; }
+  .checkrow .icon { width: 38px; height: 38px; margin: 0; }
+  .scenario { color: #5b21b6; font-size: 18.5px; font-weight: 800; }
+  .answer { font-size: 17.4px; line-height: 1.08; }
+  .arrowtext { color: #5b21b6; font-size: 26px; font-weight: 850; }
+</style>
+</head>
+<body>
+<main class="card">
+  <section class="header">
+    <div class="aws-icon"><img src="../assets/aws-icons/Arch_Amazon-Route-53_64.svg" alt="Amazon Route 53 icon"></div>
+    <h1>Amazon Route 53</h1>
+    <div class="badge">Deep Dive</div>
+  </section>
+  <div class="grid">
+    <section class="panel takeaways">
+      <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><path d="M14 20h36M14 32h28M14 44h34"/><path d="M48 26l6 6-6 6"/></svg></div><h2>Key Takeaways</h2></div>
+      <ul>
+        <li>Route 53 provides authoritative DNS for public and private domains.</li>
+        <li>Hosted zones contain records for domains and subdomains.</li>
+        <li>Records map names to values, aliases, or AWS resources.</li>
+        <li>Routing policies control DNS answers.</li>
+        <li>Health checks can support failover decisions.</li>
+      </ul>
+    </section>
+    <section class="panel mental">
+      <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="18"/><path d="M14 32h36"/></svg></div><h2>Core Mental Model</h2></div>
+      <div class="formula"><div class="flow">
+        <div class="node"><div class="icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="20"/><path d="M16 32h32M32 12c8 8 8 32 0 40"/></svg></div><b>domain<br>name</b></div>
+        <div class="op">+</div>
+        <div class="node"><div class="icon"><svg viewBox="0 0 64 64"><rect x="14" y="16" width="36" height="32" rx="4"/><path d="M22 26h20M22 38h16"/></svg></div><b>hosted<br>zone</b></div>
+        <div class="op">+</div>
+        <div class="node"><div class="icon"><svg viewBox="0 0 64 64"><path d="M14 20h36M14 32h28M14 44h34"/></svg></div><b>record<br>policy</b></div>
+        <div class="op">&rarr;</div>
+        <div class="node"><div class="icon"><svg viewBox="0 0 64 64"><path d="M21 43a12 12 0 1 1 4-23 15 15 0 0 1 28 8 10 10 0 0 1-2 20H21z"/></svg></div><b>DNS<br>answer</b></div>
+      </div></div>
+    </section>
+    <div class="twocol">
+      <section class="panel">
+        <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="23"/><circle cx="32" cy="32" r="8"/><path d="M32 9v10M32 45v10M9 32h10M45 32h10"/></svg></div><h2>When To Use It</h2></div>
+        <div class="listrow">
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="20"/><path d="M16 32h32"/></svg></div><span>Host DNS for internet-facing domains.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><rect x="16" y="18" width="32" height="28" rx="4"/><path d="M24 28h16M24 36h16"/></svg></div><span>Register or transfer domain names.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><rect x="12" y="22" width="40" height="20" rx="4"/><path d="M20 32h24"/></svg></div><span>Route to AWS resources with alias records.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M12 22h40M12 42h40M22 14v36M42 14v36"/></svg></div><span>Create private DNS names inside VPCs.</span></div>
+        </div>
+      </section>
+      <section class="panel warn">
+        <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><h2>Watch Out</h2></div>
+        <div class="listrow">
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><span>TTL and resolver caching delay visible changes.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><span>Public and private zones solve different problems.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><span>Registrar delegation must use correct name servers.</span></div>
+        </div>
+      </section>
+    </div>
+    <section class="panel wide ops">
+      <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><path d="M32 8l21 9v14c0 13-8 22-21 27-13-5-21-14-21-27V17z"/><path d="M24 33h16v14H24z"/></svg></div><h2>Security &amp; Operations</h2></div>
+      <div class="opsmap">
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l21 9v14c0 13-8 22-21 27-13-5-21-14-21-27V17z"/></svg></div>IAM<br>controls</div>
+        <div class="dash"></div>
+        <div class="svc main"><div class="icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="20"/><path d="M16 32h32M32 12c8 8 8 32 0 40"/></svg></div>Route 53</div>
+        <div class="dash"></div>
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><path d="M14 44h36M20 38l8-10 8 6 12-18"/></svg></div>Health<br>checks</div>
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><rect x="14" y="16" width="36" height="32" rx="4"/><path d="M22 26h20M22 38h16"/></svg></div>Hosted<br>zones</div>
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><circle cx="18" cy="32" r="6"/><circle cx="46" cy="20" r="6"/><circle cx="46" cy="44" r="6"/></svg></div>Routing<br>policies</div>
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><path d="M12 22h40M12 42h40M22 14v36M42 14v36"/></svg></div>Private<br>DNS</div>
+      </div>
+      <ul>
+        <li>Use least privilege for hosted zone and record changes.</li>
+        <li>Monitor health checks and DNS behavior where needed.</li>
+        <li>Control critical zone changes through review.</li>
+        <li>Use private zones for internal VPC resolution.</li>
+      </ul>
+    </section>
+    <section class="panel wide">
+      <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><path d="M24 25a8 8 0 1 1 11 7c-3 2-4 4-4 8"/><path d="M32 49h.01"/></svg></div><h2>Knowledge Check</h2></div>
+      <div class="check">
+        <div class="checkrow"><div class="icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="20"/><path d="M16 32h32"/></svg></div><div class="scenario">DNS for example.com</div><div class="arrowtext">&rarr;</div><div class="answer">create a public hosted zone and delegate NS records.</div></div>
+        <div class="checkrow"><div class="icon"><svg viewBox="0 0 64 64"><path d="M12 22h40M12 42h40M22 14v36M42 14v36"/></svg></div><div class="scenario">Internal app.local names</div><div class="arrowtext">&rarr;</div><div class="answer">use a private hosted zone associated with VPCs.</div></div>
+        <div class="checkrow"><div class="icon"><svg viewBox="0 0 64 64"><path d="M14 44h36M20 38l8-10 8 6 12-18"/></svg></div><div class="scenario">Active-passive DNS</div><div class="arrowtext">&rarr;</div><div class="answer">use failover routing with health checks.</div></div>
+      </div>
+    </section>
+  </div>
+</main>
+</body>
+</html>
+

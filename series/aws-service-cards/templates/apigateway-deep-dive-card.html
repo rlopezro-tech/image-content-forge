@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1080, initial-scale=1">
+<title>Amazon API Gateway Deep Dive</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #eef4fb; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #0f1b2d; }
+  .card { width: 1080px; height: 1350px; padding: 30px 38px; background: radial-gradient(circle at 96% 2%, rgba(20,184,166,.13), transparent 300px), linear-gradient(180deg, #f8fbff 0%, #eef5fb 100%); overflow: hidden; }
+  .header { height: 156px; border-radius: 22px; padding: 26px 34px; display: flex; align-items: center; gap: 26px; color: #101b31; background: radial-gradient(circle at 8% 50%, rgba(139,92,246,.18), transparent 260px), linear-gradient(135deg, rgba(255,255,255,.96) 0%, rgba(246,242,255,.94) 58%, rgba(238,247,255,.96) 100%); border: 1.5px solid rgba(125,82,220,.30); box-shadow: 0 18px 40px rgba(65,48,128,.13); }
+  .aws-icon { width: 98px; height: 98px; border-radius: 18px; display: grid; place-items: center; background: rgba(125,82,220,.08); box-shadow: inset 0 0 0 1px rgba(125,82,220,.22), 0 10px 24px rgba(65,48,128,.12); flex: 0 0 auto; }
+  .aws-icon img { width: 80px; height: 80px; display: block; }
+  svg { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+  h1 { font-size: 50px; line-height: 1; margin: 0; font-weight: 800; letter-spacing: 0; white-space: nowrap; }
+  .badge { margin-left: auto; padding: 11px 24px; border: 2px solid #7c3aed; border-radius: 999px; color: #5b21b6; background: rgba(124,58,237,.08); font-size: 25px; font-weight: 800; text-transform: uppercase; }
+  .grid { margin-top: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .panel { border: 1.5px solid #c7d8ea; border-radius: 18px; background: rgba(255,255,255,.91); box-shadow: 0 9px 22px rgba(19,45,79,.08); padding: 16px 24px; }
+  .wide { grid-column: 1 / -1; }
+  .head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .mark { width: 48px; height: 48px; border-radius: 13px; display: grid; place-items: center; color: white; background: linear-gradient(135deg, #7c3aed, #2563eb); box-shadow: inset 0 0 0 1px rgba(255,255,255,.28); }
+  .mark svg, .icon svg { width: 28px; height: 28px; stroke-width: 2.6; }
+  h2 { margin: 0; color: #0b1d3a; font-size: 25px; line-height: 1; font-weight: 850; text-transform: uppercase; letter-spacing: .025em; }
+  ul { margin: 0; padding: 0 0 0 24px; }
+  li { margin: 6px 0; font-size: 18.3px; line-height: 1.13; }
+  li::marker { color: #5b21b6; font-size: 20px; }
+  .takeaways { min-height: 248px; }
+  .mental { min-height: 248px; }
+  .formula { margin-top: 12px; padding: 14px; border: 1px solid #bfd5ea; border-radius: 16px; background: linear-gradient(180deg, #f9fbff, #f5f0ff); }
+  .flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; gap: 10px; align-items: center; }
+  .node { min-height: 92px; display: grid; place-items: center; text-align: center; }
+  .icon { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; margin-bottom: 6px; color: #5b21b6; background: #f5f0ff; }
+  .node b { font-size: 14px; line-height: 1.02; }
+  .op { font-size: 30px; color: #155fce; font-weight: 800; }
+  .twocol { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; grid-column: 1 / -1; }
+  .listrow { display: grid; gap: 8px; }
+  .line { display: grid; grid-template-columns: 44px 1fr; gap: 11px; align-items: center; min-height: 48px; }
+  .line .icon { width: 40px; height: 40px; margin: 0; border-radius: 12px; }
+  .line span { font-size: 18.4px; line-height: 1.1; }
+  .warn .icon { color: #f97316; background: #fff4e8; }
+  .opsmap { margin-top: 4px; display: grid; grid-template-columns: 88px 34px 122px 34px repeat(4, 1fr); align-items: center; gap: 7px; }
+  .svc { text-align: center; font-size: 13.5px; line-height: 1.05; color: #26354b; }
+  .svc .icon { margin: 0 auto 4px; width: 48px; height: 48px; }
+  .svc.main .icon { width: 72px; height: 72px; color: white; background: linear-gradient(135deg, #7c3aed, #2563eb); }
+  .dash { height: 2px; border-top: 2px dashed #6d8197; position: relative; }
+  .dash:after { content: ""; position: absolute; right: -1px; top: -6px; border-left: 9px solid #6d8197; border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
+  .ops ul { margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; column-gap: 24px; }
+  .ops li { font-size: 17.3px; margin: 4px 0; }
+  .check { display: grid; gap: 5px; }
+  .checkrow { display: grid; grid-template-columns: 48px 1fr 34px 1.25fr; gap: 12px; align-items: center; min-height: 45px; border-top: 1px solid #d7e4f1; }
+  .checkrow:first-child { border-top: 0; }
+  .checkrow .icon { width: 38px; height: 38px; margin: 0; }
+  .scenario { color: #5b21b6; font-size: 18.5px; font-weight: 800; }
+  .answer { font-size: 17.4px; line-height: 1.08; }
+  .arrowtext { color: #5b21b6; font-size: 26px; font-weight: 850; }
+</style>
+</head>
+<body>
+<main class="card">
+  <section class="header">
+    <div class="aws-icon"><img src="../assets/aws-icons/Arch_Amazon-API-Gateway_64.svg" alt="Amazon API Gateway icon"></div>
+    <h1>Amazon API Gateway</h1>
+    <div class="badge">Deep Dive</div>
+  </section>
+  <div class="grid">
+    <section class="panel takeaways">
+      <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><path d="M16 20h32M16 32h24M16 44h30"/><path d="M46 26l6 6-6 6"/></svg></div><h2>Key Takeaways</h2></div>
+      <ul>
+        <li>API Gateway is the managed front door for API traffic.</li>
+        <li>HTTP APIs fit low-latency RESTful workloads.</li>
+        <li>REST APIs offer a broader feature set.</li>
+        <li>WebSocket APIs support two-way communication.</li>
+        <li>Stages, routes, auth, throttling, and logs shape production behavior.</li>
+      </ul>
+    </section>
+    <section class="panel mental">
+      <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="18"/><path d="M14 32h36"/></svg></div><h2>Core Mental Model</h2></div>
+      <div class="formula"><div class="flow">
+        <div class="node"><div class="icon"><svg viewBox="0 0 64 64"><rect x="12" y="18" width="40" height="28" rx="4"/><path d="M20 28h24M20 37h14"/></svg></div><b>client<br>request</b></div>
+        <div class="op">+</div>
+        <div class="node"><div class="icon"><svg viewBox="0 0 64 64"><path d="M16 20h32M16 32h24M16 44h30"/></svg></div><b>route<br>method</b></div>
+        <div class="op">+</div>
+        <div class="node"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l21 9v14c0 13-8 22-21 27-13-5-21-14-21-27V17z"/></svg></div><b>auth<br>limits</b></div>
+        <div class="op">&rarr;</div>
+        <div class="node"><div class="icon"><svg viewBox="0 0 64 64"><circle cx="20" cy="32" r="8"/><circle cx="44" cy="20" r="7"/><circle cx="44" cy="44" r="7"/></svg></div><b>backend<br>integration</b></div>
+      </div></div>
+    </section>
+    <div class="twocol">
+      <section class="panel">
+        <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="23"/><circle cx="32" cy="32" r="8"/><path d="M32 9v10M32 45v10M9 32h10M45 32h10"/></svg></div><h2>When To Use It</h2></div>
+        <div class="listrow">
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M25 18 15 46h12l-3 12 25-34H36l4-14z"/></svg></div><span>Expose Lambda through HTTPS APIs.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><circle cx="18" cy="32" r="6"/><circle cx="32" cy="22" r="6"/><circle cx="46" cy="32" r="6"/><circle cx="32" cy="44" r="6"/></svg></div><span>Put a managed layer before microservices.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M16 20h32M16 32h32M16 44h32"/></svg></div><span>Use RESTful APIs with auth and monitoring.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M12 32c8-12 16-12 24 0s16 12 24 0"/></svg></div><span>Support WebSocket real-time workloads.</span></div>
+        </div>
+      </section>
+      <section class="panel warn">
+        <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><h2>Watch Out</h2></div>
+        <div class="listrow">
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><span>Choose HTTP API vs REST API by feature needs.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><span>Redeploy stage-bound REST or WebSocket changes.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><span>Test CORS, backend errors, mappings, and timeouts.</span></div>
+        </div>
+      </section>
+    </div>
+    <section class="panel wide ops">
+      <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><path d="M32 8l21 9v14c0 13-8 22-21 27-13-5-21-14-21-27V17z"/><path d="M24 33h16v14H24z"/></svg></div><h2>Security &amp; Operations</h2></div>
+      <div class="opsmap">
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l21 9v14c0 13-8 22-21 27-13-5-21-14-21-27V17z"/></svg></div>Authorizers<br>IAM</div>
+        <div class="dash"></div>
+        <div class="svc main"><div class="icon"><svg viewBox="0 0 64 64"><path d="M14 20h36v24H14z"/><path d="M22 28h20M22 36h12"/></svg></div>API Gateway</div>
+        <div class="dash"></div>
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><path d="M21 43a12 12 0 1 1 4-23 15 15 0 0 1 28 8 10 10 0 0 1-2 20H21z"/></svg></div>Access<br>logs</div>
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><path d="M14 44h36M20 38l8-10 8 6 12-18"/></svg></div>Metrics<br>tracing</div>
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="20"/><path d="M20 32h24M32 20v24"/></svg></div>Throttling<br>limits</div>
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><path d="M12 22h40M12 42h40M22 14v36M42 14v36"/></svg></div>Custom<br>domains</div>
+      </div>
+      <ul>
+        <li>Use IAM, Lambda authorizers, JWT/OIDC, or Cognito.</li>
+        <li>Configure access logs, metrics, and tracing.</li>
+        <li>Use ACM with custom domains for public APIs.</li>
+        <li>Use VPC Link for private backend integrations.</li>
+      </ul>
+    </section>
+    <section class="panel wide">
+      <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><path d="M24 25a8 8 0 1 1 11 7c-3 2-4 4-4 8"/><path d="M32 49h.01"/></svg></div><h2>Knowledge Check</h2></div>
+      <div class="check">
+        <div class="checkrow"><div class="icon"><svg viewBox="0 0 64 64"><path d="M25 18 15 46h12l-3 12 25-34H36l4-14z"/></svg></div><div class="scenario">Simple Lambda HTTPS API</div><div class="arrowtext">&rarr;</div><div class="answer">use HTTP API plus Lambda integration.</div></div>
+        <div class="checkrow"><div class="icon"><svg viewBox="0 0 64 64"><path d="M16 20h32M16 32h32M16 44h32"/></svg></div><div class="scenario">Richer API management</div><div class="arrowtext">&rarr;</div><div class="answer">evaluate REST API capabilities.</div></div>
+        <div class="checkrow"><div class="icon"><svg viewBox="0 0 64 64"><path d="M12 32c8-12 16-12 24 0s16 12 24 0"/></svg></div><div class="scenario">Two-way client connection</div><div class="arrowtext">&rarr;</div><div class="answer">use a WebSocket API.</div></div>
+      </div>
+    </section>
+  </div>
+</main>
+</body>
+</html>
+

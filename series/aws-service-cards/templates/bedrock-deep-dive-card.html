@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1080, initial-scale=1">
+<title>Amazon Bedrock Deep Dive</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #eef4fb; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #0f1b2d; }
+  .card { width: 1080px; height: 1350px; padding: 26px 38px; background: radial-gradient(circle at 96% 2%, rgba(20,184,166,.13), transparent 300px), linear-gradient(180deg, #f8fbff 0%, #eef5fb 100%); overflow: hidden; }
+  .header { height: 140px; border-radius: 22px; padding: 22px 34px; display: flex; align-items: center; gap: 26px; color: #101b31; background: radial-gradient(circle at 8% 50%, rgba(139,92,246,.18), transparent 260px), linear-gradient(135deg, rgba(255,255,255,.96) 0%, rgba(246,242,255,.94) 58%, rgba(238,247,255,.96) 100%); border: 1.5px solid rgba(125,82,220,.30); box-shadow: 0 18px 40px rgba(65,48,128,.13); }
+  .aws-icon { width: 98px; height: 98px; border-radius: 18px; display: grid; place-items: center; background: rgba(125,82,220,.08); box-shadow: inset 0 0 0 1px rgba(125,82,220,.22), 0 10px 24px rgba(65,48,128,.12); flex: 0 0 auto; }
+  .aws-icon img { width: 80px; height: 80px; display: block; }
+  svg { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+  h1 { font-size: 54px; line-height: 1; margin: 0; font-weight: 800; letter-spacing: 0; white-space: nowrap; }
+  .badge { margin-left: auto; padding: 11px 24px; border: 2px solid #7c3aed; border-radius: 999px; color: #5b21b6; background: rgba(124,58,237,.08); font-size: 25px; font-weight: 800; text-transform: uppercase; }
+  .grid { margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .panel { border: 1.5px solid #c7d8ea; border-radius: 18px; background: rgba(255,255,255,.91); box-shadow: 0 9px 22px rgba(19,45,79,.08); padding: 13px 24px; }
+  .wide { grid-column: 1 / -1; }
+  .head { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .mark { width: 48px; height: 48px; border-radius: 13px; display: grid; place-items: center; color: white; background: linear-gradient(135deg, #7c3aed, #2563eb); box-shadow: inset 0 0 0 1px rgba(255,255,255,.28); }
+  .mark svg, .icon svg { width: 28px; height: 28px; stroke-width: 2.6; }
+  h2 { margin: 0; color: #0b1d3a; font-size: 25px; line-height: 1; font-weight: 850; text-transform: uppercase; letter-spacing: .025em; }
+  ul { margin: 0; padding: 0 0 0 24px; }
+  li { margin: 4px 0; font-size: 17.2px; line-height: 1.1; }
+  li::marker { color: #5b21b6; font-size: 20px; }
+  .takeaways { min-height: 232px; }
+  .mental { min-height: 232px; }
+  .formula { margin-top: 9px; padding: 12px; border: 1px solid #bfd5ea; border-radius: 16px; background: linear-gradient(180deg, #f9fbff, #f5f0ff); }
+  .flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 10px; align-items: center; }
+  .node { min-height: 82px; display: grid; place-items: center; text-align: center; }
+  .icon { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; margin-bottom: 6px; color: #5b21b6; background: #f5f0ff; }
+  .node b { font-size: 14px; line-height: 1.02; }
+  .op { font-size: 30px; color: #155fce; font-weight: 800; }
+  .twocol { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; grid-column: 1 / -1; }
+  .listrow { display: grid; gap: 7px; }
+  .line { display: grid; grid-template-columns: 44px 1fr; gap: 11px; align-items: center; min-height: 41px; }
+  .line .icon { width: 40px; height: 40px; margin: 0; border-radius: 12px; }
+  .line span { font-size: 17.6px; line-height: 1.1; }
+  .warn .icon { color: #f97316; background: #fff4e8; }
+  .opsmap { margin-top: 2px; display: grid; grid-template-columns: 90px 30px 124px 30px repeat(4, 1fr); align-items: center; gap: 7px; }
+  .svc { text-align: center; font-size: 13.5px; line-height: 1.05; color: #26354b; }
+  .svc .icon { margin: 0 auto 4px; width: 48px; height: 48px; }
+  .svc.main .icon { width: 72px; height: 72px; color: white; background: linear-gradient(135deg, #7c3aed, #2563eb); }
+  .dash { height: 2px; border-top: 2px dashed #6d8197; position: relative; }
+  .dash:after { content: ""; position: absolute; right: -1px; top: -6px; border-left: 9px solid #6d8197; border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
+  .ops ul { margin-top: 8px; display: grid; grid-template-columns: 1fr 1fr; column-gap: 24px; }
+  .ops li { font-size: 16.8px; margin: 3px 0; }
+  .check { display: grid; gap: 5px; }
+  .checkrow { display: grid; grid-template-columns: 48px 1fr 34px 1.2fr; gap: 12px; align-items: center; min-height: 38px; border-top: 1px solid #d7e4f1; }
+  .checkrow:first-child { border-top: 0; }
+  .checkrow .icon { width: 38px; height: 38px; margin: 0; }
+  .scenario { color: #5b21b6; font-size: 18px; font-weight: 800; }
+  .answer { font-size: 17px; line-height: 1.08; }
+  .arrowtext { color: #5b21b6; font-size: 26px; font-weight: 850; }
+  .source { grid-column: 1 / -1; text-align: center; color: #617086; font-size: 12.5px; margin-top: -4px; }
+</style>
+</head>
+<body>
+<main class="card">
+  <section class="header">
+    <div class="aws-icon"><img src="../assets/aws-icons/Arch_Amazon-Bedrock_64.svg" alt="Amazon Bedrock icon"></div>
+    <h1>Amazon Bedrock</h1>
+    <div class="badge">Deep Dive</div>
+  </section>
+  <div class="grid">
+    <section class="panel takeaways">
+      <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><path d="M16 20h32M16 32h24M16 44h30"/><path d="M46 26l6 6-6 6"/></svg></div><h2>Key Takeaways</h2></div>
+      <ul>
+        <li>Bedrock is the managed foundation-model platform for generative AI on AWS.</li>
+        <li>Use APIs for inference, agents, knowledge bases, guardrails, and evaluation.</li>
+        <li>Knowledge Bases add Retrieval Augmented Generation with your data.</li>
+        <li>Agents use instructions, tools, and data sources to execute tasks.</li>
+        <li>Guardrails evaluate user inputs and model responses.</li>
+      </ul>
+    </section>
+    <section class="panel mental">
+      <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="18"/><path d="M14 32h36"/></svg></div><h2>Core Mental Model</h2></div>
+      <div class="formula"><div class="flow">
+        <div class="node"><div class="icon"><svg viewBox="0 0 64 64"><rect x="12" y="18" width="40" height="28" rx="4"/><path d="M20 28h24M20 37h14"/></svg></div><b>app<br>prompt</b></div>
+        <div class="op">+</div>
+        <div class="node"><div class="icon"><svg viewBox="0 0 64 64"><circle cx="24" cy="24" r="9"/><circle cx="42" cy="38" r="12"/></svg></div><b>model<br>choice</b></div>
+        <div class="op">&rarr;</div>
+        <div class="node"><div class="icon"><svg viewBox="0 0 64 64"><path d="M14 20h36v24H14z"/><path d="M22 28h20M22 36h12"/></svg></div><b>managed<br>response</b></div>
+      </div></div>
+      <ul>
+        <li>Add context with Knowledge Bases.</li>
+        <li>Add tools and steps with Agents.</li>
+        <li>Add safeguards with Guardrails.</li>
+      </ul>
+    </section>
+    <div class="twocol">
+      <section class="panel">
+        <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="23"/><circle cx="32" cy="32" r="8"/><path d="M32 9v10M32 45v10M9 32h10M45 32h10"/></svg></div><h2>When To Use It</h2></div>
+        <div class="listrow">
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M18 16h28v32H18z"/><path d="M24 24h16M24 32h16M24 40h10"/></svg></div><span>Build generative AI without managing inference infrastructure.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><circle cx="20" cy="32" r="7"/><circle cx="32" cy="20" r="7"/><circle cx="44" cy="32" r="7"/><circle cx="32" cy="44" r="7"/></svg></div><span>Use model choice through AWS APIs.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M14 18h36v28H14z"/><path d="M22 27h20M22 36h13"/></svg></div><span>Build RAG over enterprise data.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><circle cx="18" cy="32" r="6"/><circle cx="32" cy="22" r="6"/><circle cx="46" cy="32" r="6"/><circle cx="32" cy="44" r="6"/></svg></div><span>Create agents that call tools or APIs.</span></div>
+        </div>
+      </section>
+      <section class="panel warn">
+        <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><h2>Watch Out</h2></div>
+        <div class="listrow">
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><span>Model features, latency, and regions vary by model.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><span>RAG quality depends on ingestion, chunks, retrieval, and prompts.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><span>Guardrails do not replace application-level validation.</span></div>
+        </div>
+      </section>
+    </div>
+    <section class="panel wide ops">
+      <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><path d="M32 8l21 9v14c0 13-8 22-21 27-13-5-21-14-21-27V17z"/><path d="M24 33h16v14H24z"/></svg></div><h2>Security &amp; Operations</h2></div>
+      <div class="opsmap">
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l21 9v14c0 13-8 22-21 27-13-5-21-14-21-27V17z"/></svg></div>IAM<br>policies</div>
+        <div class="dash"></div>
+        <div class="svc main"><div class="icon"><svg viewBox="0 0 64 64"><path d="M18 16h28v32H18z"/><path d="M24 24h16M24 32h16M24 40h10"/></svg></div>Bedrock</div>
+        <div class="dash"></div>
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><path d="M14 44h36M20 38l8-10 8 6 12-18"/></svg></div>CloudWatch<br>metrics</div>
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><path d="M16 14h32v36H16z"/><path d="M24 24h16M24 33h16M24 42h9"/></svg></div>CloudTrail<br>audit</div>
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div>Guardrails<br>policies</div>
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="20"/><path d="M20 32h24M32 20v24"/></svg></div>Model<br>evaluation</div>
+      </div>
+      <ul>
+        <li>Control access with IAM policies and service roles.</li>
+        <li>Audit API activity with AWS CloudTrail.</li>
+        <li>Monitor workloads with Amazon CloudWatch.</li>
+        <li>Evaluate models and prompts before production.</li>
+      </ul>
+    </section>
+    <section class="panel wide">
+      <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><path d="M24 25a8 8 0 1 1 11 7c-3 2-4 4-4 8"/><path d="M32 49h.01"/></svg></div><h2>Knowledge Check</h2></div>
+      <div class="check">
+        <div class="checkrow"><div class="icon"><svg viewBox="0 0 64 64"><path d="M18 16h28v32H18z"/><path d="M24 24h16M24 32h16M24 40h10"/></svg></div><div class="scenario">Simple generative API</div><div class="arrowtext">&rarr;</div><div class="answer">use model inference.</div></div>
+        <div class="checkrow"><div class="icon"><svg viewBox="0 0 64 64"><path d="M14 18h36v28H14z"/><path d="M22 27h20M22 36h13"/></svg></div><div class="scenario">Answers from private docs</div><div class="arrowtext">&rarr;</div><div class="answer">use Knowledge Bases.</div></div>
+        <div class="checkrow"><div class="icon"><svg viewBox="0 0 64 64"><circle cx="18" cy="32" r="6"/><circle cx="32" cy="22" r="6"/><circle cx="46" cy="32" r="6"/><circle cx="32" cy="44" r="6"/></svg></div><div class="scenario">Task execution with tools</div><div class="arrowtext">&rarr;</div><div class="answer">use Agents.</div></div>
+        <div class="checkrow"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><div class="scenario">Safety controls</div><div class="arrowtext">&rarr;</div><div class="answer">apply Guardrails.</div></div>
+      </div>
+    </section>
+    <div class="source">Sources: Official AWS Documentation and AWS Architecture Icons</div>
+  </div>
+</main>
+</body>
+</html>

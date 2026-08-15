@@ -1,0 +1,15 @@
+name: System Architecture Diagrams
+slug: system-architecture-diagrams
+format: linkedin-architecture-diagram
+canvas: 1080x1350
+language: en
+status: active
+items:
+  - number: 1
+    slug: serverless-ecommerce-checkout
+    title: Serverless Ecommerce Checkout
+    status: ready
+  - number: 2
+    slug: ecommerce-microservices-payments
+    title: Ecommerce Microservices Payments
+    status: ready
