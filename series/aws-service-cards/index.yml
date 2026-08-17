@@ -129,3 +129,15 @@ items:
     slug: sagemaker
     title: Amazon SageMaker AI
     status: ready
+  - number: 32
+    slug: bedrock-agentcore
+    title: Amazon Bedrock AgentCore
+    status: ready
+  - number: 33
+    slug: bedrock-guardrails
+    title: Amazon Bedrock Guardrails
+    status: ready
+  - number: 34
+    slug: elastic-beanstalk
+    title: AWS Elastic Beanstalk
+    status: ready

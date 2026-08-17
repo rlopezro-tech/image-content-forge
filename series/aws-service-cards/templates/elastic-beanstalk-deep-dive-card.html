@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1080, initial-scale=1">
+<title>AWS Elastic Beanstalk Deep Dive</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #eef4fb; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #111827; }
+  .card { width: 1080px; height: 1350px; padding: 26px 38px; background: radial-gradient(circle at 95% 2%, rgba(34,197,94,.14), transparent 300px), radial-gradient(circle at 2% 98%, rgba(59,130,246,.11), transparent 320px), linear-gradient(180deg, #f8fbff 0%, #edf5fb 100%); overflow: hidden; }
+  .header { height: 140px; border-radius: 22px; padding: 22px 32px; display: flex; align-items: center; gap: 24px; background: linear-gradient(135deg, rgba(255,255,255,.97), rgba(238,249,255,.94) 58%, rgba(236,253,245,.95)); border: 1.5px solid rgba(36,116,190,.28); box-shadow: 0 18px 40px rgba(30,74,120,.13); }
+  .aws-icon { width: 96px; height: 96px; border-radius: 18px; display: grid; place-items: center; background: rgba(36,116,190,.08); box-shadow: inset 0 0 0 1px rgba(36,116,190,.22), 0 10px 24px rgba(30,74,120,.12); flex: 0 0 auto; }
+  .aws-icon img { width: 78px; height: 78px; display: block; }
+  h1 { margin: 0; font-size: 53px; line-height: .98; font-weight: 850; letter-spacing: 0; color: #101828; }
+  .badge { margin-left: auto; padding: 11px 22px; border: 2px solid #2563eb; border-radius: 999px; color: #1d4ed8; background: rgba(37,99,235,.08); font-size: 25px; font-weight: 850; text-transform: uppercase; }
+  .grid { margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .panel { border: 1.5px solid #c5d8ea; border-radius: 18px; background: rgba(255,255,255,.92); box-shadow: 0 9px 22px rgba(19,45,79,.08); padding: 12px 22px; }
+  .wide { grid-column: 1 / -1; }
+  .head { display: flex; align-items: center; gap: 11px; margin-bottom: 7px; }
+  .mark { width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center; color: white; background: linear-gradient(135deg, #2563eb, #0f766e); box-shadow: inset 0 0 0 1px rgba(255,255,255,.28); flex: 0 0 auto; }
+  svg { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+  .mark svg, .icon svg { width: 28px; height: 28px; stroke-width: 2.6; }
+  h2 { margin: 0; color: #0b1d3a; font-size: 23px; line-height: 1; font-weight: 850; text-transform: uppercase; letter-spacing: .02em; }
+  ul { margin: 0; padding: 0 0 0 22px; }
+  li { margin: 3px 0; font-size: 16.1px; line-height: 1.08; }
+  li::marker { color: #1d4ed8; font-size: 19px; }
+  .takeaways { min-height: 244px; }
+  .mental { min-height: 244px; }
+  .formula { margin-top: 8px; padding: 10px; border: 1px solid #bfd5ea; border-radius: 16px; background: linear-gradient(180deg, #f9fbff, #eef6ff); }
+  .flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 8px; align-items: center; }
+  .node { min-height: 78px; display: grid; place-items: center; text-align: center; }
+  .icon { width: 50px; height: 50px; border-radius: 14px; display: grid; place-items: center; margin-bottom: 5px; color: #1d4ed8; background: #eef6ff; }
+  .node b { font-size: 13.2px; line-height: 1.02; }
+  .op { font-size: 27px; color: #0f766e; font-weight: 850; }
+  .twocol { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; grid-column: 1 / -1; }
+  .listrow { display: grid; gap: 6px; }
+  .line { display: grid; grid-template-columns: 42px 1fr; gap: 10px; align-items: center; min-height: 39px; }
+  .line .icon { width: 40px; height: 40px; margin: 0; border-radius: 12px; }
+  .line span { font-size: 16.6px; line-height: 1.08; }
+  .warn .icon { color: #f97316; background: #fff4e8; }
+  .opsmap { margin-top: 2px; display: grid; grid-template-columns: 96px 28px 126px 28px repeat(4, 1fr); align-items: center; gap: 7px; }
+  .svc { text-align: center; font-size: 13px; line-height: 1.04; color: #26354b; }
+  .svc .icon { margin: 0 auto 4px; width: 46px; height: 46px; }
+  .svc.main .icon { width: 70px; height: 70px; color: white; background: linear-gradient(135deg, #2563eb, #0f766e); }
+  .dash { height: 2px; border-top: 2px dashed #6d8197; position: relative; }
+  .dash:after { content: ""; position: absolute; right: -1px; top: -6px; border-left: 9px solid #6d8197; border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
+  .ops ul { margin-top: 7px; display: grid; grid-template-columns: 1fr 1fr; column-gap: 22px; }
+  .ops li { font-size: 16px; margin: 3px 0; }
+  .check { display: grid; gap: 5px; }
+  .checkrow { display: grid; grid-template-columns: 46px 1fr 34px 1.15fr; gap: 12px; align-items: center; min-height: 37px; border-top: 1px solid #d7e4f1; }
+  .checkrow:first-child { border-top: 0; }
+  .checkrow .icon { width: 38px; height: 38px; margin: 0; }
+  .scenario { color: #1d4ed8; font-size: 17px; font-weight: 850; }
+  .answer { font-size: 16.5px; line-height: 1.08; }
+  .arrowtext { color: #0f766e; font-size: 25px; font-weight: 850; }
+</style>
+</head>
+<body>
+<main class="card">
+  <section class="header">
+    <div class="aws-icon"><img src="../../../shared/assets/aws-icons/Arch_AWS-Elastic-Beanstalk_64.svg" alt="AWS Elastic Beanstalk icon"></div>
+    <h1>AWS Elastic Beanstalk</h1>
+    <div class="badge">Deep Dive</div>
+  </section>
+  <div class="grid">
+    <section class="panel takeaways">
+      <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><path d="M16 20h32M16 32h24M16 44h30"/><path d="M46 26l6 6-6 6"/></svg></div><h2>Key Takeaways</h2></div>
+      <ul>
+        <li>Elastic Beanstalk deploys code and provisions EC2, load balancers, Auto Scaling, and health monitoring.</li>
+        <li>Applications contain versions and one or more environments that run those versions.</li>
+        <li>Platforms define the OS, runtime, web server, app server, and Beanstalk components.</li>
+        <li>Web server environments handle HTTP traffic; worker environments process SQS messages.</li>
+        <li>No extra Beanstalk charge: you pay for the underlying AWS resources.</li>
+      </ul>
+    </section>
+    <section class="panel mental">
+      <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="18"/><path d="M14 32h36"/></svg></div><h2>Core Mental Model</h2></div>
+      <div class="formula"><div class="flow">
+        <div class="node"><div class="icon"><svg viewBox="0 0 64 64"><path d="M16 18h32v28H16z"/><path d="M24 28h16M24 37h10"/></svg></div><b>source<br>bundle</b></div>
+        <div class="op">+</div>
+        <div class="node"><div class="icon"><svg viewBox="0 0 64 64"><path d="M18 18h28v28H18z"/><path d="M10 26h8M46 38h8"/></svg></div><b>platform<br>choice</b></div>
+        <div class="op">&rarr;</div>
+        <div class="node"><div class="icon"><svg viewBox="0 0 64 64"><path d="M14 44h36M18 36h12V20H18zM34 36h12V14H34z"/></svg></div><b>managed<br>environment</b></div>
+      </div></div>
+      <ul>
+        <li>Beanstalk orchestrates resource creation and app deployment.</li>
+        <li>You keep visibility into the AWS resources it creates.</li>
+        <li>Use configuration files and environment settings for repeatability.</li>
+      </ul>
+    </section>
+    <div class="twocol">
+      <section class="panel">
+        <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="23"/><circle cx="32" cy="32" r="8"/><path d="M32 9v10M32 45v10M9 32h10M45 32h10"/></svg></div><h2>When To Use It</h2></div>
+        <div class="listrow">
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M18 46l28-28M30 18h16v16"/></svg></div><span>You want PaaS-style deployment on AWS.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><circle cx="20" cy="32" r="7"/><circle cx="32" cy="20" r="7"/><circle cx="44" cy="32" r="7"/><circle cx="32" cy="44" r="7"/></svg></div><span>You need Java, .NET, Node.js, PHP, Python, Ruby, Go, or Docker.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M14 44h36M18 36h12V20H18zM34 36h12V14H34z"/></svg></div><span>You want AWS resources created but still configurable.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><rect x="12" y="16" width="40" height="32" rx="4"/><path d="M12 26h40"/></svg></div><span>You need quick app hosting before custom IaC.</span></div>
+        </div>
+      </section>
+      <section class="panel warn">
+        <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><h2>Watch Out</h2></div>
+        <div class="listrow">
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><span>Resources still live in your AWS account.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><span>Platform lifecycle and updates matter.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><span>Manual resource changes can create drift.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><span>Advanced apps may fit ECS, EKS, Lambda, or IaC better.</span></div>
+        </div>
+      </section>
+    </div>
+    <section class="panel wide ops">
+      <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><path d="M32 8l21 9v14c0 13-8 22-21 27-13-5-21-14-21-27V17z"/><path d="M24 33h16v14H24z"/></svg></div><h2>Security &amp; Operations</h2></div>
+      <div class="opsmap">
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l21 9v14c0 13-8 22-21 27-13-5-21-14-21-27V17z"/></svg></div>IAM<br>roles</div>
+        <div class="dash"></div>
+        <div class="svc main"><div class="icon"><svg viewBox="0 0 64 64"><path d="M14 44h36M18 36h12V20H18zM34 36h12V14H34z"/></svg></div>Beanstalk</div>
+        <div class="dash"></div>
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><path d="M14 20h36v24H14z"/><path d="M22 28h20M22 36h12"/></svg></div>Security<br>groups</div>
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><path d="M14 44h36M20 38l8-10 8 6 12-18"/></svg></div>Health<br>logs</div>
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><path d="M18 18h28v28H18z"/><path d="M10 26h8M46 38h8"/></svg></div>Platform<br>updates</div>
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><path d="M16 22h16v20H16zM32 22h16v20H32z"/><path d="M26 32h12"/></svg></div>Blue/green<br>swap</div>
+      </div>
+      <ul>
+        <li>Use IAM service roles and instance profiles intentionally.</li>
+        <li>Control network access with VPC and security group settings.</li>
+        <li>Monitor environment health, events, metrics, and logs.</li>
+        <li>Plan platform updates and safer releases with environment swaps.</li>
+      </ul>
+    </section>
+    <section class="panel wide">
+      <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><path d="M24 25a8 8 0 1 1 11 7c-3 2-4 4-4 8"/><path d="M32 49h.01"/></svg></div><h2>Knowledge Check</h2></div>
+      <div class="check">
+        <div class="checkrow"><div class="icon"><svg viewBox="0 0 64 64"><rect x="12" y="16" width="40" height="32" rx="4"/><path d="M12 26h40"/></svg></div><div class="scenario">Simple web app hosting</div><div class="arrowtext">&rarr;</div><div class="answer">use a web server environment.</div></div>
+        <div class="checkrow"><div class="icon"><svg viewBox="0 0 64 64"><path d="M16 18h32v28H16z"/><path d="M24 28h16M24 37h10"/></svg></div><div class="scenario">Async background work</div><div class="arrowtext">&rarr;</div><div class="answer">use a worker environment.</div></div>
+        <div class="checkrow"><div class="icon"><svg viewBox="0 0 64 64"><path d="M18 18h28v28H18z"/><path d="M10 26h8M46 38h8"/></svg></div><div class="scenario">Runtime stack</div><div class="arrowtext">&rarr;</div><div class="answer">choose a platform.</div></div>
+        <div class="checkrow"><div class="icon"><svg viewBox="0 0 64 64"><path d="M16 22h16v20H16zM32 22h16v20H32z"/><path d="M26 32h12"/></svg></div><div class="scenario">Safer release switch</div><div class="arrowtext">&rarr;</div><div class="answer">swap environment URLs.</div></div>
+      </div>
+    </section>
+  </div>
+</main>
+</body>
+</html>

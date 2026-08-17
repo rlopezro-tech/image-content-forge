@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1080, initial-scale=1">
+<title>Amazon Bedrock Guardrails Deep Dive</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #edf4fb; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #111827; }
+  .card { width: 1080px; height: 1350px; padding: 26px 38px; background: radial-gradient(circle at 95% 2%, rgba(124,58,237,.16), transparent 300px), radial-gradient(circle at 2% 98%, rgba(37,99,235,.09), transparent 320px), linear-gradient(180deg, #fbfaff 0%, #f0f4ff 100%); overflow: hidden; }
+  .header { height: 140px; border-radius: 22px; padding: 22px 32px; display: flex; align-items: center; gap: 24px; background: radial-gradient(circle at 12% 48%, rgba(124,58,237,.18), transparent 260px), linear-gradient(135deg, rgba(255,255,255,.98), rgba(246,241,255,.97) 55%, rgba(238,242,255,.96)); border: 1.5px solid rgba(124,58,237,.38); box-shadow: 0 18px 42px rgba(76,29,149,.16); }
+  .aws-icon { width: 96px; height: 96px; border-radius: 18px; display: grid; place-items: center; background: rgba(124,58,237,.14); box-shadow: inset 0 0 0 1px rgba(124,58,237,.34), 0 10px 24px rgba(76,29,149,.16); flex: 0 0 auto; }
+  .aws-icon img { width: 78px; height: 78px; display: block; }
+  h1 { margin: 0; font-size: 49px; line-height: .98; font-weight: 850; letter-spacing: 0; color: #101828; }
+  .badge { margin-left: auto; padding: 11px 22px; border: 2px solid #7c3aed; border-radius: 999px; color: #5b21b6; background: rgba(124,58,237,.08); font-size: 25px; font-weight: 850; text-transform: uppercase; }
+  .grid { margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .panel { border: 1.5px solid #c5d8ea; border-radius: 18px; background: rgba(255,255,255,.92); box-shadow: 0 9px 22px rgba(19,45,79,.08); padding: 12px 22px; }
+  .wide { grid-column: 1 / -1; }
+  .head { display: flex; align-items: center; gap: 11px; margin-bottom: 7px; }
+  .mark { width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center; color: white; background: linear-gradient(135deg, #7c3aed, #2563eb); box-shadow: inset 0 0 0 1px rgba(255,255,255,.28); flex: 0 0 auto; }
+  svg { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+  .mark svg, .icon svg { width: 28px; height: 28px; stroke-width: 2.6; }
+  h2 { margin: 0; color: #0b1d3a; font-size: 23px; line-height: 1; font-weight: 850; text-transform: uppercase; letter-spacing: .02em; }
+  ul { margin: 0; padding: 0 0 0 22px; }
+  li { margin: 3px 0; font-size: 16.1px; line-height: 1.08; }
+  li::marker { color: #5b21b6; font-size: 19px; }
+  .takeaways { min-height: 244px; }
+  .mental { min-height: 244px; }
+  .formula { margin-top: 8px; padding: 10px; border: 1px solid #bfd5ea; border-radius: 16px; background: linear-gradient(180deg, #f9fbff, #f5f0ff); }
+  .flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 8px; align-items: center; }
+  .node { min-height: 78px; display: grid; place-items: center; text-align: center; }
+  .icon { width: 50px; height: 50px; border-radius: 14px; display: grid; place-items: center; margin-bottom: 5px; color: #5b21b6; background: #f5f0ff; }
+  .node b { font-size: 13.2px; line-height: 1.02; }
+  .op { font-size: 27px; color: #7c3aed; font-weight: 850; }
+  .twocol { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; grid-column: 1 / -1; }
+  .listrow { display: grid; gap: 6px; }
+  .line { display: grid; grid-template-columns: 42px 1fr; gap: 10px; align-items: center; min-height: 39px; }
+  .line .icon { width: 40px; height: 40px; margin: 0; border-radius: 12px; }
+  .line span { font-size: 16.6px; line-height: 1.08; }
+  .warn .icon { color: #f97316; background: #fff4e8; }
+  .opsmap { margin-top: 2px; display: grid; grid-template-columns: 96px 28px 126px 28px repeat(4, 1fr); align-items: center; gap: 7px; }
+  .svc { text-align: center; font-size: 13px; line-height: 1.04; color: #26354b; }
+  .svc .icon { margin: 0 auto 4px; width: 46px; height: 46px; }
+  .svc.main .icon { width: 70px; height: 70px; color: white; background: linear-gradient(135deg, #7c3aed, #2563eb); }
+  .dash { height: 2px; border-top: 2px dashed #6d8197; position: relative; }
+  .dash:after { content: ""; position: absolute; right: -1px; top: -6px; border-left: 9px solid #6d8197; border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
+  .ops ul { margin-top: 7px; display: grid; grid-template-columns: 1fr 1fr; column-gap: 22px; }
+  .ops li { font-size: 16px; margin: 3px 0; }
+  .check { display: grid; gap: 5px; }
+  .checkrow { display: grid; grid-template-columns: 46px 1fr 34px 1.15fr; gap: 12px; align-items: center; min-height: 37px; border-top: 1px solid #d7e4f1; }
+  .checkrow:first-child { border-top: 0; }
+  .checkrow .icon { width: 38px; height: 38px; margin: 0; }
+  .scenario { color: #5b21b6; font-size: 17px; font-weight: 850; }
+  .answer { font-size: 16.5px; line-height: 1.08; }
+  .arrowtext { color: #5b21b6; font-size: 25px; font-weight: 850; }
+</style>
+</head>
+<body>
+<main class="card">
+  <section class="header">
+    <div class="aws-icon"><img src="../../../shared/assets/aws-icons/Arch_Amazon-Bedrock-Guardrails_64.svg" alt="Amazon Bedrock Guardrails icon"></div>
+    <h1>Amazon Bedrock Guardrails</h1>
+    <div class="badge">Deep Dive</div>
+  </section>
+  <div class="grid">
+    <section class="panel takeaways">
+      <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><path d="M16 20h32M16 32h24M16 44h30"/><path d="M46 26l6 6-6 6"/></svg></div><h2>Key Takeaways</h2></div>
+      <ul>
+        <li>Guardrails evaluate user inputs and model responses against configured policies.</li>
+        <li>Apply them during inference or independently with the ApplyGuardrail API.</li>
+        <li>Policies include content, topics, words, sensitive info, grounding, images, and automated reasoning checks.</li>
+        <li>Blocked input discards inference; unsafe output can be blocked or masked.</li>
+        <li>Account or organization enforcement can apply default safeguards across Bedrock calls.</li>
+      </ul>
+    </section>
+    <section class="panel mental">
+      <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="18"/><path d="M14 32h36"/></svg></div><h2>Core Mental Model</h2></div>
+      <div class="formula"><div class="flow">
+        <div class="node"><div class="icon"><svg viewBox="0 0 64 64"><path d="M14 20h36v24H14z"/><path d="M22 28h20M22 36h12"/></svg></div><b>app<br>content</b></div>
+        <div class="op">+</div>
+        <div class="node"><div class="icon"><svg viewBox="0 0 64 64"><path d="M18 16h28v32H18z"/><path d="M24 26h16M24 36h11"/></svg></div><b>guardrail<br>policies</b></div>
+        <div class="op">&rarr;</div>
+        <div class="node"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l21 9v14c0 13-8 22-21 27-13-5-21-14-21-27V17z"/><path d="M23 33l6 6 13-16"/></svg></div><b>safe<br>decision</b></div>
+      </div></div>
+      <ul>
+        <li>Evaluate input before model inference.</li>
+        <li>Evaluate generated output before returning it.</li>
+        <li>Return safe content, block responses, or mask sensitive data.</li>
+      </ul>
+    </section>
+    <div class="twocol">
+      <section class="panel">
+        <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="23"/><circle cx="32" cy="32" r="8"/><path d="M32 9v10M32 45v10M9 32h10M45 32h10"/></svg></div><h2>When To Use It</h2></div>
+        <div class="listrow">
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l21 9v14c0 13-8 22-21 27-13-5-21-14-21-27V17z"/></svg></div><span>You need consistent AI safety controls.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M18 22h28v26H18z"/><path d="M24 22v-5a8 8 0 0 1 16 0v5"/></svg></div><span>You handle sensitive information or PII.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><span>You want prompt attack and harmful content filtering.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M14 18h36v28H14z"/><path d="M22 28h20M22 37h13"/></svg></div><span>You need org-wide model invocation safeguards.</span></div>
+        </div>
+      </section>
+      <section class="panel warn">
+        <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><h2>Watch Out</h2></div>
+        <div class="listrow">
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><span>Guardrails complement app security and validation.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><span>Policy choices affect latency, behavior, and cost.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><span>Standard and Classic tiers differ by capability.</span></div>
+          <div class="line"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l26 48H6z"/><path d="M32 24v14M32 47h.01"/></svg></div><span>Enforcement requires ApplyGuardrail permissions.</span></div>
+        </div>
+      </section>
+    </div>
+    <section class="panel wide ops">
+      <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><path d="M32 8l21 9v14c0 13-8 22-21 27-13-5-21-14-21-27V17z"/><path d="M24 33h16v14H24z"/></svg></div><h2>Security &amp; Operations</h2></div>
+      <div class="opsmap">
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l21 9v14c0 13-8 22-21 27-13-5-21-14-21-27V17z"/></svg></div>IAM<br>access</div>
+        <div class="dash"></div>
+        <div class="svc main"><div class="icon"><svg viewBox="0 0 64 64"><path d="M32 8l21 9v14c0 13-8 22-21 27-13-5-21-14-21-27V17z"/></svg></div>Guardrails</div>
+        <div class="dash"></div>
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><path d="M18 16h28v32H18z"/><path d="M24 26h16M24 36h11"/></svg></div>Resource<br>policies</div>
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="20"/><path d="M20 32h24M32 20v24"/></svg></div>Drafts<br>versions</div>
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><circle cx="19" cy="32" r="7"/><circle cx="45" cy="32" r="7"/><path d="M26 32h12"/></svg></div>Cross-Region<br>profiles</div>
+        <div class="svc"><div class="icon"><svg viewBox="0 0 64 64"><path d="M14 44h36M20 38l8-10 8 6 12-18"/></svg></div>Metrics<br>monitoring</div>
+      </div>
+      <ul>
+        <li>Grant callers permission to apply the selected guardrail.</li>
+        <li>Test draft guardrails before promoting versioned configurations.</li>
+        <li>Use resource-based policies for shared or enforced guardrails.</li>
+        <li>Monitor interventions, latency, and policy outcomes.</li>
+      </ul>
+    </section>
+    <section class="panel wide">
+      <div class="head"><div class="mark"><svg viewBox="0 0 64 64"><path d="M24 25a8 8 0 1 1 11 7c-3 2-4 4-4 8"/><path d="M32 49h.01"/></svg></div><h2>Knowledge Check</h2></div>
+      <div class="check">
+        <div class="checkrow"><div class="icon"><svg viewBox="0 0 64 64"><circle cx="24" cy="24" r="9"/><circle cx="42" cy="38" r="12"/></svg></div><div class="scenario">Moderate model calls</div><div class="arrowtext">&rarr;</div><div class="answer">attach guardrail to inference.</div></div>
+        <div class="checkrow"><div class="icon"><svg viewBox="0 0 64 64"><path d="M16 18h32v28H16z"/><path d="M24 28h16M24 37h10"/></svg></div><div class="scenario">Moderate external text</div><div class="arrowtext">&rarr;</div><div class="answer">call ApplyGuardrail.</div></div>
+        <div class="checkrow"><div class="icon"><svg viewBox="0 0 64 64"><path d="M18 22h28v26H18z"/><path d="M24 22v-5a8 8 0 0 1 16 0v5"/></svg></div><div class="scenario">PII controls</div><div class="arrowtext">&rarr;</div><div class="answer">use sensitive information filters.</div></div>
+        <div class="checkrow"><div class="icon"><svg viewBox="0 0 64 64"><path d="M14 18h36v28H14z"/><path d="M22 28h20M22 37h13"/></svg></div><div class="scenario">Org-wide defaults</div><div class="arrowtext">&rarr;</div><div class="answer">use guardrail enforcement.</div></div>
+      </div>
+    </section>
+  </div>
+</main>
+</body>
+</html>
