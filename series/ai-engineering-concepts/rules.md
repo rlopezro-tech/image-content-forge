@@ -7,6 +7,9 @@ Use this rule set to generate practical LinkedIn cards for AI engineering concep
 - Final image format: PNG.
 - Default canvas: `1080 x 1350`.
 - One image per LinkedIn publication.
+- HTML/CSS is the source of truth for every card design.
+- The PNG must be rendered from the HTML template, not generated as a flat image with text.
+- Every publication must include a LinkedIn post in Markdown.
 - Visible card text: English.
 - Post copy: concise and ready to paste into LinkedIn.
 
@@ -71,6 +74,83 @@ Recommended layout:
 5. Production notes.
 
 The card should use the full usable width of the canvas and remain readable on mobile LinkedIn previews.
+
+## HTML Render Standard
+
+Create one self-contained HTML template for every publication:
+
+```text
+templates/{concept-slug}-card.html
+```
+
+The HTML template is the editable master asset. The final PNG is only the rendered export:
+
+```text
+images/{concept-slug}.png
+```
+
+Template requirements:
+
+- Use a fixed `.card` viewport of exactly `1080px x 1350px`.
+- Include `<!doctype html>`, `lang="en"`, and a responsive viewport declaration.
+- Keep all CSS in the template or inlined for deterministic rendering.
+- Keep all visible copy as real HTML text so it remains exact, selectable, and easy to revise.
+- Use CSS Grid and Flexbox for layout; do not position the full card with arbitrary absolute coordinates.
+- Use inline SVG for neutral concept icons, arrows, diagrams, and small functional symbols.
+- Do not use external web images, remote fonts, remote stylesheets, or network-dependent assets in the final template.
+- Reference only local assets when an official product or framework logo is required.
+- Use semantic sections for `header`, `overview`, `how it works`, `implementation`, and `production notes`.
+- Use reusable classes for panels, section labels, step nodes, bullets, badges, and icons.
+- Keep the template readable and maintainable; do not minify it.
+
+Rendering requirements:
+
+- Render the HTML at exactly `1080 x 1350` CSS pixels.
+- Capture only the `.card` element, without browser chrome, page margins, or transparent padding.
+- Export a PNG at native dimensions; do not resize a generated raster export to force the target ratio.
+- Inspect the rendered PNG after export for text wrapping, clipping, overflow, contrast, and mobile readability.
+- If the layout changes, update the HTML template first and regenerate the PNG.
+
+The final HTML and PNG must show the same content. Do not manually edit the PNG after rendering.
+
+## LinkedIn Post Standard
+
+Create one Markdown post for every publication:
+
+```text
+posts/{number}-{concept-slug}-linkedin-post.md
+```
+
+The post should complement the image instead of repeating every visible line.
+
+Post requirements:
+
+- Write the post in Spanish unless a different language is explicitly requested.
+- Start with a concise hook related to the concept.
+- Explain the practical idea in 2-4 short paragraphs.
+- Add 3-5 concise takeaways or implementation reminders when useful.
+- Keep the tone educational, direct, and useful to the engineering community.
+- Do not mention interviews, hiring, candidates, or exam preparation.
+- Do not use exaggerated AI claims, engagement bait, or empty motivational language.
+- Do not add unsupported technical claims that are absent from the source material.
+- End with a focused question only when it creates a natural technical discussion.
+- Use a small, relevant hashtag set: normally 3-5 hashtags.
+- Keep source links and references outside the image, in the Markdown post when they add value.
+
+## HTML Quality Checks
+
+Before considering a card complete, verify:
+
+- The PNG dimensions are exactly `1080 x 1350`.
+- No text, icon, border, or panel is clipped at the card edges.
+- No text overlaps another section or escapes its parent panel.
+- The overview remains at or below 60 words.
+- The central diagram contains 4-6 nodes and remains legible at feed size.
+- Implementation and production notes contain no more than 3 bullets each.
+- The header follows the shared series structure and remains visually consistent.
+- All sections have clear boundaries and balanced vertical rhythm.
+- The lowest section ends naturally; do not add a footer or empty spacer.
+- The card remains readable when previewed at a reduced mobile scale.
 
 ## Visual System
 
