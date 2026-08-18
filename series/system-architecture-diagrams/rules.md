@@ -1,6 +1,12 @@
 # AWS Application Architecture Diagram Rules
 
-Use this rule set to generate complete, real AWS application architecture diagrams for LinkedIn publishing. These diagrams are different from the AWS service card series: they must represent an end-to-end application, workload, platform, or system architecture running in production, with accurate AWS service relationships, network boundaries, traffic flows, data flows, security controls, observability, and operational context.
+Use this rule set to generate one complete, real AWS application architecture diagram per publication for LinkedIn. These diagrams are different from the AWS service card series: they must represent an end-to-end application, workload, platform, or system architecture running in production, with accurate AWS service relationships, network boundaries, traffic flows, data flows, security controls, observability, and operational context.
+
+## One Image Per Architecture
+
+Each architecture topic produces exactly one final PNG image. Do not generate a separate generic diagram and AWS diagram for the same topic, and do not split one architecture into Overview and Deep Dive images.
+
+The single image must combine the conceptual system flow, the concrete AWS implementation, the most important production boundaries, and the relevant security, data, asynchronous, and observability relationships. Keep alternatives, trade-offs, and interview discussion points in the Markdown prompt or LinkedIn post, not in additional images.
 
 ## Master Prompt
 
@@ -96,15 +102,15 @@ Base output folder:
 Create files using this naming pattern:
 
 ```text
-architecture-diagrams/prompts/{architecture-slug}-architecture-prompt.md
-architecture-diagrams/images/{architecture-slug}-architecture.png
-architecture-diagrams/templates/{architecture-slug}-architecture-diagram.html
+series/system-architecture-diagrams/prompts/{architecture-slug}-architecture-prompt.md
+series/system-architecture-diagrams/images/{architecture-slug}-architecture.png
+series/system-architecture-diagrams/templates/{architecture-slug}-architecture-diagram.html
 ```
 
 Optional files when useful:
 
 ```text
-architecture-diagrams/posts/{series-number}-{architecture-slug}-architecture-post.md
+series/system-architecture-diagrams/posts/{series-number}-{architecture-slug}-architecture-post.md
 ```
 
 Use lowercase slugs in filenames.
@@ -112,12 +118,14 @@ Use lowercase slugs in filenames.
 Example:
 
 ```text
-architecture-diagrams/prompts/serverless-ecommerce-architecture-prompt.md
-architecture-diagrams/images/serverless-ecommerce-architecture.png
-architecture-diagrams/templates/serverless-ecommerce-architecture-diagram.html
+series/system-architecture-diagrams/prompts/serverless-ecommerce-architecture-prompt.md
+series/system-architecture-diagrams/images/serverless-ecommerce-architecture.png
+series/system-architecture-diagrams/templates/serverless-ecommerce-architecture-diagram.html
 ```
 
-Do not save complete architecture diagram outputs in the service-card folders (`prompts`, `images`, `templates`, or `posts`). Keep them inside `architecture-diagrams`.
+Do not save complete architecture diagram outputs in the service-card folders (`prompts`, `images`, `templates`, or `posts`). Keep them inside `series/system-architecture-diagrams`.
+
+For every architecture slug, create at most one Markdown prompt, one final PNG image, one HTML/CSS render template, and one optional LinkedIn post. The HTML template is the rendering source for the single PNG and must not render a carousel, alternate version, comparison image, or second canvas.
 
 Do not leave generated HTML files in the `linkedin-content-forge` root.
 
@@ -262,14 +270,14 @@ Do not place long explanations in the header. Keep any description in a short ca
 Use official AWS Architecture Icons from:
 
 ```text
-assets/aws-icons
+../../shared/assets/aws-icons
 ```
 
 Before rendering:
 
 1. Check `shared/assets/aws-icons` for each required service icon.
 2. If an icon is missing, use the official AWS Architecture Icons package/source.
-3. Save missing official SVG icons into `shared/assets/aws-icons`.
+3. Save missing official SVG icons into `../../shared/assets/aws-icons`.
 4. Preserve official icon artwork, colors, proportions, and names.
 
 Do not redraw, recolor, simplify, convert to monochrome, or replace AWS service icons with generic icons.
@@ -665,7 +673,7 @@ Each generated architecture prompt must use this structure:
 
 ## Image Generation Prompt
 
-Create a complete AWS architecture diagram for {APP_OR_WORKLOAD_NAME}.
+Create one complete AWS architecture diagram for {APP_OR_WORKLOAD_NAME}. This topic must result in exactly one final image.
 
 Final output format: PNG.
 
@@ -747,13 +755,13 @@ cd ".."
 Run this command, replacing the workload name and slug:
 
 ```bash
-codex "Use the rules in './series/system-architecture-diagrams/rules.md' to generate a complete real production-runtime AWS architecture diagram for {APP_OR_WORKLOAD_NAME} in vertical LinkedIn format. Do not include CI/CD, build, deployment, repository, or container registry services unless explicitly required by the workload. Research only official AWS documentation, AWS Architecture Center, AWS Well-Architected Framework, and AWS Architecture Icons. Create the Markdown prompt in './series/system-architecture-diagrams/prompts', the render template in './series/system-architecture-diagrams/templates' if HTML/CSS is used, and the final PNG image in './series/system-architecture-diagrams/images'. Use the architecture slug '{architecture-slug}'. All visible diagram text must be in English."
+codex "Use the rules in './series/system-architecture-diagrams/rules.md' to generate one complete real production-runtime AWS architecture diagram for {APP_OR_WORKLOAD_NAME} in vertical LinkedIn format. Generate exactly one final PNG image for this architecture. Do not create a generic companion image, AWS companion image, Overview image, or Deep Dive image. Do not include CI/CD, build, deployment, repository, or container registry services unless explicitly required by the workload. Research only official AWS documentation, AWS Architecture Center, AWS Well-Architected Framework, and AWS Architecture Icons. Create one Markdown prompt in './series/system-architecture-diagrams/prompts', one HTML/CSS render template in './series/system-architecture-diagrams/templates', and one final PNG image in './series/system-architecture-diagrams/images'. Use the architecture slug '{architecture-slug}'. All visible diagram text must be in English."
 ```
 
 Example:
 
 ```bash
-codex "Use the rules in './series/system-architecture-diagrams/rules.md' to generate a complete real production-runtime AWS architecture diagram for a serverless ecommerce checkout app in vertical LinkedIn format. Do not include CI/CD, build, deployment, repository, or container registry services unless explicitly required by the workload. Research only official AWS documentation, AWS Architecture Center, AWS Well-Architected Framework, and AWS Architecture Icons. Create the Markdown prompt in './series/system-architecture-diagrams/prompts', the render template in './series/system-architecture-diagrams/templates' if HTML/CSS is used, and the final PNG image in './series/system-architecture-diagrams/images'. Use the architecture slug 'serverless-ecommerce-checkout'. All visible diagram text must be in English."
+codex "Use the rules in './series/system-architecture-diagrams/rules.md' to generate one complete real production-runtime AWS architecture diagram for a serverless ecommerce checkout app in vertical LinkedIn format. Generate exactly one final PNG image for this architecture. Do not create a generic companion image, AWS companion image, Overview image, or Deep Dive image. Do not include CI/CD, build, deployment, repository, or container registry services unless explicitly required by the workload. Research only official AWS documentation, AWS Architecture Center, AWS Well-Architected Framework, and AWS Architecture Icons. Create one Markdown prompt in './series/system-architecture-diagrams/prompts', one HTML/CSS render template in './series/system-architecture-diagrams/templates', and one final PNG image in './series/system-architecture-diagrams/images'. Use the architecture slug 'serverless-ecommerce-checkout'. All visible diagram text must be in English."
 ```
 
 ## Completion Criteria
@@ -761,12 +769,13 @@ codex "Use the rules in './series/system-architecture-diagrams/rules.md' to gene
 The task is complete when:
 
 - The workload architecture has been researched from official AWS sources.
+- Exactly one final PNG is produced for the architecture topic.
 - The architecture assumptions are documented in the Markdown prompt.
 - The diagram uses official AWS Architecture Icons where available.
 - The final diagram shows realistic boundaries, services, flows, security, and operations.
 - The final diagram includes only relevant production runtime components.
 - The visual design is clean, professional, AWS-inspired, and free of decorative filler.
 - Component boxes are homologated, icons are centered, and text does not overflow.
-- The final PNG is saved in `series/system-architecture-diagrams/images`.
-- Any render template is saved in `series/system-architecture-diagrams/templates`.
+- The single final PNG is saved in `series/system-architecture-diagrams/images`.
+- One HTML/CSS render template is saved in `series/system-architecture-diagrams/templates`.
 - The final response tells the user the created file paths and mentions the official AWS sources used.
