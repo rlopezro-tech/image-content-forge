@@ -13,3 +13,7 @@ items:
     slug: ecommerce-microservices-payments
     title: Ecommerce Microservices Payments
     status: ready
+  - number: 3
+    slug: serverless-rag-knowledge-assistant
+    title: Serverless RAG Knowledge Assistant
+    status: ready
