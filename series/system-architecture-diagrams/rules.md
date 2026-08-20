@@ -461,6 +461,8 @@ Target visual feel:
 - Editorial layout with restrained density.
 - AWS-native visual language without copying the AWS console.
 - Useful at first glance and still readable when zoomed in.
+- Calm system map where boundaries and service ownership are easier to read than arrows.
+- Diagram that feels reviewed by an architect, not generated as a decorative infographic.
 
 Use AWS service-category colors as accents, but keep the canvas calm. Do not let the diagram become dominated by a single purple, navy, beige, or orange palette.
 
@@ -472,9 +474,36 @@ Preferred color system:
 - Async/event/data area: subtle blue, violet, or neutral tint.
 - Security/observability area: subtle amber or neutral tint.
 - Component nodes: white surfaces with consistent border.
-- Arrows: muted navy for sync, controlled purple for async, muted gray-blue for observability.
+- Arrows: muted gray-blue for sync, soft purple-gray for async, very light slate for observability. Arrows must be visually quieter than component nodes, panel titles, and boundary labels.
 
 Use color to communicate architecture grouping, not decoration.
+
+Recommended visual tokens for `1080 x 1350` diagrams:
+
+```text
+Canvas background: #f6f8fb or #f8fafc
+Panel fill: #ffffff to #f7fbff
+Panel border: #d7e2ee to #c9d8e8
+Component fill: #ffffff
+Component border: #c8d6e6
+Primary text: #172033 to #1f2a3d
+Secondary text: #607086 to #728197
+Sync line: #6f849b at 55-70% opacity
+Async line: #8a7bb8 at 45-60% opacity
+Observability line: #8f9ca9 at 35-50% opacity
+Security/control line: #b79255 at 45-60% opacity
+Risk/failure line: #c87555 at 65-80% opacity, only when explicitly needed
+```
+
+Color and weight hierarchy:
+
+1. Header title and primary panel titles.
+2. Component nodes and official AWS icons.
+3. Boundary labels and support panels.
+4. Primary flow connectors.
+5. Secondary, async, security, and observability connectors.
+
+If arrows compete with service nodes, reduce stroke width, opacity, or labels before changing the node design.
 
 Professional polish rules:
 
@@ -488,6 +517,10 @@ Professional polish rules:
 - Avoid callout boxes unless they explain a real architecture decision.
 - Avoid footers or source notes that compete with the diagram.
 - If a legend is needed, keep it compact and visually quiet.
+- Keep connector labels smaller and quieter than node labels.
+- Keep panel titles clear but not oversized; architecture hierarchy should come from grouping and alignment, not giant text.
+- Use whitespace and panel grouping before using color intensity.
+- Prefer quiet matte surfaces over glassmorphism, glow, or high-contrast gradients.
 
 Avoid:
 
@@ -597,6 +630,51 @@ Use a consistent line system:
 
 Include a small legend only when more than two line styles are used.
 
+### Connector visual weight
+
+Architecture connectors must be informative but visually secondary. The diagram should not look like a web of heavy arrows.
+
+Recommended connector styling for `1080 x 1350` diagrams:
+
+```text
+Primary user/request path: 2.0-2.5 px stroke, 70-85% opacity
+Normal synchronous flow: 1.4-1.8 px stroke, 55-70% opacity
+Asynchronous/event flow: 1.3-1.7 px stroke, 45-60% opacity, dashed
+Observability/audit flow: 1.0-1.4 px stroke, 35-50% opacity, dotted
+Security/control relationship: 1.0-1.4 px stroke, 40-60% opacity
+Secondary operational flow: 1.0-1.2 px stroke, 35-50% opacity
+```
+
+Arrowheads:
+
+- Use small arrowheads, proportional to the line width.
+- Do not use oversized triangular arrowheads.
+- Arrowheads should be the same muted color and opacity as the line.
+- Use arrowheads only where direction matters.
+- For observability or support relationships, omit arrowheads when the dotted line plus label is enough.
+
+Connector contrast rules:
+
+- Connectors must be lighter than node borders and quieter than service names.
+- Never use saturated blue, purple, green, or orange for routine connectors.
+- Do not add glow, drop shadow, gradient, or thick highlight effects to arrows.
+- Reserve emphasis for one primary traffic path only.
+- If every connector is emphasized, none of them are emphasized.
+
+### Connector routing
+
+Route lines through intentional open corridors:
+
+- Prefer orthogonal or gently curved routes over diagonal spaghetti.
+- Route from node edge to node edge; do not start or end lines from the center of an icon.
+- Keep connector endpoints aligned to the center of the node side when possible.
+- Do not run arrows through icons, service names, panel titles, or boundary labels.
+- Do not route multiple unrelated arrows through the same narrow gap.
+- Avoid crossings. If crossings appear, rearrange panels/nodes before adding more arrow styles.
+- Keep support flows such as logs, metrics, audit, secrets, and IAM visually near their related services, but quieter than the main runtime path.
+- Prefer one grouped observability connector from a panel to an observability node instead of many noisy per-service dotted lines, unless per-service tracing is the point of the diagram.
+- Prefer one grouped security/control connector from a panel to IAM/KMS/Secrets Manager instead of drawing a control line from every component.
+
 Keep arrow labels short:
 
 ```text
@@ -613,6 +691,13 @@ Auth
 Do not over-label obvious flows.
 
 Arrow labels must not overlap nodes, titles, icons, or other arrows. Place labels on short horizontal segments when possible. If a label cannot fit cleanly, remove it or replace it with the legend.
+
+Label styling:
+
+- Use smaller text than component labels.
+- Use muted gray-blue text.
+- Use a tiny white or near-white label background only when the label crosses a boundary or line.
+- Do not place labels on top of nodes or inside icon tiles.
 
 ## Architecture Accuracy Rules
 
@@ -768,17 +853,18 @@ Use official AWS Architecture Icons for all AWS services.
 
 ### Visual Style
 
-Use a clean professional AWS-inspired technical architecture style with a bright neutral background, official AWS icons, thin boundaries, subtle shadows, and clear section panels. Group related services inside titled rounded rectangular panels before arranging the nodes. Keep the diagram polished, restrained, useful, and easy to scan. Do not add decorative filler, marketing copy, framework lists, or services that are not relevant to the runtime architecture.
+Use a clean professional AWS-inspired technical architecture style with a bright neutral background, official AWS icons, thin boundaries, subtle shadows, and clear section panels. Group related services inside titled rounded rectangular panels before arranging the nodes. Keep the diagram polished, restrained, useful, and easy to scan. Make arrows and connector labels visually quieter than component nodes and panel titles. Do not add decorative filler, marketing copy, framework lists, or services that are not relevant to the runtime architecture.
 
 ### Sectioned Layout Requirement
 
-Build the composition panel-first: place the major architecture boundaries and functional section panels first, then place homologated service nodes inside their owning panel. Every section panel must have a short title, light semantic tint, thin border, internal padding, and consistent alignment. Keep the primary flow central and route arrows through intentional gaps between panels. Do not leave unrelated service nodes floating on the canvas or use nested cards as decoration.
+Build the composition panel-first: place the major architecture boundaries and functional section panels first, then place homologated service nodes inside their owning panel. Every section panel must have a short title, light semantic tint, thin border, internal padding, and consistent alignment. Keep the primary flow central and route arrows through intentional gaps between panels. Use grouped support connectors for observability/security when individual per-service lines would create clutter. Do not leave unrelated service nodes floating on the canvas or use nested cards as decoration.
 
 ### Line Legend
 
 - Solid arrow: synchronous request or direct invocation.
 - Dashed arrow: asynchronous event or queue/message flow.
 - Dotted arrow: logs, metrics, traces, audit, or monitoring.
+- Keep arrows muted and thin. Use stronger emphasis only for the single primary runtime path.
 
 ## Accuracy Checklist
 
@@ -805,6 +891,8 @@ Build the composition panel-first: place the major architecture boundaries and f
 - IAM, KMS, and secrets are shown as security controls, not request routers.
 - Observability and audit flows are visually distinct from runtime traffic.
 - Async flows are visually distinct from synchronous flows.
+- Arrows are muted, thin, routed through clear corridors, and visually secondary to nodes.
+- No connector label or arrowhead competes with service names, panel titles, or official icons.
 - All visible text is in English.
 - Final output is PNG.
 - Diagram uses vertical 4:5 LinkedIn format unless another format is explicitly requested.

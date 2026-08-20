@@ -21,3 +21,10 @@ posts/      LinkedIn post copy
 - Scope: production runtime by default.
 
 CI/CD, repositories, build systems, and deployment flows should only be included when the specific diagram requires them.
+
+## Design Direction
+
+- Use panel-first architecture layouts: boundaries and ownership should be clear before following arrows.
+- Keep connectors muted, thin, and visually secondary to service nodes and panel titles.
+- Emphasize only the primary runtime path; keep async, observability, security, and support flows quieter.
+- Prefer grouped support connectors over many per-service lines when the diagram would become noisy.
