@@ -387,7 +387,18 @@ Do not let text overlap icons, arrows, section titles, boundaries, other nodes, 
 
 ## Section And Boundary Standard
 
-Boundary containers must be visually distinct from component nodes.
+The architecture must be organized as a small hierarchy of clearly grouped rectangular panels. Use the reference image as an organizational cue: readers should be able to identify the major zones before following individual arrows. This is a layout rule, not a requirement to copy the reference's colors, icons, or exact composition.
+
+### Required visual hierarchy
+
+Use these levels when they apply:
+
+1. **Canvas and header**: one clean outer frame for the title.
+2. **Primary boundary**: AWS Cloud, account, region, VPC, or an external-systems area.
+3. **Functional section panels**: edge/API, runtime/compute, events/async, data, security, and observability.
+4. **Component nodes**: AWS services and external actors inside the section that owns their role.
+
+Every component node should belong to a visible section panel unless it is an external actor at the entry edge or a compact legend item. Do not scatter unrelated nodes directly on the canvas.
 
 Use boundary containers for:
 
@@ -398,20 +409,35 @@ Use boundary containers for:
 - Public subnet
 - Private subnet
 - External systems
+- Edge or ingress layer
+- Runtime or compute layer
+- Events, queues, or integration layer
 - Data layer
 - Security and observability layer
 
-Boundary rules:
+### Functional section panel rules
 
+- Draw each major functional group as a rounded rectangle with a short title in its upper-left area.
+- Give every panel a light semantic tint and a thin tinted border; panel fills must remain lighter than component nodes.
+- Keep the title separated from the nodes with a dedicated top padding band; never place a node over a panel title.
+- Use one panel per coherent responsibility. Do not create a panel for every individual service.
+- Put nodes that communicate heavily in the same panel or in adjacent panels with a clean shared edge.
+- Keep the primary runtime path visually central; place support panels such as security and observability to the side or below.
+- Align nodes to a consistent internal grid. Equal-role nodes in a row should share width, height, icon tile size, and baseline.
+- Maintain visible breathing room between panel borders and nodes. Nodes must not touch panel edges.
+- Use nesting only when it communicates a real boundary, such as `AWS Cloud > Region > VPC`. Do not nest decorative cards inside functional panels.
+- Avoid more than two nested boundary levels inside the main content area unless account, region, and VPC placement are essential to the architecture.
+
+### Boundary styling
+
+- Boundary containers must be visually distinct from component nodes.
 - Use lighter fills than component nodes.
-- Use thin tinted borders.
-- Use no heavy shadow.
-- Put the boundary title in the top-left with enough padding.
-- Do not place component nodes on top of boundary titles.
+- Use thin borders, typically `1-1.5 px`, with no heavy shadow.
+- Put boundary titles in the top-left with consistent inset padding.
 - Do not let arrows or labels cross boundary titles when avoidable.
-- Keep enough internal padding so nodes do not touch boundary edges.
-
-Section titles must be short and functional. Avoid decorative section titles.
+- Arrows may cross a panel boundary only when they represent a real inter-zone flow; route them through clear gaps rather than across nodes or titles.
+- Section titles must be short and functional, such as `Edge and API`, `Runtime`, `Async processing`, `Data`, or `Security and observability`.
+- Do not use marketing statements, benefits, or paragraph-length explanations as panel titles.
 
 ## Visual Design Rules
 
@@ -498,7 +524,40 @@ Prefer top-to-bottom flow for default LinkedIn architecture diagrams.
 
 Use left-to-right flow only inside a layer when it improves readability.
 
-Use swimlanes, grouped panels, or boundary boxes when they improve clarity.
+Use grouped rectangular panels as the default layout primitive. Swimlanes or boundary boxes may be used when they clarify a real network or ownership boundary.
+
+### Panel-first composition
+
+Design the geometry in this order:
+
+1. Reserve the header and outer margins.
+2. Place the primary boundary or main cloud frame.
+3. Divide the usable area into functional section panels before placing service nodes.
+4. Place nodes on a shared grid inside their owning panel.
+5. Route the primary flow through panel centers or intentional gaps.
+6. Add secondary, async, security, and observability flows only after the main path is readable.
+
+For the default `1080 x 1350` canvas, use a practical structure such as:
+
+- Header panel at the top.
+- External actors/entry panel below the header when needed.
+- One large AWS or primary-system boundary around the core architecture.
+- Two to four stacked or side-by-side functional panels inside that boundary.
+- A compact security/observability support panel near the bottom or along one side.
+- Optional small legend panel at the bottom.
+
+The exact number and arrangement of panels may change with the workload, but the grouping must remain obvious at a glance. Prefer fewer, larger panels over many small boxes.
+
+Panel layout constraints:
+
+- Keep consistent outer margins and gutters between sibling panels.
+- Use a shared left edge when panels form a vertical stack.
+- Use a shared baseline when panels form a horizontal row.
+- Do not place a panel title, node, or label directly underneath an arrowhead.
+- Reserve clear routing corridors between panels; do not route several unrelated arrows through the same narrow gap.
+- Avoid crossing arrows inside a panel. If crossings are unavoidable, reorganize the nodes or split the section.
+- Keep the primary user/request flow visually dominant and mostly monotonic: top-to-bottom by default, left-to-right within a row.
+- Keep external actors outside the AWS boundary and keep data stores inside the data panel or their correct network boundary.
 
 Do not put UI cards inside other cards. Use boundary containers for architecture zones, not decorative nested cards.
 
@@ -709,7 +768,11 @@ Use official AWS Architecture Icons for all AWS services.
 
 ### Visual Style
 
-Use a clean professional AWS-inspired technical architecture style with a bright neutral background, official AWS icons, thin boundaries, subtle shadows, clear grouped layers, readable labels, and consistent arrow styles. Keep the diagram polished, restrained, useful, and easy to scan. Do not add decorative filler, marketing copy, framework lists, or services that are not relevant to the runtime architecture.
+Use a clean professional AWS-inspired technical architecture style with a bright neutral background, official AWS icons, thin boundaries, subtle shadows, and clear section panels. Group related services inside titled rounded rectangular panels before arranging the nodes. Keep the diagram polished, restrained, useful, and easy to scan. Do not add decorative filler, marketing copy, framework lists, or services that are not relevant to the runtime architecture.
+
+### Sectioned Layout Requirement
+
+Build the composition panel-first: place the major architecture boundaries and functional section panels first, then place homologated service nodes inside their owning panel. Every section panel must have a short title, light semantic tint, thin border, internal padding, and consistent alignment. Keep the primary flow central and route arrows through intentional gaps between panels. Do not leave unrelated service nodes floating on the canvas or use nested cards as decoration.
 
 ### Line Legend
 
@@ -725,6 +788,10 @@ Use a clean professional AWS-inspired technical architecture style with a bright
 - Only relevant production runtime components are visible.
 - No decorative filler, marketing copy, or generic framework/technology lists are visible.
 - Color is used for grouping and architecture meaning, not decoration.
+- Major functional groups are enclosed in titled rectangular section panels.
+- Every service node belongs to a clear owning panel or valid external boundary.
+- Panel titles, borders, gutters, and internal padding are consistent.
+- The panel hierarchy communicates real architecture boundaries rather than decoration.
 - The visual style is clean, professional, and AWS-inspired.
 - Header follows the same visual standard as the AWS learning cards.
 - Component boxes are homologated within each layer.

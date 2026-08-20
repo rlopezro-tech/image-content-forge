@@ -20,6 +20,7 @@
   <rect x="926" y="60" width="92" height="34" rx="17" fill="#effaf4" stroke="#bde3ca"/><text x="972" y="82" text-anchor="middle" class="small">AWS</text>
 
   <rect x="32" y="160" width="1016" height="113" rx="18" fill="#fff" stroke="#d1ddea"/>
+  <rect x="32" y="160" width="1016" height="43" rx="18" fill="#f4f8fd" opacity=".9"/>
   <text x="58" y="190" class="section">Actors and sources</text>
   <rect x="76" y="207" width="230" height="48" rx="10" class="node" filter="url(#shadow)"/><circle cx="101" cy="231" r="14" fill="#e6f0ff" stroke="#8db4e8"/><text x="126" y="229" class="label">Document admin</text><text x="126" y="246" class="role">Approved source files</text>
   <rect x="382" y="207" width="230" height="48" rx="10" class="node" filter="url(#shadow)"/><circle cx="407" cy="231" r="14" fill="#e6f0ff" stroke="#8db4e8"/><text x="432" y="229" class="label">Authenticated user</text><text x="432" y="246" class="role">Question / answer client</text>
@@ -31,6 +32,7 @@
   <text x="84" y="384" class="boundary">Single AWS Region</text>
 
   <rect x="84" y="405" width="912" height="178" rx="18" fill="#eff8ff" stroke="#9fc7ed"/>
+  <rect x="84" y="405" width="912" height="48" rx="18" fill="#e5f3ff" opacity=".82"/>
   <text x="108" y="437" class="section">Document ingestion and knowledge layer</text>
   <rect x="118" y="464" width="220" height="78" rx="12" class="node" filter="url(#shadow)"/><rect x="134" y="480" width="42" height="42" rx="10" class="tile"/><image x="140" y="486" width="30" height="30" href="../../../shared/assets/aws-icons/Arch_Amazon-Simple-Storage-Service_64.svg" xlink:href="../../../shared/assets/aws-icons/Arch_Amazon-Simple-Storage-Service_64.svg"/><text x="188" y="494" class="label">Amazon S3</text><text x="188" y="516" class="role">Source documents</text>
   <rect x="386" y="464" width="278" height="78" rx="12" class="node" filter="url(#shadow)"/><rect x="402" y="480" width="42" height="42" rx="10" class="tile"/><image x="408" y="486" width="30" height="30" href="../../../shared/assets/aws-icons/Arch_Amazon-Bedrock_64.svg" xlink:href="../../../shared/assets/aws-icons/Arch_Amazon-Bedrock_64.svg"/><text x="456" y="494" class="label">Bedrock Knowledge Bases</text><text x="456" y="516" class="role">Ingest, embed, retrieve</text>
@@ -39,6 +41,7 @@
   <text x="345" y="478" class="tiny">sync / ingest</text><text x="670" y="478" class="tiny">index</text>
 
   <rect x="84" y="610" width="912" height="224" rx="18" fill="#f4f0ff" stroke="#cbb9f5"/>
+  <rect x="84" y="610" width="912" height="48" rx="18" fill="#eee8ff" opacity=".86"/>
   <text x="108" y="642" class="section">Authenticated query and generation path</text>
   <rect x="112" y="672" width="182" height="78" rx="12" class="node" filter="url(#shadow)"/><rect x="128" y="688" width="42" height="42" rx="10" class="tile"/><image x="134" y="694" width="30" height="30" href="../../../shared/assets/aws-icons/Arch_Amazon-Cognito_64.svg" xlink:href="../../../shared/assets/aws-icons/Arch_Amazon-Cognito_64.svg"/><text x="182" y="702" class="label">Cognito</text><text x="182" y="724" class="role">User auth</text>
   <rect x="326" y="672" width="182" height="78" rx="12" class="node" filter="url(#shadow)"/><rect x="342" y="688" width="42" height="42" rx="10" class="tile"/><image x="348" y="694" width="30" height="30" href="../../../shared/assets/aws-icons/Arch_Amazon-API-Gateway_64.svg" xlink:href="../../../shared/assets/aws-icons/Arch_Amazon-API-Gateway_64.svg"/><text x="396" y="702" class="label">API Gateway</text><text x="396" y="724" class="role">Query API</text>
@@ -48,6 +51,7 @@
   <path d="M845 672 C845 590 825 560 825 542" class="async"/><text x="842" y="600" class="tiny">retrieve context</text>
 
   <rect x="84" y="861" width="912" height="190" rx="18" fill="#fff9ed" stroke="#ebcf91"/>
+  <rect x="84" y="861" width="912" height="48" rx="18" fill="#fff2d9" opacity=".9"/>
   <text x="108" y="893" class="section">Security and observability</text>
   <rect x="122" y="922" width="188" height="78" rx="12" class="node" filter="url(#shadow)"/><rect x="138" y="938" width="42" height="42" rx="10" class="tile"/><image x="144" y="944" width="30" height="30" href="../../../shared/assets/aws-icons/Arch_Amazon-Bedrock-Guardrails_64.svg" xlink:href="../../../shared/assets/aws-icons/Arch_Amazon-Bedrock-Guardrails_64.svg"/><text x="192" y="952" class="label">Guardrails</text><text x="192" y="974" class="role">Input / output controls</text>
   <rect x="344" y="922" width="188" height="78" rx="12" class="node" filter="url(#shadow)"/><rect x="360" y="938" width="42" height="42" rx="10" class="tile"/><image x="366" y="944" width="30" height="30" href="../../../shared/assets/aws-icons/Arch_AWS-Identity-and-Access-Management_64.svg" xlink:href="../../../shared/assets/aws-icons/Arch_AWS-Identity-and-Access-Management_64.svg"/><text x="414" y="952" class="label">IAM</text><text x="414" y="974" class="role">Least privilege</text>

@@ -97,7 +97,7 @@ Use official AWS Architecture Icons for every AWS service shown.
 
 ### Visual Style
 
-Use the same bright, polished AWS technical diagram style as the system architecture series: light neutral canvas, compact glass-like header, official AWS icons, thin boundaries, homologated component nodes, short English labels, subtle shadows, and clear solid, dashed, and dotted flows. Keep the single image useful for interview study without adding paragraphs, decorative filler, CI/CD, or unrelated services.
+Use the same bright, polished AWS technical diagram style as the system architecture series: light neutral canvas, compact glass-like header, official AWS icons, thin boundaries, homologated component nodes, short English labels, subtle shadows, and clear titled rounded rectangular section panels. Group Document Ingestion, Authenticated Query and Generation, and Security/Observability into panels inside the AWS boundary; place nodes only within their owning panel and route flows through clean corridors. Keep the single image useful for interview study without adding paragraphs, decorative filler, CI/CD, or unrelated services.
 
 ### Line Legend
 
@@ -115,4 +115,6 @@ Use the same bright, polished AWS technical diagram style as the system architec
 - Guardrails and IAM are shown as controls, not as primary data-path hops.
 - No document, prompt, or response text overflows its container.
 - No CI/CD, build, repository, deployment, or registry services are visible.
+- Major functional groups are enclosed in titled rectangular section panels.
+- Every service node has a clear owning section and panels have consistent gutters and padding.
 - Final canvas is vertical 1080 x 1350 for LinkedIn publishing.

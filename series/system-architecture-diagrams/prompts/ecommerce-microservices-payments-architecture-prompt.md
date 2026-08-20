@@ -114,7 +114,7 @@ Use official AWS Architecture Icons for all AWS services.
 
 ### Visual Style
 
-Use a clean AWS-inspired technical architecture style with a bright neutral background, official AWS icons, thin boundaries, subtle shadows, clear grouped layers, readable labels, and consistent arrow styles. Keep the diagram polished, dense enough to be useful, and easy to scan.
+Use a clean AWS-inspired technical architecture style with a bright neutral background, official AWS icons, thin boundaries, subtle shadows, and titled rounded rectangular section panels. Group the Edge/API, Private Microservices, Events and Queues, Data, and Security/Operations areas before placing their nodes. Keep equal-role nodes aligned, preserve internal panel padding, and route arrows through clear gaps between panels. Keep the diagram polished, dense enough to be useful, and easy to scan.
 
 ### Line Legend
 
@@ -132,6 +132,8 @@ Use a clean AWS-inspired technical architecture style with a bright neutral back
 - Data stores are not directly exposed to the internet.
 - IAM and Secrets Manager are shown as security controls, not request routers.
 - Observability flows are visually distinct from runtime traffic.
+- Major functional groups are enclosed in titled rectangular section panels.
+- Every service node has a clear owning section and panels have consistent gutters and padding.
 - Async flows are visually distinct from synchronous flows.
 - All visible text is in English.
 - Final output is PNG.

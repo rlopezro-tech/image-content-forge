@@ -30,7 +30,7 @@ Cover:
 
 Use a vertical technical study-card format, visually aligned with the AWS service card series but not AWS-branded.
 
-The visual quality bar for this series should be higher than the AWS service cards: more refined, cleaner, more modern, and more visually memorable while staying practical and readable.
+The visual quality bar for this series should be higher than the AWS service cards: more refined, cleaner, more modern, and more visually memorable while staying practical and readable. Treat every card as a small editorial product: it needs a clear focal point, deliberate rhythm, and a recognizable series signature.
 
 The card should feel like a saved engineering note:
 
@@ -158,27 +158,36 @@ The design must look modern, sharp, and calm. It should attract attention withou
 
 Recommended visual treatment:
 
-- Light background by default with subtle depth.
-- Clean technical panels with clear boundaries.
-- Distinct section blocks for `OVERVIEW`, `HOW IT WORKS`, `IMPLEMENTATION`, and `PRODUCTION NOTES`.
-- Consistent spacing between sections.
-- Clear title hierarchy: header title, section labels, body text.
-- One strong accent color per card, supported by one or two secondary functional colors.
-- Use accent colors to guide attention, not to decorate every element.
-- Use diagrams, arrows, chips, and small technical labels instead of long prose.
-- Keep corners, shadows, and borders consistent across all cards.
-- Make the central diagram the visual anchor of the card.
-- Keep text comfortably readable on mobile previews.
+- Use a light editorial canvas with a very subtle technical texture (fine grid, ruled detail, or tiny calibration marks); it must stay behind the content.
+- Use a dark, high-contrast header band as the series signature, with a flat line icon tile and one compact type badge.
+- Use white or near-white technical panels with thin cool-gray borders, modest corner rounding, and soft layered shadows. Avoid thick cartoon outlines and hard offset shadows.
+- Give each section a distinct visual role: overview = editorial summary, how it works = diagram stage, implementation = action checklist, production notes = operational checklist.
+- Use a spacing scale and repeat it consistently: 12 / 16 / 24 / 32 px. Never solve visual imbalance with random offsets.
+- Use one primary accent (electric blue) plus up to two functional accents (teal for flow or positive state, amber for caution or operational state). Accents should identify meaning, not decorate every surface.
+- Build icons as crisp 2D inline SVGs with a consistent stroke, geometric construction, and one or two filled details. Prefer recognizable standard symbols (nodes, signal paths, shield, sliders, terminal, magnifier) over generic clip-art. When an official product/framework icon exists and is in scope, use its approved local asset; do not invent a fake “official” logo. For concepts without an official logo, use a neutral standard technical glyph.
+- Make the central diagram the visual anchor: use numbered nodes, directional connectors, small labels, and varied visual states. The flow should read left to right without relying on paragraphs.
+- Create interest through alignment, hierarchy, whitespace, and material contrast—not through gradients, 3D effects, or extra decoration.
 
 Avoid visual clutter:
 
-- No heavy gradients.
-- No dark full-card backgrounds by default.
-- No random decorative orbs, blobs, bokeh, or abstract AI imagery.
+- No heavy gradients, glassmorphism, neon glow, or 3D rendering.
+- No dark full-card backgrounds; reserve dark color for the header and small functional elements.
+- No random decorative orbs, blobs, bokeh, circuit-board filler, or abstract AI decoration.
 - No stock-style generated images.
 - No crowded multi-column layouts that reduce mobile readability.
 - No tiny labels that only work at full resolution.
 - No section without a clear visual boundary.
+
+### Visual hierarchy checks
+
+Before export, verify that:
+
+- The eye lands on the concept title first, then the central diagram, then the two checklists.
+- The header is the darkest region and the diagram is the most visually informative region.
+- Every panel has one dominant element; labels, copy, icons, and decoration must not compete equally.
+- Borders are quiet and shadows are soft; if the card looks like a worksheet or comic panel, reduce stroke weight and contrast.
+- At 50% scale, the title, section labels, step names, checklist text, and flow direction remain obvious.
+- The main title is compact enough to leave breathing room around the icon and badge; supporting copy should be larger than decorative labels.
 
 The final card should feel like a clean engineering artifact, not a slide deck, meme, infographic poster, or product ad.
 

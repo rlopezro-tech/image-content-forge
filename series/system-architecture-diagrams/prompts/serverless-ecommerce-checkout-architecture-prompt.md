@@ -103,7 +103,7 @@ Use official AWS Architecture Icons for all AWS services.
 
 ### Visual Style
 
-Use a clean professional AWS-inspired technical architecture style with a bright neutral background, official AWS icons, thin boundaries, subtle shadows, clear grouped layers, readable labels, and consistent arrow styles. Keep the diagram polished, restrained, useful, and easy to scan. Do not add decorative filler, marketing copy, framework lists, or services that are not relevant to the runtime architecture.
+Use a clean professional AWS-inspired technical architecture style with a bright neutral background, official AWS icons, thin boundaries, subtle shadows, and clear titled section panels. Group related services inside rounded rectangular panels for Edge/API, Serverless Runtime, Events and Queues, Data, and Security/Observability. Place nodes only after the panels are established, keep equal-role nodes aligned, and route arrows through clear gaps between panels. Keep the diagram polished, restrained, useful, and easy to scan. Do not add decorative filler, marketing copy, framework lists, or services that are not relevant to the runtime architecture.
 
 ### Line Legend
 
@@ -118,6 +118,8 @@ Use a clean professional AWS-inspired technical architecture style with a bright
 - Official AWS Architecture Icons are used when available.
 - Only relevant production runtime components are visible.
 - No decorative filler, marketing copy, or generic framework/technology lists are visible.
+- Major functional groups are enclosed in titled rectangular section panels.
+- Every service node has a clear owning section and panels have consistent gutters and padding.
 - Header follows the same visual standard as the AWS learning cards.
 - Component boxes are homologated within each layer.
 - Icons are visually centered inside their tiles.
