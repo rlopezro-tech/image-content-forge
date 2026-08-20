@@ -16,3 +16,8 @@ posts/      LinkedIn post copy
 ## Direction
 
 Cards should be practical, visual, and engineering-focused. Avoid vague AI hype. Each card should explain what the concept is, how it works, when to use it, common failure modes, and what to watch in production.
+
+## Planning
+
+- `roadmap.md`: topic sequence, badges, and teaching angles.
+- `publishing-strategy.md`: carousel patterns, cadence, and weekly publishing options.
