@@ -134,7 +134,10 @@ Post requirements:
 - Do not use exaggerated AI claims, engagement bait, or empty motivational language.
 - Do not add unsupported technical claims that are absent from the source material.
 - End with a focused question only when it creates a natural technical discussion.
-- Use a small, relevant hashtag set: normally 3-5 hashtags.
+- Use a small, relevant hashtag set: maximum 5 hashtags.
+- Choose hashtags that match the specific topic, not a fixed generic set.
+- Useful examples include `#AIAgent`, `#GenerativeAI`, `#SoftwareEngineering`, `#Python`, `#LLM`, `#MachineLearning`, `#TechStack`, `#Developers`, and `#Innovation`, but only use them when they fit the card.
+- Prefer a mix of one series/domain tag plus topic-specific tags. For example, an embeddings post may use `#AIEngineering #Embeddings #RAG #MachineLearning #SoftwareEngineering`; an agents post may use `#AIAgent #LLM #GenerativeAI #SoftwareEngineering #Developers`.
 - Keep source links and references outside the image, in the Markdown post when they add value.
 
 ## HTML Quality Checks

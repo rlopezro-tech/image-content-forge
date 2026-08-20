@@ -129,6 +129,31 @@ For every architecture slug, create at most one Markdown prompt, one final PNG i
 
 Do not leave generated HTML files in the `linkedin-content-forge` root.
 
+## LinkedIn Post Standard
+
+Create an optional Markdown post when the architecture diagram will be published directly:
+
+```text
+series/system-architecture-diagrams/posts/{series-number}-{architecture-slug}-architecture-post.md
+```
+
+The post should complement the diagram instead of describing every node.
+
+Post requirements:
+
+- Write the post in English.
+- Start with a concise hook about the architecture decision, workload, or production pattern.
+- Explain the practical system idea in 2-4 short paragraphs.
+- Add 3-5 implementation, security, reliability, or operations takeaways when useful.
+- Keep the tone educational, direct, and useful to engineers, architects, and technical leads.
+- Do not use exaggerated cloud claims, engagement bait, or marketing language.
+- Do not add unsupported architecture claims that are absent from the researched source material.
+- Keep source links and references in the Markdown post when they add value; do not place source URLs in the PNG.
+- Use a small, relevant hashtag set: maximum 5 hashtags.
+- Choose hashtags that match the specific architecture topic, not a fixed generic set.
+- Useful examples include `#CloudArchitecture`, `#AWS`, `#Serverless`, `#SoftwareEngineering`, `#GenerativeAI`, `#LLM`, `#MachineLearning`, `#TechStack`, `#Developers`, and `#Innovation`, but only use them when they fit the architecture.
+- Prefer a mix of architecture/domain tags plus topic-specific tags. For example, a serverless AWS diagram may use `#CloudArchitecture #AWS #Serverless #SoftwareEngineering #TechStack`; an AI system architecture may use `#GenerativeAI #LLM #CloudArchitecture #SoftwareEngineering #MachineLearning`.
+
 ## Diagram Types
 
 Choose the diagram type that matches the requested workload. If the user does not specify a type, select the smallest type that accurately explains the architecture.
