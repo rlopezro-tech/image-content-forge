@@ -34,6 +34,10 @@ items:
     title: Retrieval-Augmented Generation
     status: planned
   - number: 8
+    slug: chunking
+    title: Chunking
+    status: planned
+  - number: 9
     slug: vector-search
     title: Vector Search
     status: planned

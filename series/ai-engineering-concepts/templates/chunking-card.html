@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1080, initial-scale=1">
+<title>Chunking - Implementation</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 1080px; height: 1350px; }
+  body { background: #d8e0e8; color: #0d1730; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  .card { position: relative; width: 1080px; height: 1350px; padding: 28px 30px; overflow: hidden; background-color: #f1f5f9; background-image: linear-gradient(rgba(24, 78, 119, .022) 1px, transparent 1px), linear-gradient(90deg, rgba(24, 78, 119, .022) 1px, transparent 1px); background-size: 32px 32px; }
+  .header, .panel { border: 1px solid #d6e0ea; border-radius: 22px; background: #ffffff; }
+  .header { height: 142px; padding: 22px 28px; display: flex; align-items: center; gap: 26px; color: #0d1730; border-color: #dce5ee; box-shadow: 0 14px 30px rgba(31, 54, 78, .13), inset 0 1px 0 rgba(255,255,255,.9); }
+  .concept-icon { width: 96px; height: 96px; flex: 0 0 auto; display: grid; place-items: center; border: 1px solid rgba(43,108,255,.22); border-radius: 20px; background: linear-gradient(135deg, #9a51f2 0%, #126cff 100%); color: #ffffff; box-shadow: 0 12px 24px rgba(28, 99, 230, .22), inset 0 0 0 1px rgba(255,255,255,.20); }
+  .concept-icon svg { width: 72px; height: 72px; }
+  h1 { margin: 0; font-size: 48px; line-height: .96; letter-spacing: .01em; font-weight: 850; color: #0b1b49; text-shadow: 0 2px 8px rgba(11,27,73,.12); }
+  .badge { margin-left: auto; padding: 13px 22px; border: 1px solid rgba(34,97,255,.16); border-radius: 999px; color: #ffffff; background: linear-gradient(135deg, #4d6df7 0%, #106cff 100%); font-size: 18px; font-weight: 800; letter-spacing: .08em; white-space: nowrap; box-shadow: 0 8px 18px rgba(34,97,255,.18); }
+  .stack { margin-top: 14px; display: grid; gap: 12px; }
+  .panel { position: relative; box-shadow: 0 12px 28px rgba(31, 54, 78, .10), 0 2px 5px rgba(31, 54, 78, .06); }
+  .section-title { margin: 0; color: #2460d8; font-size: 20px; line-height: 1; font-weight: 850; letter-spacing: .13em; }
+  .overview { height: 174px; padding: 22px 28px; display: grid; grid-template-columns: 128px 1fr; gap: 24px; align-items: center; }
+  .section-mark { width: 88px; height: 88px; display: grid; place-items: center; border: 1px solid #a9c4f7; border-radius: 24px; color: #2460d8; background: #edf3ff; }
+  .section-mark svg { width: 58px; height: 58px; stroke-width: 2.8; }
+  .overview-copy { border-left: 1px solid #d2dde8; padding-left: 24px; }
+  .overview .section-title { margin-bottom: 12px; }
+  .overview p { margin: 0; width: 100%; color: #17233d; font-size: 24px; line-height: 1.18; font-weight: 540; text-align: left; }
+  .workflow { height: 402px; padding: 23px 20px 20px; }
+  .workflow .section-title { margin: 0 0 18px 12px; }
+  .steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+  .step { position: relative; min-width: 0; height: 320px; padding: 12px 10px; text-align: center; border: 1px solid #b8ccdf; border-radius: 18px; background: #ffffff; box-shadow: 0 7px 14px rgba(27, 67, 101, .10), inset 0 1px 0 rgba(255,255,255,.9); }
+  .step:not(:last-child)::after { content: ""; position: absolute; z-index: 2; width: 28px; height: 1px; top: 154px; right: -23px; background: rgba(69, 191, 208, .72); }
+  .step:not(:last-child)::before { content: ""; position: absolute; z-index: 3; top: 150px; right: -24px; border-left: 7px solid rgba(69, 191, 208, .72); border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
+  .num { width: 38px; height: 38px; margin: -31px auto 14px; display: grid; place-items: center; border: 5px solid #fbfdff; border-radius: 50%; color: #fff; background: #2460d8; font-size: 18px; font-weight: 850; box-shadow: 0 0 0 1px #2460d8; }
+  .step h3 { min-height: 48px; margin: 0 0 14px; font-size: 22px; line-height: 1.04; font-weight: 850; }
+  .step p { margin: 0; color: #253b54; font-size: 18px; line-height: 1.14; }
+  .doc { width: 136px; height: 122px; margin: 0 auto; padding: 15px 13px; border: 1px solid #cdd9e8; border-radius: 14px; background: #fbfdff; display: grid; gap: 9px; }
+  .doc span { height: 7px; border-radius: 999px; background: #93a4b8; }
+  .doc span:nth-child(1) { width: 96%; }
+  .doc span:nth-child(2) { width: 72%; }
+  .doc span:nth-child(3) { width: 88%; }
+  .doc span:nth-child(4) { width: 58%; }
+  .chunks { width: 150px; margin: 0 auto; display: grid; gap: 8px; }
+  .chunk { height: 28px; border: 1px solid #7db6ef; border-radius: 9px; background: #eef6ff; }
+  .chunk:nth-child(2) { background: #f7fbff; }
+  .overlap { position: relative; width: 150px; height: 116px; margin: 0 auto; }
+  .overlap span { position: absolute; left: 12px; width: 112px; height: 38px; border: 1px solid #7db6ef; border-radius: 11px; background: #eef6ff; }
+  .overlap span:nth-child(1) { top: 14px; }
+  .overlap span:nth-child(2) { top: 42px; left: 26px; background: #fff8eb; border-color: #f0c47c; }
+  .overlap b { position: absolute; right: 5px; top: 46px; color: #d98716; font-size: 15px; font-weight: 850; }
+  .metadata { width: 150px; height: 116px; margin: 0 auto; padding: 12px 10px; border: 1px solid #cdd9e8; border-radius: 14px; background: #fbfdff; text-align: left; display: grid; gap: 7px; }
+  .tag { display: flex; align-items: center; gap: 7px; color: #173b62; font-size: 15px; font-weight: 780; }
+  .tag i { width: 18px; height: 18px; border-radius: 6px; background: #16878a; display: inline-block; }
+  .index { width: 150px; height: 116px; margin: 0 auto; display: grid; place-items: center; }
+  .index svg { width: 128px; height: 112px; color: #2460d8; }
+  .compact { height: 248px; padding: 22px 28px; display: grid; grid-template-columns: 128px 1fr; gap: 24px; align-items: center; }
+  .compact-copy { border-left: 1px solid #d2dde8; padding-left: 24px; }
+  .compact .section-title { margin-bottom: 18px; }
+  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 15px; }
+  li { display: grid; grid-template-columns: 32px 1fr; gap: 14px; align-items: center; color: #17233d; font-size: 24px; line-height: 1.1; font-weight: 540; }
+  .check { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 9px; color: #fff; background: #16878a; font-size: 17px; font-weight: 850; box-shadow: 0 3px 0 rgba(22,135,138,.18); }
+  .tooling .section-mark { border-color: #f0c47c; color: #d98716; background: #fff8eb; }
+  .tooling .section-title { color: #cf730f; }
+  .tooling .check { background: #d98716; }
+  svg { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2.8; }
+</style>
+</head>
+<body>
+<main class="card">
+  <header class="header">
+    <div class="concept-icon" aria-hidden="true">
+      <svg viewBox="0 0 72 72"><path d="M18 14h30l8 8v36H18z"/><path d="M48 14v10h8"/><path d="M26 28h22M26 38h22M26 48h14"/><path d="M18 36h38" stroke="#b8f4fa" stroke-dasharray="5 5"/></svg>
+    </div>
+    <h1>CHUNKING</h1>
+    <div class="badge">IMPLEMENTATION</div>
+  </header>
+  <div class="stack">
+    <section class="panel overview">
+      <div class="section-mark" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M16 12h28l8 8v32H16z"/><path d="M44 12v10h8"/><path d="M24 27h20M24 36h20M24 45h12"/></svg></div>
+      <div class="overview-copy"><h2 class="section-title">OVERVIEW</h2><p>Chunking splits long documents into smaller retrievable units. Good chunks preserve meaning, fit the context budget, and give retrieval enough signal to find the right evidence.</p></div>
+    </section>
+    <section class="panel workflow">
+      <h2 class="section-title">HOW IT WORKS</h2>
+      <div class="steps">
+        <article class="step"><div class="num">1</div><h3>Source<br>document</h3><div class="doc"><span></span><span></span><span></span><span></span></div><p>raw content</p></article>
+        <article class="step"><div class="num">2</div><h3>Split<br>units</h3><div class="chunks"><div class="chunk"></div><div class="chunk"></div><div class="chunk"></div></div><p>sections or tokens</p></article>
+        <article class="step"><div class="num">3</div><h3>Add<br>overlap</h3><div class="overlap"><span></span><span></span><b>shared context</b></div><p>keep continuity</p></article>
+        <article class="step"><div class="num">4</div><h3>Attach<br>metadata</h3><div class="metadata"><span class="tag"><i></i>source_id</span><span class="tag"><i></i>section</span><span class="tag"><i></i>timestamp</span></div><p>trace evidence</p></article>
+        <article class="step"><div class="num">5</div><h3>Index<br>chunks</h3><div class="index"><svg viewBox="0 0 128 112"><path d="M28 22h52M28 42h70M28 62h48"/><circle cx="89" cy="67" r="19"/><path d="m103 81 15 15"/><path d="M36 86h38" stroke="#16878a" stroke-dasharray="5 5"/></svg></div><p>ready for RAG</p></article>
+      </div>
+    </section>
+    <section class="panel compact implementation">
+      <div class="section-mark" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M16 18h32M16 32h26M16 46h20"/><path d="m46 24 8 8-8 8"/></svg></div>
+      <div class="compact-copy"><h2 class="section-title">IMPLEMENTATION</h2><ul><li><span class="check">&#10003;</span><span>Choose chunk size by content type, not by habit.</span></li><li><span class="check">&#10003;</span><span>Use overlap for continuity, but keep duplication controlled.</span></li><li><span class="check">&#10003;</span><span>Store stable IDs, source links, hierarchy, and timestamps.</span></li></ul></div>
+    </section>
+    <section class="panel compact tooling">
+      <div class="section-mark" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M14 18h36v10H14zM14 36h36v10H14z"/><path d="M22 23h1M30 23h12M22 41h1M30 41h12"/></svg></div>
+      <div class="compact-copy"><h2 class="section-title">TOOLS / FRAMEWORKS</h2><ul><li><span class="check">&#10003;</span><span>Splitters: LangChain, LlamaIndex, Haystack.</span></li><li><span class="check">&#10003;</span><span>Parsing: Unstructured, Docling, LlamaParse.</span></li><li><span class="check">&#10003;</span><span>Evals: Ragas, DeepEval, Phoenix, Braintrust.</span></li></ul></div>
+    </section>
+  </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1080, initial-scale=1">
+<title>Tool Calling - Mental Model</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 1080px; height: 1350px; }
+  body { background: #d8e0e8; color: #0d1730; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  .card { position: relative; width: 1080px; height: 1350px; padding: 28px 30px; overflow: hidden; background-color: #f1f5f9; background-image: linear-gradient(rgba(24, 78, 119, .022) 1px, transparent 1px), linear-gradient(90deg, rgba(24, 78, 119, .022) 1px, transparent 1px); background-size: 32px 32px; }
+  .header, .panel { border: 1px solid #d6e0ea; border-radius: 22px; background: #ffffff; }
+  .header { height: 142px; padding: 22px 28px; display: flex; align-items: center; gap: 26px; color: #0d1730; background: #ffffff; border-color: #dce5ee; box-shadow: 0 14px 30px rgba(31, 54, 78, .13), inset 0 1px 0 rgba(255,255,255,.9); }
+  .concept-icon { width: 96px; height: 96px; flex: 0 0 auto; display: grid; place-items: center; border: 1px solid rgba(43,108,255,.22); border-radius: 20px; background: linear-gradient(135deg, #9a51f2 0%, #126cff 100%); color: #ffffff; box-shadow: 0 12px 24px rgba(28, 99, 230, .22), inset 0 0 0 1px rgba(255,255,255,.20); }
+  .concept-icon svg { width: 72px; height: 72px; }
+  h1 { margin: 0; font-size: 46px; line-height: .96; letter-spacing: .01em; font-weight: 850; color: #0b1b49; text-shadow: 0 2px 8px rgba(11,27,73,.12); }
+  .badge { margin-left: auto; padding: 13px 22px; border: 1px solid rgba(34,97,255,.16); border-radius: 999px; color: #ffffff; background: linear-gradient(135deg, #4d6df7 0%, #106cff 100%); font-size: 18px; font-weight: 800; letter-spacing: .08em; white-space: nowrap; box-shadow: 0 8px 18px rgba(34,97,255,.18); }
+  .stack { margin-top: 14px; display: grid; gap: 12px; }
+  .panel { position: relative; box-shadow: 0 12px 28px rgba(31, 54, 78, .10), 0 2px 5px rgba(31, 54, 78, .06); }
+  .section-title { margin: 0; color: #2460d8; font-size: 20px; line-height: 1; font-weight: 850; letter-spacing: .13em; }
+  .overview { height: 174px; padding: 22px 28px; display: grid; grid-template-columns: 128px 1fr; gap: 24px; align-items: center; }
+  .section-mark { width: 88px; height: 88px; display: grid; place-items: center; border: 1px solid #a9c4f7; border-radius: 24px; color: #2460d8; background: #edf3ff; }
+  .section-mark svg { width: 58px; height: 58px; stroke-width: 2.8; }
+  .overview-copy { border-left: 1px solid #d2dde8; padding-left: 24px; }
+  .overview .section-title { margin-bottom: 12px; }
+  .overview p { margin: 0; width: 100%; color: #17233d; font-size: 24px; line-height: 1.18; font-weight: 540; text-align: left; }
+  .workflow { height: 402px; padding: 23px 20px 20px; }
+  .workflow .section-title { margin: 0 0 18px 12px; }
+  .steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+  .step { position: relative; min-width: 0; height: 320px; padding: 12px 10px; text-align: center; border: 1px solid #b8ccdf; border-radius: 18px; background: #ffffff; box-shadow: 0 7px 14px rgba(27, 67, 101, .10), inset 0 1px 0 rgba(255,255,255,.9); }
+  .step:not(:last-child)::after { content: ""; position: absolute; z-index: 2; width: 28px; height: 1px; top: 154px; right: -23px; background: #45bfd0; }
+  .step:not(:last-child)::before { content: ""; position: absolute; z-index: 3; top: 150px; right: -24px; border-left: 7px solid #45bfd0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
+  .num { width: 38px; height: 38px; margin: -31px auto 14px; display: grid; place-items: center; border: 5px solid #fbfdff; border-radius: 50%; color: #fff; background: #2460d8; font-size: 18px; font-weight: 850; box-shadow: 0 0 0 1px #2460d8; }
+  .step h3 { min-height: 48px; margin: 0 0 14px; font-size: 22px; line-height: 1.04; font-weight: 850; }
+  .step p { margin: 0; color: #253b54; font-size: 18px; line-height: 1.14; }
+  .request { margin: 4px auto 0; width: 142px; min-height: 116px; padding: 13px 10px; display: grid; place-items: center; border: 1px solid #7db6ef; border-radius: 16px; color: #173b62; background: #eef6ff; font-size: 18px; line-height: 1.12; box-shadow: inset 0 -4px 0 rgba(36,96,216,.08); }
+  .schema { width: 150px; margin: 4px auto 0; padding: 12px 10px; border: 1px solid #c4d2e2; border-radius: 14px; background: #fbfdff; text-align: left; }
+  .schema-line { height: 14px; margin: 8px 0; border-radius: 999px; background: #e6eef8; }
+  .schema-line:nth-child(1) { width: 90%; background: #dcecff; }
+  .schema-line:nth-child(2) { width: 70%; }
+  .schema-line:nth-child(3) { width: 82%; }
+  .schema-tag { display: inline-block; padding: 5px 8px; border-radius: 999px; color: #08727a; background: #eefbff; border: 1px solid #64b7d8; font-size: 14px; font-weight: 840; }
+  .selector { width: 150px; height: 116px; margin: 0 auto; display: block; color: #08727a; }
+  .function-box { width: 150px; margin: 4px auto 0; padding: 13px 10px; border: 1px solid #cdd9e8; border-radius: 14px; background: #fbfdff; }
+  .code { margin: 0 auto 10px; color: #08727a; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 16px; line-height: 1.25; text-align: left; }
+  .result-pill { display: inline-block; padding: 6px 10px; border: 1px solid #f0c47c; border-radius: 999px; color: #8a5b1c; background: #fff8eb; font-size: 15px; font-weight: 840; }
+  .answer { margin: 10px auto 0; width: 150px; display: grid; gap: 8px; }
+  .answer-line { height: 20px; border-radius: 7px; background: #eaf1fb; border: 1px solid #cdd9e8; }
+  .answer-line:nth-child(2) { width: 82%; }
+  .answer-line:nth-child(3) { width: 62%; }
+  .compact { height: 248px; padding: 22px 28px; display: grid; grid-template-columns: 128px 1fr; gap: 24px; align-items: center; }
+  .compact-copy { border-left: 1px solid #d2dde8; padding-left: 24px; }
+  .compact .section-title { margin-bottom: 18px; }
+  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 15px; }
+  li { display: grid; grid-template-columns: 32px 1fr; gap: 14px; align-items: center; color: #17233d; font-size: 24px; line-height: 1.1; font-weight: 540; }
+  .check { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 9px; color: #fff; background: #16878a; font-size: 17px; font-weight: 850; box-shadow: 0 3px 0 rgba(22,135,138,.18); }
+  .tooling .section-mark { border-color: #f0c47c; color: #d98716; background: #fff8eb; }
+  .tooling .section-title { color: #cf730f; }
+  .tooling .check { background: #d98716; }
+  svg { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2.8; }
+</style>
+</head>
+<body>
+<main class="card">
+  <header class="header">
+    <div class="concept-icon" aria-hidden="true">
+      <svg viewBox="0 0 72 72"><path d="M23 20h26v12H23zM14 43h18v12H14zM40 43h18v12H40z"/><path d="M36 32v7M23 43l13-11 13 11"/><circle cx="36" cy="26" r="4" fill="#5bd5e5"/><circle cx="23" cy="49" r="4" fill="#b8f4fa"/><circle cx="49" cy="49" r="4" fill="#b8f4fa"/></svg>
+    </div>
+    <h1>TOOL CALLING</h1>
+    <div class="badge">MENTAL MODEL</div>
+  </header>
+  <div class="stack">
+    <section class="panel overview">
+      <div class="section-mark" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M18 18h28v14H18zM12 43h18v10H12zM34 43h18v10H34z"/><path d="M32 32v7M21 43l11-11 11 11"/></svg></div>
+      <div class="overview-copy"><h2 class="section-title">OVERVIEW</h2><p>Tool calling lets a model request external functions through typed schemas. The app executes the tool, validates inputs and outputs, then returns results so the model can continue.</p></div>
+    </section>
+    <section class="panel workflow">
+      <h2 class="section-title">HOW IT WORKS</h2>
+      <div class="steps">
+        <article class="step"><div class="num">1</div><h3>User<br>request</h3><div class="request">Check order<br>status for<br>#A1029</div></article>
+        <article class="step"><div class="num">2</div><h3>Tool<br>schema</h3><div class="schema"><span class="schema-tag">get_order()</span><div class="schema-line"></div><div class="schema-line"></div><div class="schema-line"></div></div></article>
+        <article class="step"><div class="num">3</div><h3>Model<br>selects</h3><svg class="selector" viewBox="0 0 150 116"><path d="M30 58h82M86 34l26 24-26 24"/><circle cx="32" cy="58" r="8" fill="#2460d8"/><circle cx="76" cy="58" r="7" fill="#16878a"/><circle cx="112" cy="58" r="8" fill="#16878a"/><path d="M48 42h24M48 74h24" stroke="#16878a" stroke-dasharray="5 5"/></svg></article>
+        <article class="step"><div class="num">4</div><h3>Function<br>runs</h3><div class="function-box"><div class="code">args = {<br> id: A1029<br>}</div><span class="result-pill">validated</span></div></article>
+        <article class="step"><div class="num">5</div><h3>Final<br>answer</h3><p style="color:#08727a;font-size:18px;margin:0 0 8px;">result back<br>to model</p><div class="answer"><span class="answer-line"></span><span class="answer-line"></span><span class="answer-line"></span></div></article>
+      </div>
+    </section>
+    <section class="panel compact implementation">
+      <div class="section-mark" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M14 18h36M14 32h30M14 46h22"/><path d="m46 24 8 8-8 8"/></svg></div>
+      <div class="compact-copy"><h2 class="section-title">IMPLEMENTATION</h2><ul><li><span class="check">&#10003;</span><span>Define typed schemas with clear descriptions.</span></li><li><span class="check">&#10003;</span><span>Validate arguments, permissions, and side effects.</span></li><li><span class="check">&#10003;</span><span>Handle errors, retries, and idempotency.</span></li></ul></div>
+    </section>
+    <section class="panel compact tooling">
+      <div class="section-mark" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M14 18h36v10H14zM14 36h36v10H14z"/><path d="M22 23h1M30 23h12M22 41h1M30 41h12"/></svg></div>
+      <div class="compact-copy"><h2 class="section-title">TOOLS / FRAMEWORKS</h2><ul><li><span class="check">&#10003;</span><span>Provider APIs: OpenAI, Anthropic, Gemini.</span></li><li><span class="check">&#10003;</span><span>Frameworks: LangChain, Vercel AI SDK, Agents SDK.</span></li><li><span class="check">&#10003;</span><span>Validators: JSON Schema, Zod, Pydantic.</span></li></ul></div>
+    </section>
+  </div>
+</main>
+</body>
+</html>

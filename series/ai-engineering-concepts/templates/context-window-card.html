@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1080, initial-scale=1">
+<title>Context Window - Mental Model</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 1080px; height: 1350px; }
+  body { background: #d8e0e8; color: #0d1730; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  .card { position: relative; width: 1080px; height: 1350px; padding: 28px 30px; overflow: hidden; background-color: #f1f5f9; background-image: linear-gradient(rgba(24, 78, 119, .022) 1px, transparent 1px), linear-gradient(90deg, rgba(24, 78, 119, .022) 1px, transparent 1px); background-size: 32px 32px; }
+  .header, .panel { border: 1px solid #d6e0ea; border-radius: 22px; background: #ffffff; }
+  .header { height: 142px; padding: 22px 28px; display: flex; align-items: center; gap: 26px; color: #0d1730; background: #ffffff; border-color: #dce5ee; box-shadow: 0 14px 30px rgba(31, 54, 78, .13), inset 0 1px 0 rgba(255,255,255,.9); }
+  .concept-icon { width: 96px; height: 96px; flex: 0 0 auto; display: grid; place-items: center; border: 1px solid rgba(43,108,255,.22); border-radius: 20px; background: linear-gradient(135deg, #9a51f2 0%, #126cff 100%); color: #ffffff; box-shadow: 0 12px 24px rgba(28, 99, 230, .22), inset 0 0 0 1px rgba(255,255,255,.20); }
+  .concept-icon svg { width: 72px; height: 72px; }
+  h1 { margin: 0; font-size: 44px; line-height: .96; letter-spacing: .01em; font-weight: 850; color: #0b1b49; text-shadow: 0 2px 8px rgba(11,27,73,.12); }
+  .badge { margin-left: auto; padding: 13px 22px; border: 1px solid rgba(34,97,255,.16); border-radius: 999px; color: #ffffff; background: linear-gradient(135deg, #4d6df7 0%, #106cff 100%); font-size: 18px; font-weight: 800; letter-spacing: .08em; white-space: nowrap; box-shadow: 0 8px 18px rgba(34,97,255,.18); }
+  .stack { margin-top: 14px; display: grid; gap: 12px; }
+  .panel { position: relative; box-shadow: 0 12px 28px rgba(31, 54, 78, .10), 0 2px 5px rgba(31, 54, 78, .06); }
+  .section-title { margin: 0; color: #2460d8; font-size: 20px; line-height: 1; font-weight: 850; letter-spacing: .13em; }
+  .overview { height: 174px; padding: 22px 28px; display: grid; grid-template-columns: 128px 1fr; gap: 24px; align-items: center; }
+  .section-mark { width: 88px; height: 88px; display: grid; place-items: center; border: 1px solid #a9c4f7; border-radius: 24px; color: #2460d8; background: #edf3ff; }
+  .section-mark svg { width: 58px; height: 58px; stroke-width: 2.8; }
+  .overview-copy { border-left: 1px solid #d2dde8; padding-left: 24px; }
+  .overview .section-title { margin-bottom: 12px; }
+  .overview p { margin: 0; width: 100%; color: #17233d; font-size: 24px; line-height: 1.18; font-weight: 540; text-align: left; }
+  .workflow { height: 402px; padding: 23px 20px 20px; }
+  .workflow .section-title { margin: 0 0 18px 12px; }
+  .steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+  .step { position: relative; min-width: 0; height: 320px; padding: 12px 10px; text-align: center; border: 1px solid #b8ccdf; border-radius: 18px; background: #ffffff; box-shadow: 0 7px 14px rgba(27, 67, 101, .10), inset 0 1px 0 rgba(255,255,255,.9); }
+  .step:not(:last-child)::after { content: ""; position: absolute; z-index: 2; width: 28px; height: 1px; top: 154px; right: -23px; background: #45bfd0; }
+  .step:not(:last-child)::before { content: ""; position: absolute; z-index: 3; top: 150px; right: -24px; border-left: 7px solid #45bfd0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
+  .num { width: 38px; height: 38px; margin: -31px auto 14px; display: grid; place-items: center; border: 5px solid #fbfdff; border-radius: 50%; color: #fff; background: #2460d8; font-size: 18px; font-weight: 850; box-shadow: 0 0 0 1px #2460d8; }
+  .step h3 { min-height: 48px; margin: 0 0 14px; font-size: 22px; line-height: 1.04; font-weight: 850; }
+  .step p { margin: 0; color: #253b54; font-size: 18px; line-height: 1.14; }
+  .input-stack { margin: 4px auto 0; width: 142px; min-height: 116px; display: grid; gap: 7px; align-content: center; }
+  .input-chip { padding: 7px 8px; border: 1px solid #7db6ef; border-radius: 12px; color: #173b62; background: #eef6ff; font-size: 16px; font-weight: 760; }
+  .budget-box { width: 150px; margin: 4px auto 0; padding: 13px 12px; border: 1px solid #c4d2e2; border-radius: 14px; background: #fbfdff; }
+  .budget-title { margin-bottom: 9px; color: #173b62; font-size: 17px; font-weight: 820; }
+  .bar { height: 13px; margin-bottom: 8px; overflow: hidden; border-radius: 999px; background: #e7edf5; }
+  .bar span { display: block; height: 100%; border-radius: inherit; background: #16878a; }
+  .bar:nth-child(3) span { background: #2460d8; }
+  .bar:nth-child(4) span { background: #d98716; }
+  .packing { margin: 4px auto 0; width: 150px; display: grid; gap: 8px; }
+  .pack-row { height: 24px; padding: 4px 8px; border: 1px solid #cdd9e8; border-radius: 8px; background: #f7fbff; color: #173b62; font-size: 14px; font-weight: 800; text-align: left; }
+  .pack-row.drop { color: #8a5b1c; background: #fff8eb; border-color: #f0c47c; }
+  .attention { width: 150px; height: 116px; margin: 0 auto; display: block; color: #08727a; }
+  .response { margin: 10px auto 0; width: 150px; display: grid; gap: 8px; }
+  .response-line { height: 20px; border-radius: 7px; background: #eaf1fb; border: 1px solid #cdd9e8; }
+  .response-line:nth-child(2) { width: 82%; }
+  .response-line:nth-child(3) { width: 62%; }
+  .compact { height: 248px; padding: 22px 28px; display: grid; grid-template-columns: 128px 1fr; gap: 24px; align-items: center; }
+  .compact-copy { border-left: 1px solid #d2dde8; padding-left: 24px; }
+  .compact .section-title { margin-bottom: 18px; }
+  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 15px; }
+  li { display: grid; grid-template-columns: 32px 1fr; gap: 14px; align-items: center; color: #17233d; font-size: 24px; line-height: 1.1; font-weight: 540; }
+  .check { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 9px; color: #fff; background: #16878a; font-size: 17px; font-weight: 850; box-shadow: 0 3px 0 rgba(22,135,138,.18); }
+  .tooling .section-mark { border-color: #f0c47c; color: #d98716; background: #fff8eb; }
+  .tooling .section-title { color: #cf730f; }
+  .tooling .check { background: #d98716; }
+  svg { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2.8; }
+</style>
+</head>
+<body>
+<main class="card">
+  <header class="header">
+    <div class="concept-icon" aria-hidden="true">
+      <svg viewBox="0 0 72 72"><rect x="14" y="13" width="44" height="46" rx="8"/><path d="M22 24h28M22 34h20M22 44h25"/><path d="M17 56h38" opacity=".65"/><circle cx="53" cy="18" r="5" fill="#5bd5e5"/></svg>
+    </div>
+    <h1>CONTEXT WINDOW</h1>
+    <div class="badge">MENTAL MODEL</div>
+  </header>
+  <div class="stack">
+    <section class="panel overview">
+      <div class="section-mark" aria-hidden="true"><svg viewBox="0 0 64 64"><rect x="12" y="12" width="40" height="40" rx="8"/><path d="M20 24h24M20 34h18M20 44h22"/><path d="M52 21h5M52 43h5"/></svg></div>
+      <div class="overview-copy"><h2 class="section-title">OVERVIEW</h2><p>The context window is the token budget a model can read and write in one request. It includes instructions, chat history, retrieved context, tool outputs, and the model's response.</p></div>
+    </section>
+    <section class="panel workflow">
+      <h2 class="section-title">HOW IT WORKS</h2>
+      <div class="steps">
+        <article class="step"><div class="num">1</div><h3>Input</h3><div class="input-stack"><div class="input-chip">system</div><div class="input-chip">history</div><div class="input-chip">retrieval</div><div class="input-chip">tools</div></div></article>
+        <article class="step"><div class="num">2</div><h3>Token<br>budget</h3><div class="budget-box"><div class="budget-title">available</div><div class="bar"><span style="width:76%"></span></div><div class="bar"><span style="width:52%"></span></div><div class="bar"><span style="width:30%"></span></div></div></article>
+        <article class="step"><div class="num">3</div><h3>Context<br>packing</h3><div class="packing"><div class="pack-row">keep: rules</div><div class="pack-row">keep: top-k</div><div class="pack-row drop">trim: low value</div><div class="pack-row">reserve: answer</div></div></article>
+        <article class="step"><div class="num">4</div><h3>Model<br>attention</h3><svg class="attention" viewBox="0 0 150 116"><path d="M25 92V24M25 92h102"/><path d="M40 80 65 45M40 80 88 58M40 80 112 34" stroke="#16878a" stroke-dasharray="5 5"/><circle cx="40" cy="80" r="7" fill="#2460d8"/><circle cx="65" cy="45" r="6" fill="#16878a"/><circle cx="88" cy="58" r="6" fill="#16878a"/><circle cx="112" cy="34" r="6" fill="#16878a"/></svg></article>
+        <article class="step"><div class="num">5</div><h3>Response</h3><p style="color:#08727a;font-size:18px;margin:0 0 8px;">budget left<br>for output</p><div class="response"><span class="response-line"></span><span class="response-line"></span><span class="response-line"></span></div></article>
+      </div>
+    </section>
+    <section class="panel compact implementation">
+      <div class="section-mark" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M14 18h36M14 32h30M14 46h22"/><path d="m46 24 8 8-8 8"/></svg></div>
+      <div class="compact-copy"><h2 class="section-title">IMPLEMENTATION</h2><ul><li><span class="check">&#10003;</span><span>Reserve space for the answer before adding context.</span></li><li><span class="check">&#10003;</span><span>Rank, trim, or summarize low-value context.</span></li><li><span class="check">&#10003;</span><span>Do not treat context as long-term memory.</span></li></ul></div>
+    </section>
+    <section class="panel compact tooling">
+      <div class="section-mark" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M14 18h36v10H14zM14 36h36v10H14z"/><path d="M22 23h1M30 23h12M22 41h1M30 41h12"/></svg></div>
+      <div class="compact-copy"><h2 class="section-title">TOOLS / FRAMEWORKS</h2><ul><li><span class="check">&#10003;</span><span>Counters: tiktoken, provider SDKs, LiteLLM.</span></li><li><span class="check">&#10003;</span><span>Packers: LangChain, LlamaIndex, custom logic.</span></li><li><span class="check">&#10003;</span><span>Stores: vector DBs, caches, conversation state.</span></li></ul></div>
+    </section>
+  </div>
+</main>
+</body>
+</html>
