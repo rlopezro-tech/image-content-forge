@@ -6,34 +6,34 @@ language: en
 status: planned
 items:
   - number: 1
-    slug: rag
-    title: Retrieval-Augmented Generation
-    status: planned
-  - number: 2
     slug: embeddings
     title: Embeddings
     status: planned
+  - number: 2
+    slug: tokenization
+    title: Tokenization
+    status: planned
   - number: 3
-    slug: vector-databases
-    title: Vector Databases
+    slug: context-window
+    title: Context Window
     status: planned
   - number: 4
+    slug: structured-outputs
+    title: Structured Outputs
+    status: planned
+  - number: 5
     slug: tool-calling
     title: Tool Calling
     status: planned
-  - number: 5
-    slug: evals
-    title: Evals
-    status: planned
   - number: 6
-    slug: agents
-    title: Agents
-    status: planned
-  - number: 7
     slug: context-engineering
     title: Context Engineering
     status: planned
+  - number: 7
+    slug: rag
+    title: Retrieval-Augmented Generation
+    status: planned
   - number: 8
-    slug: llm-observability
-    title: LLM Observability
+    slug: vector-search
+    title: Vector Search
     status: planned

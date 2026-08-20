@@ -71,7 +71,7 @@ Recommended layout:
 2. Overview.
 3. How it works.
 4. Implementation.
-5. Production notes.
+5. Tools / frameworks.
 
 The card should use the full usable width of the canvas and remain readable on mobile LinkedIn previews.
 
@@ -99,7 +99,7 @@ Template requirements:
 - Use inline SVG for neutral concept icons, arrows, diagrams, and small functional symbols.
 - Do not use external web images, remote fonts, remote stylesheets, or network-dependent assets in the final template.
 - Reference only local assets when an official product or framework logo is required.
-- Use semantic sections for `header`, `overview`, `how it works`, `implementation`, and `production notes`.
+- Use semantic sections for `header`, `overview`, `how it works`, `implementation`, and `tools frameworks`.
 - Use reusable classes for panels, section labels, step nodes, bullets, badges, and icons.
 - Keep the template readable and maintainable; do not minify it.
 
@@ -125,7 +125,7 @@ The post should complement the image instead of repeating every visible line.
 
 Post requirements:
 
-- Write the post in Spanish unless a different language is explicitly requested.
+- Write the post in English.
 - Start with a concise hook related to the concept.
 - Explain the practical idea in 2-4 short paragraphs.
 - Add 3-5 concise takeaways or implementation reminders when useful.
@@ -144,9 +144,10 @@ Before considering a card complete, verify:
 - The PNG dimensions are exactly `1080 x 1350`.
 - No text, icon, border, or panel is clipped at the card edges.
 - No text overlaps another section or escapes its parent panel.
-- The overview remains at or below 60 words.
+- The overview remains at or below 100 words.
+- The overview copy should use the full available text area unless a narrower measure clearly improves readability. Use justified text only when word spacing remains natural; otherwise prefer left-aligned paragraph text.
 - The central diagram contains 4-6 nodes and remains legible at feed size.
-- Implementation and production notes contain no more than 3 bullets each.
+- Implementation and tools/frameworks contain no more than 3 bullets each.
 - The header follows the shared series structure and remains visually consistent.
 - All sections have clear boundaries and balanced vertical rhythm.
 - The lowest section ends naturally; do not add a footer or empty spacer.
@@ -158,20 +159,21 @@ The design must look modern, sharp, and calm. It should attract attention withou
 
 Recommended visual treatment:
 
-- Use a light editorial canvas with a very subtle technical texture (fine grid, ruled detail, or tiny calibration marks); it must stay behind the content.
-- Use a dark, high-contrast header band as the series signature, with a flat line icon tile and one compact type badge.
-- Use white or near-white technical panels with thin cool-gray borders, modest corner rounding, and soft layered shadows. Avoid thick cartoon outlines and hard offset shadows.
-- Give each section a distinct visual role: overview = editorial summary, how it works = diagram stage, implementation = action checklist, production notes = operational checklist.
+- Use a soft light editorial canvas with white or near-white content bands, subtle cool-gray borders, modest corner rounding, and soft layered shadows.
+- Use a bright white header band as the series signature, with a gradient blue/purple concept icon tile, a compact blue type badge, and dark navy title text.
+- Keep the main title compact, generally around `44-48px` for short one-line titles on a `1080px` card, so the header breathes; supporting copy and checklist text should be larger and more readable than decorative labels.
+- Give each section a distinct visual role: overview = editorial summary, how it works = diagram stage, implementation = action checklist, tools/frameworks = practical ecosystem checklist.
+- Do not add vertical accent bars to panel edges; section color should come from headings, icons, badges, checks, borders, and diagram elements.
 - Use a spacing scale and repeat it consistently: 12 / 16 / 24 / 32 px. Never solve visual imbalance with random offsets.
 - Use one primary accent (electric blue) plus up to two functional accents (teal for flow or positive state, amber for caution or operational state). Accents should identify meaning, not decorate every surface.
 - Build icons as crisp 2D inline SVGs with a consistent stroke, geometric construction, and one or two filled details. Prefer recognizable standard symbols (nodes, signal paths, shield, sliders, terminal, magnifier) over generic clip-art. When an official product/framework icon exists and is in scope, use its approved local asset; do not invent a fake “official” logo. For concepts without an official logo, use a neutral standard technical glyph.
 - Make the central diagram the visual anchor: use numbered nodes, directional connectors, small labels, and varied visual states. The flow should read left to right without relying on paragraphs.
-- Create interest through alignment, hierarchy, whitespace, and material contrast—not through gradients, 3D effects, or extra decoration.
+- Create interest through alignment, hierarchy, whitespace, and material contrast. Use restrained gradients only for icon tiles, type badges, and small functional accents; avoid heavy gradients and decorative effects.
 
 Avoid visual clutter:
 
 - No heavy gradients, glassmorphism, neon glow, or 3D rendering.
-- No dark full-card backgrounds; reserve dark color for the header and small functional elements.
+- No dark full-card backgrounds; reserve dark color for title text, labels, and small functional elements.
 - No random decorative orbs, blobs, bokeh, circuit-board filler, or abstract AI decoration.
 - No stock-style generated images.
 - No crowded multi-column layouts that reduce mobile readability.
@@ -182,12 +184,13 @@ Avoid visual clutter:
 
 Before export, verify that:
 
-- The eye lands on the concept title first, then the central diagram, then the two checklists.
-- The header is the darkest region and the diagram is the most visually informative region.
+- The eye lands on the concept title first, then the central diagram, then the two supporting sections.
+- The header has the clearest title contrast and the diagram is the most visually informative region.
 - Every panel has one dominant element; labels, copy, icons, and decoration must not compete equally.
 - Borders are quiet and shadows are soft; if the card looks like a worksheet or comic panel, reduce stroke weight and contrast.
-- At 50% scale, the title, section labels, step names, checklist text, and flow direction remain obvious.
-- The main title is compact enough to leave breathing room around the icon and badge; supporting copy should be larger than decorative labels.
+- At 50% scale, the title, section labels, step names, supporting copy, checklist text, and flow direction remain obvious.
+- The main title is compact enough to leave breathing room around the icon and badge; supporting copy should be visibly larger than section labels and decorative text.
+- Overview paragraphs should fill the available text column naturally; do not force a specific line count. Use `text-align: justify` only when it does not create visibly uneven word spacing.
 
 The final card should feel like a clean engineering artifact, not a slide deck, meme, infographic poster, or product ad.
 
@@ -204,11 +207,25 @@ Recommended card type labels:
 
 ```text
 Mental Model
-Production Notes
+Implementation
+Tooling Map
+Production Checks
 Security Pattern
 Eval Pattern
 Framework Notes
 ```
+
+Card type guidance:
+
+- `Mental Model`: use for foundational concepts and reasoning models, such as embeddings, RAG, vector search, tool calling, agents, and context engineering.
+- `Implementation`: use when the card focuses on how to build the concept in real systems: data shape, APIs, orchestration, storage, runtime flow, deployment, or integration decisions.
+- `Tooling Map`: use when the card focuses on real tools, frameworks, databases, providers, or libraries and when to use each category.
+- `Production Checks`: use when the card focuses on operational concerns such as quality, monitoring, latency, cost, drift, indexing consistency, failure modes, or reliability.
+- `Eval Pattern`: use for evaluation workflows, datasets, graders, regression tests, scorecards, and retrieval/LLM quality measurement.
+- `Security Pattern`: use for prompt injection, data leakage, guardrails, policy enforcement, authorization, abuse controls, or safety boundaries.
+- `Framework Notes`: use for specific frameworks or SDKs such as LangChain, LlamaIndex, DeepEval, OpenAI SDKs, provider SDKs, or observability tools.
+
+Do not default every card to `Mental Model`; choose the badge that best matches the card's main teaching angle.
 
 Header rules:
 
@@ -217,6 +234,7 @@ Header rules:
 - Use the main concept title next to the icon.
 - Use a compact type badge on the right.
 - Keep the title to one line when possible; two lines maximum.
+- Prefer a slightly smaller title over an oversized header; the title should feel like a card label, not a poster headline.
 - Do not put long explanations in the header.
 - Do not include source URLs in the PNG.
 
@@ -228,17 +246,18 @@ Use this fixed visible section structure for every card:
 OVERVIEW
 HOW IT WORKS
 IMPLEMENTATION
-PRODUCTION NOTES
+TOOLS / FRAMEWORKS
 ```
 
 Do not use "interview" language in the card. The content should read as general AI engineering knowledge while still helping readers build strong technical mental models.
 
 Section rules:
 
-- `OVERVIEW`: explain what the concept is and why it matters in no more than 60 words.
+- `OVERVIEW`: explain what the concept is and why it matters in no more than 100 words. Let the copy fill the available text area naturally; do not force a specific line count. Use justified text only when it preserves natural spacing.
 - `HOW IT WORKS`: use the central diagram or flow; keep it to 4-6 nodes maximum.
-- `IMPLEMENTATION`: use up to 3 bullets about APIs, components, frameworks, data stores, orchestration, or patterns used to build it.
-- `PRODUCTION NOTES`: use up to 3 bullets about monitoring, validation, security, quality, cost, latency, failure modes, or operational checks.
+- `IMPLEMENTATION`: use up to 3 bullets about concrete engineering decisions: model/version choice, data shape, IDs, metadata, indexing, retrieval path, filtering, reranking, evaluation, orchestration, or deployment pattern.
+- `TOOLS / FRAMEWORKS`: use up to 3 bullets with real, commonly used tools grouped by category. Each bullet must start with the category before the examples, such as `Models/APIs:`, `Vector DBs:`, `Libraries:`, `Frameworks:`, `Evals:`, `Observability:`, or `Serving:`.
+- Do not list tool names without explaining what kind of tool they are. For example, use `Vector DBs: Pinecone, Weaviate, pgvector` instead of only `Pinecone, Weaviate, pgvector`.
 
 For security concepts, keep the same visible structure but adapt the content:
 
@@ -246,7 +265,7 @@ For security concepts, keep the same visible structure but adapt the content:
 OVERVIEW
 HOW IT WORKS
 IMPLEMENTATION
-PRODUCTION NOTES
+TOOLS / FRAMEWORKS
 ```
 
 Security content guidance:
@@ -254,14 +273,14 @@ Security content guidance:
 - `OVERVIEW`: state the risk or control clearly.
 - `HOW IT WORKS`: show the threat path, control path, or validation flow.
 - `IMPLEMENTATION`: name the practical controls, guardrails, policies, validators, or review steps.
-- `PRODUCTION NOTES`: include abuse monitoring, data leakage checks, policy drift, false positives, or fallback behavior.
+- `TOOLS / FRAMEWORKS`: group real tools by function, such as validators, scanners, policy engines, tracing tools, gateways, or guardrail frameworks.
 
 For framework or tool concepts, keep the same visible structure but adapt the content:
 
 - `OVERVIEW`: explain what the tool does and where it fits.
 - `HOW IT WORKS`: show its core primitives or runtime flow.
 - `IMPLEMENTATION`: name the key APIs, modules, integrations, or setup pattern.
-- `PRODUCTION NOTES`: cover tradeoffs, operational checks, versioning, reliability, and lock-in risks.
+- `TOOLS / FRAMEWORKS`: group complementary tools by function, such as integrations, providers, stores, evaluators, deployment targets, or operational frameworks.
 
 Keep visible copy short and specific. Prefer labels, arrows, matrices, and checklists over explanatory prose.
 

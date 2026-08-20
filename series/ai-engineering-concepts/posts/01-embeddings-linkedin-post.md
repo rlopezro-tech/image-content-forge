@@ -1,17 +1,17 @@
-# Embeddings: convertir significado en espacio vectorial
+# Embeddings: turning meaning into vector space
 
-Los embeddings convierten texto, imagenes o codigo en vectores numericos. La idea importante es que elementos con significado parecido tienden a quedar cerca dentro de ese espacio.
+Embeddings convert text, images, or code into numeric vectors. The key idea is that items with similar meaning tend to sit close to each other in that vector space.
 
-Por eso son una pieza base para semantic search, recomendaciones y sistemas RAG. El modelo no busca solamente coincidencias exactas de palabras: permite comparar representaciones de significado mediante una metrica de distancia.
+That is why they are a core building block for semantic search, recommendations, and RAG systems. Instead of matching only exact words, the system compares meaning representations with a distance metric.
 
-Tres puntos practicos:
+Three practical implementation points:
 
-- El modelo de embeddings debe ser adecuado para el dominio y los idiomas del sistema.
-- Cada vector debe conservar metadata y un identificador estable del documento original.
-- La calidad del retrieval debe medirse por separado de la latencia del modelo.
+- Use one embedding model version per index.
+- Store the vector, source text, metadata, and a stable ID.
+- Search by distance first, then apply filters or reranking.
 
-En produccion tambien importa mantener consistente el modelo usado para indexar y consultar, monitorear cambios en la distribucion de los vectores y combinar similitud con filtros o reranking cuando sea necesario.
+In practice, the stack is easier to reason about by category: models/APIs like OpenAI, Cohere, or Sentence Transformers; vector databases like Pinecone, Weaviate, or pgvector; and libraries/evals like FAISS, rerankers, or evaluation datasets to check whether retrieval is actually useful.
 
-¿Que metrica o estrategia de evaluacion usas para validar la calidad de tu retrieval?
+What metric or evaluation strategy do you use to validate retrieval quality?
 
 #AIEngineering #Embeddings #RAG #MachineLearning #SoftwareEngineering
