@@ -12,6 +12,7 @@ Use this rule set to generate practical LinkedIn cards for AI engineering concep
 - Every publication must include a LinkedIn post in Markdown.
 - Visible card text: English.
 - Post copy: concise and ready to paste into LinkedIn.
+- Every generated concept must be stored inside a category folder so assets are easy to locate, batch review, and publish.
 
 ## Card Goal
 
@@ -70,8 +71,8 @@ Recommended layout:
 1. Compact header.
 2. Overview.
 3. How it works.
-4. Implementation.
-5. Tools / frameworks.
+4. Engineering notes.
+5. Practical stack.
 
 The card should use the full usable width of the canvas and remain readable on mobile LinkedIn previews.
 
@@ -80,13 +81,13 @@ The card should use the full usable width of the canvas and remain readable on m
 Create one self-contained HTML template for every publication:
 
 ```text
-templates/{concept-slug}-card.html
+templates/{category-slug}/{number}-{concept-slug}-card.html
 ```
 
 The HTML template is the editable master asset. The final PNG is only the rendered export:
 
 ```text
-images/{concept-slug}.png
+images/{category-slug}/{number}-{concept-slug}.png
 ```
 
 Template requirements:
@@ -118,7 +119,7 @@ The final HTML and PNG must show the same content. Do not manually edit the PNG 
 Create one Markdown post for every publication:
 
 ```text
-posts/{number}-{concept-slug}-linkedin-post.md
+posts/{category-slug}/{number}-{concept-slug}-linkedin-post.md
 ```
 
 The post should complement the image instead of repeating every visible line.
@@ -150,7 +151,7 @@ Before considering a card complete, verify:
 - The overview remains at or below 100 words.
 - The overview copy should use the full available text area unless a narrower measure clearly improves readability. Use justified text only when word spacing remains natural; otherwise prefer left-aligned paragraph text.
 - The central diagram contains 4-6 nodes and remains legible at feed size.
-- Implementation and tools/frameworks contain no more than 3 bullets each.
+- Engineering notes and practical stack contain no more than 3 bullets each.
 - The header follows the shared series structure and remains visually consistent.
 - All sections have clear boundaries and balanced vertical rhythm.
 - The lowest section ends naturally; do not add a footer or empty spacer.
@@ -164,17 +165,21 @@ Recommended visual treatment:
 
 - Use a soft light editorial canvas with white or near-white content bands, subtle cool-gray borders, modest corner rounding, and soft layered shadows.
 - Use a bright white header band as the series signature, with a concept icon tile, a compact type badge, and dark navy title text.
-- Use one fixed header color palette per card category. All `Mental Model` cards should share the same header palette, all `Implementation` cards should share another, and so on. Do not vary the header by concept within the same category.
+- Use one fixed header color palette per card category. All `Core Concept` cards should share the same header palette, all `Implementation` cards should share another, and so on. Do not vary the header by concept within the same category.
 - Recommended category header palettes:
-  - `Mental Model`: blue/cyan
+  - `Core Concept`: blue/cyan
   - `Implementation`: teal/green
+  - `Architecture Pattern`: slate/blue
+  - `Deployment Paradigm`: emerald/blue
   - `Tooling Map`: indigo/violet
   - `Production Checks`: amber/orange
   - `Eval Pattern`: purple/blue
   - `Security Pattern`: rose/red
+  - `Anti-Pattern`: red/amber
   - `Framework Notes`: cyan/indigo
+  - `Protocol`: violet/cyan
 - Keep the main title compact, generally around `44-48px` for short one-line titles on a `1080px` card, so the header breathes; supporting copy and checklist text should be larger and more readable than decorative labels.
-- Give each section a distinct visual role: overview = editorial summary, how it works = diagram stage, implementation = action checklist, tools/frameworks = practical ecosystem checklist.
+- Give each section a distinct visual role: overview = editorial summary, how it works = diagram stage, engineering notes = decision checklist, practical stack = ecosystem and runtime checklist.
 - Do not add vertical accent bars to panel edges; section color should come from headings, icons, badges, checks, borders, and diagram elements.
 - Use a spacing scale and repeat it consistently: 12 / 16 / 24 / 32 px. Never solve visual imbalance with random offsets.
 - Use one primary accent (electric blue) plus up to two functional accents (teal for flow or positive state, amber for caution or operational state). Accents should identify meaning, not decorate every surface.
@@ -218,26 +223,34 @@ Header content:
 Recommended card type labels:
 
 ```text
-Mental Model
+Core Concept
 Implementation
+Architecture Pattern
+Deployment Paradigm
 Tooling Map
 Production Checks
 Security Pattern
 Eval Pattern
 Framework Notes
+Protocol
+Anti-Pattern
 ```
 
 Card type guidance:
 
-- `Mental Model`: use for foundational concepts and reasoning models, such as embeddings, RAG, vector search, tool calling, agents, and context engineering.
+- `Core Concept`: use for foundational concepts and reasoning models, such as embeddings, RAG, vector search, tool calling, agents, context engineering, fine-tuning, and system tradeoffs.
 - `Implementation`: use when the card focuses on how to build the concept in real systems: data shape, APIs, orchestration, storage, runtime flow, deployment, or integration decisions.
+- `Architecture Pattern`: use for reusable system composition patterns such as direct LLM call, prompt chain, RAG architecture, agentic RAG, AI gateway, multi-model systems, memory architecture, guardrails architecture, and multi-tenant AI systems.
+- `Deployment Paradigm`: use for where and how AI workloads run: hosted APIs, self-hosted inference, online inference, batch inference, streaming inference, async workflows, serverless inference, edge AI, private/VPC deployment, multi-region deployment, and rollout strategies.
 - `Tooling Map`: use when the card focuses on real tools, frameworks, databases, providers, or libraries and when to use each category.
 - `Production Checks`: use when the card focuses on operational concerns such as quality, monitoring, latency, cost, drift, indexing consistency, failure modes, or reliability.
 - `Eval Pattern`: use for evaluation workflows, datasets, graders, regression tests, scorecards, and retrieval/LLM quality measurement.
 - `Security Pattern`: use for prompt injection, data leakage, guardrails, policy enforcement, authorization, abuse controls, or safety boundaries.
 - `Framework Notes`: use for specific frameworks or SDKs such as LangChain, LlamaIndex, DeepEval, OpenAI SDKs, provider SDKs, or observability tools.
+- `Protocol`: use for standards and interfaces such as MCP, A2A, and comparisons between protocols.
+- `Anti-Pattern`: use for common AI system design mistakes, why they fail, and what to use instead.
 
-Do not default every card to `Mental Model`; choose the badge that best matches the card's main teaching angle.
+Do not default every card to `Core Concept`; choose the badge that best matches the card's main teaching angle.
 
 Header rules:
 
@@ -257,8 +270,8 @@ Use this fixed visible section structure for every card:
 ```text
 OVERVIEW
 HOW IT WORKS
-IMPLEMENTATION
-TOOLS / FRAMEWORKS
+ENGINEERING NOTES
+PRACTICAL STACK
 ```
 
 Do not use "interview" language in the card. The content should read as general AI engineering knowledge while still helping readers build strong technical mental models.
@@ -267,8 +280,8 @@ Section rules:
 
 - `OVERVIEW`: explain what the concept is and why it matters in no more than 100 words. Let the copy fill the available text area naturally; do not force a specific line count. Use justified text only when it preserves natural spacing.
 - `HOW IT WORKS`: use the central diagram or flow; keep it to 4-6 nodes maximum.
-- `IMPLEMENTATION`: use up to 3 bullets about concrete engineering decisions: model/version choice, data shape, IDs, metadata, indexing, retrieval path, filtering, reranking, evaluation, orchestration, or deployment pattern.
-- `TOOLS / FRAMEWORKS`: use up to 3 bullets with real, commonly used tools grouped by category. Each bullet must start with the category before the examples, such as `Models/APIs:`, `Vector DBs:`, `Libraries:`, `Frameworks:`, `Evals:`, `Observability:`, or `Serving:`.
+- `ENGINEERING NOTES`: use up to 3 bullets about concrete engineering judgment: key decisions, production risks, constraints, tradeoffs, validation points, or rollout concerns. The bullets should help an engineer decide how to apply the concept safely in a real system.
+- `PRACTICAL STACK`: use up to 3 bullets with the concrete ecosystem needed to apply the concept. Group items by function, such as `Models/APIs:`, `Storage:`, `Runtime:`, `Frameworks:`, `Evals:`, `Observability:`, `Security:`, `Serving:`, `Metrics:`, `Controls:`, or `Protocols:`.
 - Do not list tool names without explaining what kind of tool they are. For example, use `Vector DBs: Pinecone, Weaviate, pgvector` instead of only `Pinecone, Weaviate, pgvector`.
 
 For security concepts, keep the same visible structure but adapt the content:
@@ -276,23 +289,23 @@ For security concepts, keep the same visible structure but adapt the content:
 ```text
 OVERVIEW
 HOW IT WORKS
-IMPLEMENTATION
-TOOLS / FRAMEWORKS
+ENGINEERING NOTES
+PRACTICAL STACK
 ```
 
 Security content guidance:
 
 - `OVERVIEW`: state the risk or control clearly.
 - `HOW IT WORKS`: show the threat path, control path, or validation flow.
-- `IMPLEMENTATION`: name the practical controls, guardrails, policies, validators, or review steps.
-- `TOOLS / FRAMEWORKS`: group real tools by function, such as validators, scanners, policy engines, tracing tools, gateways, or guardrail frameworks.
+- `ENGINEERING NOTES`: name the practical controls, guardrails, policies, validators, review steps, and failure boundaries.
+- `PRACTICAL STACK`: group real controls, tools, runtime checks, policies, validators, scanners, policy engines, tracing tools, gateways, or guardrail frameworks.
 
 For framework or tool concepts, keep the same visible structure but adapt the content:
 
 - `OVERVIEW`: explain what the tool does and where it fits.
 - `HOW IT WORKS`: show its core primitives or runtime flow.
-- `IMPLEMENTATION`: name the key APIs, modules, integrations, or setup pattern.
-- `TOOLS / FRAMEWORKS`: group complementary tools by function, such as integrations, providers, stores, evaluators, deployment targets, or operational frameworks.
+- `ENGINEERING NOTES`: name the key APIs, modules, integrations, setup pattern, tradeoffs, and adoption risks.
+- `PRACTICAL STACK`: group complementary integrations, providers, stores, evaluators, deployment targets, metrics, runtime components, or operational frameworks.
 
 Keep visible copy short and specific. Prefer labels, arrows, matrices, and checklists over explanatory prose.
 
@@ -304,16 +317,48 @@ This series can cover general AI engineering concepts and selected tools or fram
 
 Good topic categories:
 
-- RAG and retrieval systems.
-- Embeddings, chunking, reranking, and vector search.
-- Tool calling and structured outputs.
-- Agents, planning loops, memory, and orchestration.
-- Evals, regression testing, datasets, and graders.
-- LLM observability, tracing, logging, and cost monitoring.
-- Safety, security, guardrails, prompt injection, data leakage, and abuse controls.
-- Frameworks such as DeepEval, LangChain, LlamaIndex, and provider SDKs when the post explains how to reason about the tool.
+- AI fundamentals: embeddings, tokens, context windows, structured outputs, tool calling, RAG, fine-tuning, and system tradeoffs.
+- Retrieval and knowledge systems: vector search, chunking, metadata filters, hybrid search, reranking, grounding, citations, and RAG failure modes.
+- LLM application patterns: direct calls, prompt chains, deterministic workflows, RAG architecture, tool-using apps, routing, caching, validation, and memory architecture.
+- Evaluation and quality: evals, regression testing, golden datasets, retrieval quality, judges, scorecards, and online/offline monitoring.
+- Production operations: observability, tracing, versioning, latency, cost, retries, rate limits, release gates, and readiness checks.
+- Security and governance: prompt injection, data leakage, PII redaction, guardrails, policy enforcement, tenant isolation, data residency, and audit trails.
+- Agents and orchestration: agent loops, planning, tool selection, agentic RAG, single-agent systems, multi-agent systems, handoffs, concurrent agents, and evaluator-optimizer loops.
+- Architecture and system design: compound AI systems, AI gateways, model serving architecture, multi-tenant AI, provider abstraction, human-in-the-loop architecture, and decision matrices.
+- Deployment and infrastructure: hosted APIs, self-hosted inference, hybrid deployment, online/batch/streaming/async/serverless/edge inference, private deployments, multi-region deployments, and rollout strategies.
+- Frameworks, tools, and protocols: LangChain, LlamaIndex, OpenAI Agents SDK, Semantic Kernel, CrewAI, AutoGen, DSPy, MCP, A2A, vector databases, rerankers, serving tools, and observability tools.
+- Anti-patterns: prompt-only architecture, no eval gate, blind RAG, agent-for-everything, context stuffing, accidental provider lock-in, and no rollback strategy.
 
 Keep product-specific posts grounded in the tool's official documentation. Do not turn the series into vendor announcements.
+
+## Asset Organization
+
+Every generated concept must create or reuse one category folder under each asset root. Do not place new generated assets directly at the root of `prompts/`, `templates/`, `images/`, or `posts/`.
+
+Use these canonical category slugs:
+
+```text
+01-ai-fundamentals
+02-retrieval-knowledge-systems
+03-llm-application-patterns
+04-evaluation-quality
+05-production-operations
+06-security-governance
+07-agents-orchestration
+08-architecture-system-design
+09-deployment-infrastructure
+10-frameworks-tools-protocols
+11-anti-patterns
+```
+
+Folder rules:
+
+- Create the category folder if it does not exist.
+- Use the roadmap number as a filename prefix so files sort in publishing order.
+- Use the same `{category-slug}`, `{number}`, and `{concept-slug}` across prompt, template, image, and post.
+- Keep category folders stable. Do not invent one-off folders for individual concepts.
+- If a concept fits multiple categories, choose the category from the roadmap row, not the secondary association.
+- Existing uncategorized files may remain for compatibility, but all new generated assets must use the categorized structure.
 
 ## Icon Rules
 
@@ -352,8 +397,8 @@ Do not use unverified social posts, SEO summaries, or generated claims as source
 ## Output Files
 
 ```text
-prompts/{concept-slug}-prompt.md
-templates/{concept-slug}-card.html
-images/{concept-slug}.png
-posts/{number}-{concept-slug}-linkedin-post.md
+prompts/{category-slug}/{number}-{concept-slug}-prompt.md
+templates/{category-slug}/{number}-{concept-slug}-card.html
+images/{category-slug}/{number}-{concept-slug}.png
+posts/{category-slug}/{number}-{concept-slug}-linkedin-post.md
 ```
