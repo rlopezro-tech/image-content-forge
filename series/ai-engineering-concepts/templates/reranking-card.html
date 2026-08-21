@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1080, initial-scale=1">
+<title>Reranking - Implementation</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 1080px; height: 1350px; }
+  body {
+    background: #d7dfe7;
+    color: #0d1730;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  .card {
+    position: relative;
+    width: 1080px;
+    height: 1350px;
+    padding: 28px 30px;
+    overflow: hidden;
+    background-color: #f2f6fa;
+    background-image:
+      linear-gradient(rgba(24, 78, 119, .022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(24, 78, 119, .022) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .header,
+  .panel {
+    border: 1px solid #d7e1ea;
+    border-radius: 22px;
+    background: #ffffff;
+  }
+  .header {
+    height: 142px;
+    padding: 22px 28px;
+    display: flex;
+    align-items: center;
+    gap: 26px;
+    color: #0d1730;
+    border-color: #dce5ee;
+    background: #ffffff;
+    box-shadow: 0 14px 30px rgba(31, 54, 78, .13), inset 0 1px 0 rgba(255,255,255,.9);
+  }
+  .concept-icon {
+    width: 96px;
+    height: 96px;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(236,72,153,.24);
+    border-radius: 20px;
+    background: linear-gradient(135deg, #db2777 0%, #f97316 100%);
+    color: #ffffff;
+    box-shadow: 0 12px 24px rgba(219, 39, 119, .22), inset 0 0 0 1px rgba(255,255,255,.20);
+  }
+  .concept-icon svg { width: 72px; height: 72px; }
+  h1 {
+    margin: 0;
+    font-size: 48px;
+    line-height: .96;
+    letter-spacing: .01em;
+    font-weight: 850;
+    color: #0b1b49;
+    text-shadow: 0 2px 8px rgba(11,27,73,.12);
+  }
+  .badge {
+    margin-left: auto;
+    padding: 13px 22px;
+    border: 1px solid rgba(236,72,153,.18);
+    border-radius: 999px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #db2777 0%, #f97316 100%);
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    white-space: nowrap;
+    box-shadow: 0 8px 18px rgba(219, 39, 119, .18);
+  }
+  .stack { margin-top: 14px; display: grid; gap: 12px; }
+  .panel {
+    position: relative;
+    box-shadow: 0 12px 28px rgba(31, 54, 78, .10), 0 2px 5px rgba(31, 54, 78, .06);
+  }
+  .section-title {
+    margin: 0;
+    color: #2460d8;
+    font-size: 20px;
+    line-height: 1;
+    font-weight: 850;
+    letter-spacing: .13em;
+  }
+  .overview {
+    height: 174px;
+    padding: 22px 28px;
+    display: grid;
+    grid-template-columns: 128px 1fr;
+    gap: 24px;
+    align-items: center;
+  }
+  .section-mark {
+    width: 88px;
+    height: 88px;
+    display: grid;
+    place-items: center;
+    border: 1px solid #a9c4f7;
+    border-radius: 24px;
+    color: #2460d8;
+    background: #edf3ff;
+  }
+  .section-mark svg { width: 58px; height: 58px; stroke-width: 2.8; }
+  .overview-copy {
+    border-left: 1px solid #d2dde8;
+    padding-left: 24px;
+  }
+  .overview .section-title { margin-bottom: 12px; }
+  .overview p {
+    margin: 0;
+    width: 100%;
+    color: #17233d;
+    font-size: 24px;
+    line-height: 1.18;
+    font-weight: 540;
+    text-align: left;
+  }
+  .workflow {
+    height: 402px;
+    padding: 23px 20px 20px;
+  }
+  .workflow .section-title { margin: 0 0 18px 12px; }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+  }
+  .step {
+    position: relative;
+    min-width: 0;
+    height: 320px;
+    padding: 12px 10px;
+    text-align: center;
+    border: 1px solid #b8ccdf;
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 7px 14px rgba(27, 67, 101, .10), inset 0 1px 0 rgba(255,255,255,.9);
+  }
+  .step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    width: 28px;
+    height: 1px;
+    top: 154px;
+    right: -23px;
+    background: #45bfd0;
+  }
+  .step:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    z-index: 3;
+    top: 150px;
+    right: -24px;
+    border-left: 7px solid #45bfd0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+  }
+  .num {
+    width: 38px;
+    height: 38px;
+    margin: -31px auto 14px;
+    display: grid;
+    place-items: center;
+    border: 5px solid #fbfdff;
+    border-radius: 50%;
+    color: #fff;
+    background: #2460d8;
+    font-size: 18px;
+    font-weight: 850;
+    box-shadow: 0 0 0 1px #2460d8;
+  }
+  .step h3 {
+    min-height: 48px;
+    margin: 0 0 14px;
+    font-size: 22px;
+    line-height: 1.04;
+    font-weight: 850;
+  }
+  .step p {
+    margin: 0;
+    color: #253b54;
+    font-size: 18px;
+    line-height: 1.14;
+  }
+  .query {
+    margin: 4px auto 0;
+    width: 148px;
+    min-height: 118px;
+    padding: 14px 10px;
+    display: grid;
+    gap: 8px;
+    align-content: center;
+    border: 1px solid #cbd9e8;
+    border-radius: 16px;
+    background: #fbfdff;
+  }
+  .query-line {
+    height: 14px;
+    border-radius: 999px;
+    background: #dfe8f2;
+  }
+  .query-line.wide { width: 100%; }
+  .query-line.med { width: 74%; }
+  .query-line.short { width: 52%; }
+  .candidates {
+    width: 150px;
+    margin: 0 auto;
+    display: grid;
+    gap: 8px;
+  }
+  .cand-chip {
+    height: 30px;
+    padding: 6px 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid #cdd9e8;
+    border-radius: 9px;
+    background: #f7fbff;
+    color: #173b62;
+    font-size: 14px;
+    font-weight: 800;
+    text-align: left;
+  }
+  .cand-chip b {
+    width: 18px;
+    height: 18px;
+    display: grid;
+    place-items: center;
+    border-radius: 6px;
+    color: #fff;
+    background: #16878a;
+    font-size: 12px;
+  }
+  .cand-chip span {
+    height: 4px;
+    flex: 1;
+    border-radius: 999px;
+    background: #9aa8b8;
+  }
+  .score {
+    width: 150px;
+    margin: 4px auto 0;
+    padding: 12px 11px;
+    border: 1px solid #c4d2e2;
+    border-radius: 14px;
+    background: #fbfdff;
+  }
+  .score-title {
+    margin: 0 0 10px;
+    color: #173b62;
+    font-size: 17px;
+    font-weight: 820;
+  }
+  .meter {
+    height: 13px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #e7edf5;
+  }
+  .meter span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: #16878a;
+  }
+  .keep {
+    width: 150px;
+    margin: 4px auto 0;
+    display: grid;
+    gap: 8px;
+  }
+  .keep-row {
+    height: 24px;
+    padding: 4px 8px;
+    border: 1px solid #cdd9e8;
+    border-radius: 8px;
+    background: #f7fbff;
+    color: #173b62;
+    font-size: 14px;
+    font-weight: 800;
+    text-align: left;
+  }
+  .keep-row.drop {
+    color: #8a5b1c;
+    background: #fff8eb;
+    border-color: #f0c47c;
+  }
+  .rank {
+    width: 150px;
+    margin: 4px auto 0;
+    padding: 13px 10px;
+    border: 1px solid #cdd9e8;
+    border-radius: 14px;
+    background: #fbfdff;
+  }
+  .rank-stack {
+    margin: 0 auto 8px;
+    width: 68px;
+    height: 54px;
+    display: block;
+    color: #2460d8;
+  }
+  .answer {
+    margin: 10px auto 0;
+    width: 150px;
+    display: grid;
+    gap: 8px;
+  }
+  .answer-line {
+    height: 20px;
+    border-radius: 7px;
+    background: #eaf1fb;
+    border: 1px solid #cdd9e8;
+  }
+  .answer-line:nth-child(2) { width: 82%; }
+  .answer-line:nth-child(3) { width: 62%; }
+  .compact {
+    height: 248px;
+    padding: 22px 28px;
+    display: grid;
+    grid-template-columns: 128px 1fr;
+    gap: 24px;
+    align-items: center;
+  }
+  .compact-copy {
+    border-left: 1px solid #d2dde8;
+    padding-left: 24px;
+  }
+  .compact .section-title { margin-bottom: 18px; }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 15px;
+  }
+  li {
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    gap: 14px;
+    align-items: center;
+    color: #17233d;
+    font-size: 24px;
+    line-height: 1.1;
+    font-weight: 540;
+  }
+  .check {
+    width: 28px;
+    height: 28px;
+    display: grid;
+    place-items: center;
+    border-radius: 9px;
+    color: #fff;
+    background: #16878a;
+    font-size: 17px;
+    font-weight: 850;
+    box-shadow: 0 3px 0 rgba(22,135,138,.18);
+  }
+  .tooling .section-mark {
+    border-color: #f0c47c;
+    color: #d98716;
+    background: #fff8eb;
+  }
+  .tooling .section-title { color: #cf730f; }
+  .tooling .check { background: #d98716; }
+  svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2.8;
+  }
+</style>
+</head>
+<body>
+<main class="card">
+  <header class="header">
+    <div class="concept-icon" aria-hidden="true">
+      <svg viewBox="0 0 72 72">
+        <path d="M20 16h18a8 8 0 0 1 8 8v12H28a8 8 0 0 1-8-8z"/>
+        <path d="M26 30h26a8 8 0 0 1 8 8v14H34a8 8 0 0 1-8-8z"/>
+        <path d="M23 23h8M40 36h12M40 44h8"/>
+        <circle cx="56" cy="18" r="4" fill="#5bd5e5"/>
+        <path d="M48 24h10"/>
+        <path d="M52 21l6 3-6 3"/>
+      </svg>
+    </div>
+    <h1>RERANKING</h1>
+    <div class="badge">IMPLEMENTATION</div>
+  </header>
+  <div class="stack">
+    <section class="panel overview">
+      <div class="section-mark" aria-hidden="true">
+        <svg viewBox="0 0 64 64">
+          <path d="M14 18h18v18H14z"/>
+          <path d="M30 26h20v16H30z"/>
+          <path d="M21 27h4M21 33h6M36 31h10M36 38h8"/>
+          <path d="M50 23l6 4-6 4"/>
+        </svg>
+      </div>
+      <div class="overview-copy">
+        <h2 class="section-title">OVERVIEW</h2>
+        <p>Reranking scores retrieved candidates again with a stronger model or scoring layer after the first search step. The goal is higher precision at the top of the list before the model generates the final answer.</p>
+      </div>
+    </section>
+    <section class="panel workflow">
+      <h2 class="section-title">HOW IT WORKS</h2>
+      <div class="steps">
+        <article class="step">
+          <div class="num">1</div>
+          <h3>Query</h3>
+          <div class="query">
+            <div class="query-line wide"></div>
+            <div class="query-line med"></div>
+            <div class="query-line short"></div>
+          </div>
+        </article>
+        <article class="step">
+          <div class="num">2</div>
+          <h3>Initial<br>retrieve</h3>
+          <div class="candidates">
+            <div class="cand-chip"><b>1</b><span></span></div>
+            <div class="cand-chip"><b>2</b><span></span></div>
+            <div class="cand-chip"><b>3</b><span></span></div>
+          </div>
+        </article>
+        <article class="step">
+          <div class="num">3</div>
+          <h3>Rerank<br>candidates</h3>
+          <div class="score">
+            <div class="score-title">better scorer</div>
+            <div class="meter"><span style="width:88%"></span></div>
+            <div class="meter"><span style="width:64%"></span></div>
+            <div class="meter"><span style="width:38%"></span></div>
+          </div>
+        </article>
+        <article class="step">
+          <div class="num">4</div>
+          <h3>Keep top<br>set</h3>
+          <div class="keep">
+            <div class="keep-row">keep: strongest</div>
+            <div class="keep-row">keep: relevant</div>
+            <div class="keep-row drop">drop: weak noise</div>
+            <div class="keep-row">trim to top-k</div>
+          </div>
+        </article>
+        <article class="step">
+          <div class="num">5</div>
+          <h3>Generate<br>answer</h3>
+          <div class="rank">
+            <svg class="rank-stack" viewBox="0 0 68 54">
+              <path d="M14 14h28a6 6 0 0 1 6 6v14H20a6 6 0 0 1-6-6z"/>
+              <path d="M24 25h18M24 33h12"/>
+              <path d="M38 18l12 0"/>
+              <path d="M41 15l6 3-6 3"/>
+            </svg>
+            <div class="answer">
+              <span class="answer-line"></span>
+              <span class="answer-line"></span>
+              <span class="answer-line"></span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+    <section class="panel compact implementation">
+      <div class="section-mark" aria-hidden="true">
+        <svg viewBox="0 0 64 64">
+          <path d="M14 18h36M14 32h30M14 46h22"/>
+          <path d="m46 24 8 8-8 8"/>
+        </svg>
+      </div>
+      <div class="compact-copy">
+        <h2 class="section-title">IMPLEMENTATION</h2>
+        <ul>
+          <li><span class="check">&#10003;</span><span>Use reranking when first-pass retrieval is broad or noisy.</span></li>
+          <li><span class="check">&#10003;</span><span>Score semantic relevance before generation, not after.</span></li>
+          <li><span class="check">&#10003;</span><span>Keep the final candidate list small and high quality.</span></li>
+        </ul>
+      </div>
+    </section>
+    <section class="panel compact tooling">
+      <div class="section-mark" aria-hidden="true">
+        <svg viewBox="0 0 64 64">
+          <path d="M14 18h36v10H14zM14 36h36v10H14z"/>
+          <path d="M22 23h1M30 23h12M22 41h1M30 41h12"/>
+        </svg>
+      </div>
+      <div class="compact-copy">
+        <h2 class="section-title">TOOLS / FRAMEWORKS</h2>
+        <ul>
+          <li><span class="check">&#10003;</span><span>Rerankers: Cohere Rerank, bge-reranker, cross-encoders.</span></li>
+          <li><span class="check">&#10003;</span><span>Retrievers: LangChain, LlamaIndex, custom pipelines.</span></li>
+          <li><span class="check">&#10003;</span><span>Search stack: vector DBs, hybrid search, provider APIs.</span></li>
+        </ul>
+      </div>
+    </section>
+  </div>
+</main>
+</body>
+</html>

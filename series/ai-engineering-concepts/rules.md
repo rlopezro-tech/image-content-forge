@@ -164,6 +164,7 @@ Recommended visual treatment:
 
 - Use a soft light editorial canvas with white or near-white content bands, subtle cool-gray borders, modest corner rounding, and soft layered shadows.
 - Use a bright white header band as the series signature, with a gradient blue/purple concept icon tile, a compact blue type badge, and dark navy title text.
+- When multiple cards are produced in the same batch, vary the header accent palette by concept or category so the series is easier to scan as a set. Keep the icon tile and type badge on the same accent family, and avoid repeating the same header gradient across adjacent cards.
 - Keep the main title compact, generally around `44-48px` for short one-line titles on a `1080px` card, so the header breathes; supporting copy and checklist text should be larger and more readable than decorative labels.
 - Give each section a distinct visual role: overview = editorial summary, how it works = diagram stage, implementation = action checklist, tools/frameworks = practical ecosystem checklist.
 - Do not add vertical accent bars to panel edges; section color should come from headings, icons, badges, checks, borders, and diagram elements.

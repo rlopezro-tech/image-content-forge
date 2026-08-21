@@ -20,7 +20,7 @@ items:
   - number: 4
     slug: structured-outputs
     title: Structured Outputs
-    status: planned
+    status: ready
   - number: 5
     slug: tool-calling
     title: Tool Calling
@@ -28,7 +28,7 @@ items:
   - number: 6
     slug: context-engineering
     title: Context Engineering
-    status: planned
+    status: ready
   - number: 7
     slug: rag
     title: Retrieval-Augmented Generation
@@ -41,3 +41,15 @@ items:
     slug: vector-search
     title: Vector Search
     status: planned
+  - number: 12
+    slug: hybrid-search
+    title: Hybrid Search
+    status: ready
+  - number: 13
+    slug: reranking
+    title: Reranking
+    status: ready
+  - number: 14
+    slug: freshness-management
+    title: Freshness Management
+    status: ready
