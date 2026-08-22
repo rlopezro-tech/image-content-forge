@@ -1,0 +1,10 @@
+# Vector Databases Card Prompt
+
+Create a vertical LinkedIn technical concept card for "Vector Databases" in the AI Engineering Concepts series.
+
+- Canvas: 1080 x 1350 PNG rendered from HTML.
+- Category folder: `02-retrieval-knowledge-systems`
+- Badge: `Tooling Map`
+- Teaching angle: Vector databases store embeddings with metadata and indexes so applications can query semantic similarity, filter results, update knowledge, and serve retrieval workloads.
+- Sections: overview, how it works, engineering notes, practical stack.
+- Style: clean technical study-card, light editorial canvas, compact header, readable diagram, no hype.

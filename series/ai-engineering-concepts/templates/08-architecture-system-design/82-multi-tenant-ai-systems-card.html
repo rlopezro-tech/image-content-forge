@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1080, initial-scale=1">
+<title>Multi-Tenant AI Systems - Architecture Pattern</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 1080px; height: 1350px; }
+  body { background: #d7dfe7; color: #0d1730; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  .card { width: 1080px; height: 1350px; padding: 28px 30px; overflow: hidden; background-color: #f2f6fa; background-image: linear-gradient(rgba(24,78,119,.022) 1px, transparent 1px), linear-gradient(90deg, rgba(24,78,119,.022) 1px, transparent 1px); background-size: 32px 32px; }
+  .header, .panel { border: 1px solid #d7e1ea; border-radius: 22px; background: #fff; }
+  .header { height: 142px; padding: 22px 28px; display: flex; align-items: center; gap: 24px; box-shadow: 0 14px 30px rgba(31,54,78,.13), inset 0 1px 0 rgba(255,255,255,.9); }
+  .concept-icon { width: 96px; height: 96px; flex: 0 0 auto; display: grid; place-items: center; border: 1px solid rgba(37,99,235,.24); border-radius: 20px; background: linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%); color: #fff; box-shadow: 0 12px 24px rgba(30,58,138,.22), inset 0 0 0 1px rgba(255,255,255,.20); }
+  .concept-icon svg { width: 72px; height: 72px; }
+  h1 { margin: 0; color: #0b1b49; font-size: 39px; line-height: .96; font-weight: 850; letter-spacing: 0; text-shadow: 0 2px 8px rgba(11,27,73,.12); white-space: nowrap; }
+  .badge { margin-left: auto; padding: 13px 18px; border-radius: 999px; color: #fff; background: linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%); font-size: 16px; font-weight: 800; letter-spacing: .08em; white-space: nowrap; box-shadow: 0 8px 18px rgba(30,58,138,.18); }
+  .stack { margin-top: 14px; display: grid; gap: 12px; }
+  .panel { position: relative; box-shadow: 0 12px 28px rgba(31,54,78,.10), 0 2px 5px rgba(31,54,78,.06); }
+  .section-title { margin: 0; color: #2460d8; font-size: 20px; line-height: 1; font-weight: 850; letter-spacing: .13em; }
+  .overview { height: 174px; padding: 22px 28px; display: grid; grid-template-columns: 128px 1fr; gap: 24px; align-items: center; }
+  .section-mark { width: 88px; height: 88px; display: grid; place-items: center; border: 1px solid #a9c4f7; border-radius: 24px; color: #2460d8; background: #edf3ff; }
+  .section-mark svg { width: 58px; height: 58px; }
+  .overview-copy, .compact-copy { border-left: 1px solid #d2dde8; padding-left: 24px; }
+  .overview .section-title { margin-bottom: 12px; }
+  .overview p { margin: 0; color: #17233d; font-size: 24px; line-height: 1.18; font-weight: 540; }
+  .workflow { height: 402px; padding: 23px 20px 20px; }
+  .workflow .section-title { margin: 0 0 18px 12px; }
+  .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+  .step { position: relative; min-width: 0; height: 320px; padding: 12px 10px; text-align: center; border: 1px solid #b8ccdf; border-radius: 18px; background: #fff; box-shadow: 0 7px 14px rgba(27,67,101,.10), inset 0 1px 0 rgba(255,255,255,.9); }
+  .step:not(:last-child)::after { content: ""; position: absolute; z-index: 2; width: 28px; height: 1px; top: 154px; right: -23px; background: #45bfd0; }
+  .step:not(:last-child)::before { content: ""; position: absolute; z-index: 3; top: 150px; right: -24px; border-left: 7px solid #45bfd0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
+  .num { width: 38px; height: 38px; margin: -31px auto 14px; display: grid; place-items: center; border: 5px solid #fbfdff; border-radius: 50%; color: #fff; background: #2460d8; font-size: 18px; font-weight: 850; box-shadow: 0 0 0 1px #2460d8; }
+  .step h3 { min-height: 48px; margin: 0 0 13px; color: #0d1730; font-size: 22px; line-height: 1.04; font-weight: 850; }
+  .mini { width: 150px; min-height: 124px; margin: 0 auto 12px; padding: 12px 10px; display: grid; align-content: center; gap: 8px; border: 1px solid #cbd9e8; border-radius: 16px; background: #fbfdff; }
+  .tenant-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .tenant { height: 42px; display: grid; place-items: center; border: 1px solid #b9cdf3; border-radius: 12px; background: #edf3ff; color: #1d4ed8; font-size: 15px; font-weight: 850; }
+  .tenant.alt { border-color: #f0c47c; background: #fff8eb; color: #8a5b1c; }
+  .chip { height: 30px; padding: 6px 8px; display: flex; align-items: center; gap: 8px; border: 1px solid #cdd9e8; border-radius: 9px; background: #f7fbff; color: #173b62; font-size: 14px; font-weight: 800; }
+  .chip b { width: 18px; height: 18px; display: grid; place-items: center; border-radius: 6px; color: #fff; background: #16878a; font-size: 12px; }
+  .chip span { height: 4px; flex: 1; border-radius: 999px; background: #9aa8b8; }
+  .lock { width: 82px; height: 82px; margin: 0 auto; display: grid; place-items: center; border-radius: 24px; color: #fff; background: linear-gradient(135deg,#1d4ed8,#0891b2); }
+  .lock svg { width: 52px; height: 52px; }
+  .step p { margin: 0; color: #253b54; font-size: 18px; line-height: 1.14; }
+  .compact { height: 248px; padding: 22px 28px; display: grid; grid-template-columns: 128px 1fr; gap: 24px; align-items: center; }
+  .compact .section-title { margin-bottom: 18px; }
+  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 15px; }
+  li { display: grid; grid-template-columns: 32px 1fr; gap: 14px; align-items: center; color: #17233d; font-size: 24px; line-height: 1.1; font-weight: 540; }
+  .check { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 9px; color: #fff; background: #16878a; font-size: 17px; font-weight: 850; }
+  .tooling .section-mark { border-color: #f0c47c; color: #d98716; background: #fff8eb; }
+  .tooling .section-title { color: #cf730f; }
+  .tooling .check { background: #d98716; }
+  svg { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2.8; }
+</style>
+</head>
+<body>
+<main class="card">
+  <header class="header">
+    <div class="concept-icon" aria-hidden="true"><svg viewBox="0 0 72 72"><rect x="10" y="14" width="22" height="20" rx="6"/><rect x="40" y="14" width="22" height="20" rx="6"/><rect x="10" y="42" width="22" height="16" rx="5"/><rect x="40" y="42" width="22" height="16" rx="5"/><path d="M32 24h8M32 50h8"/><path d="M21 34v8M51 34v8"/></svg></div>
+    <h1>MULTI-TENANT AI SYSTEMS</h1>
+    <div class="badge">ARCHITECTURE PATTERN</div>
+  </header>
+  <div class="stack">
+    <section class="panel overview">
+      <div class="section-mark" aria-hidden="true"><svg viewBox="0 0 64 64"><rect x="10" y="16" width="18" height="16" rx="5"/><rect x="36" y="16" width="18" height="16" rx="5"/><rect x="10" y="40" width="18" height="12" rx="4"/><rect x="36" y="40" width="18" height="12" rx="4"/></svg></div>
+      <div class="overview-copy"><h2 class="section-title">OVERVIEW</h2><p>Multi-tenant AI systems isolate prompts, retrieval, tools, memory, logs, rate limits, and permissions by customer or workspace. It matters because AI requests mix application data with generated context, making tenant boundaries part of the model path.</p></div>
+    </section>
+    <section class="panel workflow">
+      <h2 class="section-title">HOW IT WORKS</h2>
+      <div class="flow">
+        <article class="step"><div class="num">1</div><h3>Identify<br>tenant</h3><div class="mini tenant-grid"><div class="tenant">A</div><div class="tenant alt">B</div><div class="tenant">C</div><div class="tenant">D</div></div><p>Resolve user, workspace, policy, and region.</p></article>
+        <article class="step"><div class="num">2</div><h3>Scope<br>context</h3><div class="mini"><div class="chip"><b>P</b><span></span></div><div class="chip"><b>R</b><span></span></div><div class="chip"><b>M</b><span></span></div></div><p>Load only tenant-approved prompts and memory.</p></article>
+        <article class="step"><div class="num">3</div><h3>Filter<br>retrieval</h3><div class="mini"><div class="chip"><b>ID</b><span></span></div><div class="chip"><b>ACL</b><span></span></div><div class="chip"><b>REG</b><span></span></div></div><p>Apply tenant filters before search and rerank.</p></article>
+        <article class="step"><div class="num">4</div><h3>Authorize<br>tools</h3><div class="mini"><div class="lock"><svg viewBox="0 0 64 64"><rect x="18" y="30" width="28" height="22" rx="6"/><path d="M24 30v-8a8 8 0 0 1 16 0v8"/><path d="M32 39v5"/></svg></div></div><p>Limit APIs, actions, and side effects by tenant.</p></article>
+        <article class="step"><div class="num">5</div><h3>Log and<br>limit</h3><div class="mini"><div class="chip"><b>$</b><span></span></div><div class="chip"><b>Q</b><span></span></div><div class="chip"><b>T</b><span></span></div></div><p>Track usage, traces, quotas, and audit records.</p></article>
+      </div>
+    </section>
+    <section class="panel compact implementation"><div class="section-mark" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M16 18h32v28H16z"/><path d="M24 28h16M24 36h10"/><path d="M46 46l8 8"/></svg></div><div class="compact-copy"><h2 class="section-title">ENGINEERING NOTES</h2><ul><li><span class="check">&#10003;</span><span>Scope prompts, indexes, caches, tools, and traces by tenant.</span></li><li><span class="check">&#10003;</span><span>Apply filters before retrieval, generation, and tool execution.</span></li><li><span class="check">&#10003;</span><span>Test isolation with cross-tenant adversarial requests.</span></li></ul></div></section>
+    <section class="panel compact tooling"><div class="section-mark" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M14 18h36v10H14zM14 36h36v10H14z"/><path d="M22 23h1M30 23h12M22 41h1M30 41h12"/></svg></div><div class="compact-copy"><h2 class="section-title">PRACTICAL STACK</h2><ul><li><span class="check">&#10003;</span><span>Identity: tenants, users, roles, regions, data policies.</span></li><li><span class="check">&#10003;</span><span>Storage: per-tenant indexes, filters, caches, logs.</span></li><li><span class="check">&#10003;</span><span>Controls: quotas, permissions, audit trails, isolation tests.</span></li></ul></div></section>
+  </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1080, initial-scale=1">
+<title>Model Capability Boundaries - Core Concept</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 1080px; height: 1350px; }
+  body {
+    background: #d7dfe7;
+    color: #0d1730;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  .card {
+    width: 1080px;
+    height: 1350px;
+    padding: 28px 30px;
+    overflow: hidden;
+    background-color: #f2f6fa;
+    background-image:
+      linear-gradient(rgba(24, 78, 119, .022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(24, 78, 119, .022) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .header, .panel {
+    border: 1px solid #d7e1ea;
+    border-radius: 22px;
+    background: #ffffff;
+  }
+  .header {
+    height: 142px;
+    padding: 22px 28px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    box-shadow: 0 14px 30px rgba(31, 54, 78, .13), inset 0 1px 0 rgba(255,255,255,.9);
+  }
+  .concept-icon {
+    width: 96px;
+    height: 96px;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    border: 1px solid color-mix(in srgb, #22d3ee 28%, white);
+    border-radius: 20px;
+    background: linear-gradient(135deg, #0e7490 0%, #22d3ee 100%);
+    color: #ffffff;
+    box-shadow: 0 12px 24px rgba(15, 85, 120, .22), inset 0 0 0 1px rgba(255,255,255,.20);
+  }
+  .concept-icon svg { width: 72px; height: 72px; }
+  h1 {
+    margin: 0;
+    color: #0b1b49;
+    font-size: 40px;
+    line-height: .96;
+    font-weight: 850;
+    letter-spacing: 0;
+    text-shadow: 0 2px 8px rgba(11,27,73,.12);
+  }
+  .badge {
+    margin-left: auto;
+    padding: 13px 18px;
+    border-radius: 999px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #0e7490 0%, #22d3ee 100%);
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    white-space: nowrap;
+    box-shadow: 0 8px 18px rgba(20, 80, 120, .18);
+  }
+  .stack { margin-top: 14px; display: grid; gap: 12px; }
+  .panel { box-shadow: 0 12px 28px rgba(31, 54, 78, .10), 0 2px 5px rgba(31, 54, 78, .06); }
+  .section-title {
+    margin: 0;
+    color: #2460d8;
+    font-size: 20px;
+    line-height: 1;
+    font-weight: 850;
+    letter-spacing: .13em;
+  }
+  .overview {
+    height: 174px;
+    padding: 22px 28px;
+    display: grid;
+    grid-template-columns: 128px 1fr;
+    gap: 24px;
+    align-items: center;
+  }
+  .section-mark {
+    width: 88px;
+    height: 88px;
+    display: grid;
+    place-items: center;
+    border: 1px solid #a9c4f7;
+    border-radius: 24px;
+    color: #2460d8;
+    background: #edf3ff;
+  }
+  .section-mark svg { width: 58px; height: 58px; stroke-width: 2.8; }
+  .overview-copy { border-left: 1px solid #d2dde8; padding-left: 24px; }
+  .overview .section-title { margin-bottom: 12px; }
+  .overview p {
+    margin: 0;
+    color: #17233d;
+    font-size: 24px;
+    line-height: 1.18;
+    font-weight: 540;
+  }
+  .workflow {
+    height: 402px;
+    padding: 23px 20px 20px;
+  }
+  .workflow .section-title { margin: 0 0 18px 12px; }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+  }
+  .step {
+    position: relative;
+    min-width: 0;
+    height: 320px;
+    padding: 12px 10px;
+    text-align: center;
+    border: 1px solid #b8ccdf;
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 7px 14px rgba(27, 67, 101, .10), inset 0 1px 0 rgba(255,255,255,.9);
+  }
+  .step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    width: 28px;
+    height: 1px;
+    top: 154px;
+    right: -23px;
+    background: #45bfd0;
+  }
+  .step:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    z-index: 3;
+    top: 150px;
+    right: -24px;
+    border-left: 7px solid #45bfd0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+  }
+  .num {
+    width: 38px;
+    height: 38px;
+    margin: -31px auto 14px;
+    display: grid;
+    place-items: center;
+    border: 5px solid #fbfdff;
+    border-radius: 50%;
+    color: #fff;
+    background: #2460d8;
+    font-size: 18px;
+    font-weight: 850;
+    box-shadow: 0 0 0 1px #2460d8;
+  }
+  .step h3 {
+    min-height: 48px;
+    margin: 0 0 13px;
+    color: #0d1730;
+    font-size: 22px;
+    line-height: 1.04;
+    font-weight: 850;
+  }
+  .mini {
+    width: 150px;
+    min-height: 124px;
+    margin: 0 auto 12px;
+    padding: 12px 10px;
+    display: grid;
+    align-content: center;
+    gap: 8px;
+    border: 1px solid #cbd9e8;
+    border-radius: 16px;
+    background: #fbfdff;
+  }
+  .line { height: 14px; border-radius: 999px; background: #dfe8f2; }
+  .line:nth-child(2) { width: 74%; }
+  .line:nth-child(3) { width: 52%; }
+  .dot-row { display: flex; justify-content: center; gap: 10px; }
+  .dot { width: 18px; height: 18px; border-radius: 50%; background: #22d3ee; opacity: .9; }
+  .step p {
+    margin: 0;
+    color: #253b54;
+    font-size: 18px;
+    line-height: 1.14;
+  }
+  .lower {
+    height: 436px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .checklist, .tools {
+    padding: 25px 26px;
+    min-width: 0;
+  }
+  .checklist .section-title, .tools .section-title { margin-bottom: 18px; }
+  .bullet {
+    min-height: 78px;
+    padding: 16px 16px 16px 58px;
+    position: relative;
+    border: 1px solid #d9e4ef;
+    border-radius: 16px;
+    background: #fbfdff;
+    color: #17233d;
+    font-size: 23px;
+    line-height: 1.13;
+    font-weight: 620;
+  }
+  .bullet + .bullet { margin-top: 14px; }
+  .bullet::before {
+    content: "";
+    position: absolute;
+    left: 18px;
+    top: 20px;
+    width: 22px;
+    height: 22px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #0e7490, #22d3ee);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.35);
+  }
+  .tool-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .tool {
+    min-height: 54px;
+    padding: 13px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    border: 1px solid #d9e4ef;
+    border-radius: 15px;
+    background: #fbfdff;
+    color: #142238;
+    font-size: 22px;
+    line-height: 1;
+    font-weight: 780;
+  }
+  .tool span {
+    width: 36px;
+    height: 26px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #0e7490, #22d3ee);
+    opacity: .95;
+  }
+</style>
+</head>
+<body>
+<main class="card">
+  <header class="header">
+    <div class="concept-icon"><svg viewBox="0 0 72 72" fill="none" aria-hidden="true">
+    <path d="M18 20h18l18 16-18 16H18l18-16-18-16Z" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>
+    <circle cx="18" cy="20" r="5" fill="currentColor"/>
+    <circle cx="36" cy="36" r="5" fill="currentColor"/>
+    <circle cx="18" cy="52" r="5" fill="currentColor"/>
+    <circle cx="54" cy="36" r="5" fill="currentColor"/>
+  </svg></div>
+    <h1>Model Capability Boundaries</h1>
+    <div class="badge">Core Concept</div>
+  </header>
+  <div class="stack">
+    <section class="panel overview" aria-labelledby="overview-title">
+      <div class="section-mark"><svg viewBox="0 0 72 72" fill="none" aria-hidden="true">
+    <path d="M18 20h18l18 16-18 16H18l18-16-18-16Z" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>
+    <circle cx="18" cy="20" r="5" fill="currentColor"/>
+    <circle cx="36" cy="36" r="5" fill="currentColor"/>
+    <circle cx="18" cy="52" r="5" fill="currentColor"/>
+    <circle cx="54" cy="36" r="5" fill="currentColor"/>
+  </svg></div>
+      <div class="overview-copy">
+        <h2 id="overview-title" class="section-title">OVERVIEW</h2>
+        <p>A model boundary is the line between what the model can infer from its training and context, and what your system must provide through data, tools, policy, validation, or human review.</p>
+      </div>
+    </section>
+    <section class="panel workflow" aria-labelledby="workflow-title">
+      <h2 id="workflow-title" class="section-title">HOW IT WORKS</h2>
+      <div class="steps">
+        <article class="step">
+          <div class="num">1</div>
+          <h3>Task</h3>
+          <div class="mini"><div class="line"></div><div class="line"></div><div class="line"></div><div class="dot-row"><i class="dot"></i><i class="dot"></i><i class="dot"></i></div></div>
+          <p>Define the user goal and required confidence level.</p>
+        </article>
+        <article class="step">
+          <div class="num">2</div>
+          <h3>Knowledge</h3>
+          <div class="mini"><div class="line"></div><div class="line"></div><div class="line"></div><div class="dot-row"><i class="dot"></i><i class="dot"></i><i class="dot"></i></div></div>
+          <p>Check whether needed facts are in context or external data.</p>
+        </article>
+        <article class="step">
+          <div class="num">3</div>
+          <h3>Tools</h3>
+          <div class="mini"><div class="line"></div><div class="line"></div><div class="line"></div><div class="dot-row"><i class="dot"></i><i class="dot"></i><i class="dot"></i></div></div>
+          <p>Add APIs when the answer requires action or live state.</p>
+        </article>
+        <article class="step">
+          <div class="num">4</div>
+          <h3>Control</h3>
+          <div class="mini"><div class="line"></div><div class="line"></div><div class="line"></div><div class="dot-row"><i class="dot"></i><i class="dot"></i><i class="dot"></i></div></div>
+          <p>Constrain outputs with schemas, policy, and validation.</p>
+        </article>
+        <article class="step">
+          <div class="num">5</div>
+          <h3>Escalate</h3>
+          <div class="mini"><div class="line"></div><div class="line"></div><div class="line"></div><div class="dot-row"><i class="dot"></i><i class="dot"></i><i class="dot"></i></div></div>
+          <p>Route uncertain, risky, or irreversible cases to review.</p>
+        </article>
+      </div>
+    </section>
+    <section class="lower">
+      <div class="panel checklist">
+        <h2 class="section-title">ENGINEERING NOTES</h2>
+        <div class="bullet">Missing data is not a reasoning problem.</div>
+        <div class="bullet">Untrusted context can change model behavior.</div>
+        <div class="bullet">Confidence must be measured outside the prompt.</div>
+      </div>
+      <div class="panel tools">
+        <h2 class="section-title">PRACTICAL STACK</h2>
+        <div class="tool-grid">
+          <div class="tool">Capability matrix<span></span></div>
+          <div class="tool">Retrieval<span></span></div>
+          <div class="tool">Tool permissions<span></span></div>
+          <div class="tool">Validators<span></span></div>
+          <div class="tool">Human review<span></span></div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+</body>
+</html>
