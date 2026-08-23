@@ -381,6 +381,16 @@ Keep product-specific posts grounded in the tool's official documentation. Do no
 
 Every generated concept must create or reuse one category folder under each asset root. Do not place new generated assets directly at the root of `prompts/`, `templates/`, `images/`, or `posts/`.
 
+Before generating any image, template, prompt, or LinkedIn post for a concept that is not already present in the existing category folders, classify it first.
+
+Classification flow:
+
+- Check the roadmap and existing category folders to see whether the concept already has a defined category and number.
+- If the concept is new but fits an existing canonical category, assign it to that category before generating assets.
+- If the concept does not clearly fit any existing category, evaluate the closest roadmap capability and choose the best canonical category before generating assets. Do not generate the image or post first.
+- If a new roadmap row or number is needed, decide the category, number, slug, badge, and teaching angle before creating files.
+- Only after classification is complete should the prompt, HTML template, PNG image, and LinkedIn post be generated.
+
 Use these canonical category slugs:
 
 ```text
