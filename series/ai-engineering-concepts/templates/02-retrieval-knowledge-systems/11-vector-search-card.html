@@ -83,23 +83,7 @@
   .overview {
     height: 174px;
     padding: 22px 28px;
-    display: grid;
-    grid-template-columns: 128px 1fr;
-    gap: 24px;
-    align-items: center;
   }
-  .section-mark {
-    width: 88px;
-    height: 88px;
-    display: grid;
-    place-items: center;
-    border: 1px solid #a9c4f7;
-    border-radius: 24px;
-    color: #2460d8;
-    background: #edf3ff;
-  }
-  .section-mark svg { width: 58px; height: 58px; stroke-width: 2.8; }
-  .overview-copy { border-left: 1px solid #d2dde8; padding-left: 24px; }
   .overview .section-title { margin-bottom: 12px; }
   .overview p {
     margin: 0;
@@ -235,7 +219,7 @@
     gap: 12px;
   }
   .tool {
-    min-height: 54px;
+    min-height: 74px;
     padding: 13px 15px;
     display: flex;
     align-items: center;
@@ -245,8 +229,8 @@
     border-radius: 15px;
     background: #fbfdff;
     color: #142238;
-    font-size: 22px;
-    line-height: 1;
+    font-size: 21px;
+    line-height: 1.12;
     font-weight: 780;
   }
   .tool span {
@@ -273,13 +257,6 @@
   </header>
   <div class="stack">
     <section class="panel overview" aria-labelledby="overview-title">
-      <div class="section-mark"><svg viewBox="0 0 72 72" fill="none" aria-hidden="true">
-    <path d="M18 20h18l18 16-18 16H18l18-16-18-16Z" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>
-    <circle cx="18" cy="20" r="5" fill="currentColor"/>
-    <circle cx="36" cy="36" r="5" fill="currentColor"/>
-    <circle cx="18" cy="52" r="5" fill="currentColor"/>
-    <circle cx="54" cy="36" r="5" fill="currentColor"/>
-  </svg></div>
       <div class="overview-copy">
         <h2 id="overview-title" class="section-title">OVERVIEW</h2>
         <p>Vector search finds semantically similar items by comparing embeddings in high-dimensional space. It powers retrieval when exact keywords are too brittle.</p>
@@ -330,11 +307,9 @@
       <div class="panel tools">
         <h2 class="section-title">PRACTICAL STACK</h2>
         <div class="tool-grid">
-          <div class="tool">Embedding model<span></span></div>
-          <div class="tool">ANN index<span></span></div>
-          <div class="tool">Similarity metric<span></span></div>
-          <div class="tool">Metadata filters<span></span></div>
-          <div class="tool">Reranker<span></span></div>
+          <div class="tool">Models: embedding APIs, batch jobs.<span></span></div>
+          <div class="tool">Storage: ANN index, vector DB, metadata filters.<span></span></div>
+          <div class="tool">Quality: similarity metrics, rerankers, retrieval evals.<span></span></div>
         </div>
       </div>
     </section>
