@@ -18,16 +18,17 @@ Status values:
 | 5 | Tool Calling | published | TBD | `images/01-ai-fundamentals/tool-calling.png` |
 | 7 | RAG | published | TBD | `images/01-ai-fundamentals/rag.png` |
 | 13 | Chunking | published | TBD | `images/02-retrieval-knowledge-systems/chunking.png` |
+| 4 | Structured Outputs | published | 2026-08-23 | `images/01-ai-fundamentals/structured-outputs.png` |
+| 6 | Context Engineering | published | 2026-08-23 | `images/01-ai-fundamentals/context-engineering.png` |
+| 8 | Fine-Tuning | published | 2026-08-23 | `images/01-ai-fundamentals/08-fine-tuning.png` |
+| 11 | Vector Search | published | 2026-08-23 | `images/02-retrieval-knowledge-systems/11-vector-search.png` |
+| 17 | Reranking | published | 2026-08-23 | `images/02-retrieval-knowledge-systems/reranking.png` |
 
 ## Ready To Publish
 
 | Roadmap # | Concept | Status | LinkedIn date | Image |
 |---:|---|---|---|---|
-| 4 | Structured Outputs | ready_to_publish | TBD | `images/01-ai-fundamentals/structured-outputs.png` |
-| 6 | Context Engineering | ready_to_publish | TBD | `images/01-ai-fundamentals/context-engineering.png` |
-| 8 | Fine-Tuning | ready_to_publish | TBD | `images/01-ai-fundamentals/08-fine-tuning.png` |
-| 11 | Vector Search | ready_to_publish | TBD | `images/02-retrieval-knowledge-systems/11-vector-search.png` |
-| 17 | Reranking | ready_to_publish | TBD | `images/02-retrieval-knowledge-systems/reranking.png` |
+| - | - | - | - | - |
 
 ## Notes
 
