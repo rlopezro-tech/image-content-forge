@@ -264,51 +264,162 @@
     font-size: 18px;
     line-height: 1.14;
   }
-  .compact {
-    height: 248px;
-    padding: 22px 28px;
+  .expanded {
+    height: 508px;
+    padding: 24px 28px 26px;
     display: grid;
     grid-template-columns: 128px 1fr;
     gap: 24px;
     align-items: center;
   }
-  .compact .section-title { margin-bottom: 18px; }
-  ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  .expanded-copy {
+    height: 100%;
+    border-left: 1px solid #d2dde8;
+    padding-left: 24px;
     display: grid;
-    gap: 15px;
+    grid-template-rows: auto 1fr;
+    gap: 18px;
   }
-  li {
-    display: grid;
-    grid-template-columns: 32px 1fr;
-    gap: 14px;
-    align-items: center;
-    color: #17233d;
-    font-size: 24px;
-    line-height: 1.1;
-    font-weight: 540;
-  }
-  .check {
-    width: 28px;
-    height: 28px;
-    display: grid;
-    place-items: center;
-    border-radius: 9px;
-    color: #fff;
-    background: #16878a;
-    font-size: 17px;
-    font-weight: 850;
-    box-shadow: 0 3px 0 rgba(22,135,138,.18);
-  }
-  .tooling .section-mark {
+  .expanded .section-title { color: #cf730f; }
+  .expanded .section-mark {
     border-color: #f0c47c;
     color: #d98716;
     background: #fff8eb;
   }
-  .tooling .section-title { color: #cf730f; }
-  .tooling .check { background: #d98716; }
+  .io-map {
+    height: 382px;
+    display: grid;
+    grid-template-columns: 196px 1fr 196px;
+    gap: 18px;
+    align-items: stretch;
+  }
+  .io-column,
+  .io-core,
+  .control-row {
+    border: 1px solid #cbd9e8;
+    border-radius: 18px;
+    background: #fbfdff;
+  }
+  .io-column {
+    padding: 16px 14px;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: 14px;
+  }
+  .io-title {
+    color: #0d1730;
+    font-size: 20px;
+    line-height: 1;
+    font-weight: 850;
+    text-align: center;
+  }
+  .io-items {
+    display: grid;
+    gap: 9px;
+    align-content: center;
+  }
+  .io-pill {
+    height: 42px;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    border: 1px solid #b9cdf3;
+    border-radius: 12px;
+    color: #183b66;
+    background: #edf3ff;
+    font-size: 16px;
+    font-weight: 800;
+  }
+  .io-pill.hot {
+    color: #8a5b1c;
+    border-color: #f0c47c;
+    background: #fff8eb;
+  }
+  .io-dot {
+    width: 11px;
+    height: 11px;
+    flex: 0 0 auto;
+    border-radius: 4px;
+    background: #2460d8;
+  }
+  .io-pill.hot .io-dot { background: #d98716; }
+  .map-center {
+    position: relative;
+    display: grid;
+    grid-template-rows: 1fr 82px;
+    gap: 14px;
+  }
+  .map-center::before,
+  .map-center::after {
+    content: "";
+    position: absolute;
+    z-index: 3;
+    top: 151px;
+    width: 24px;
+    height: 1px;
+    background: #45bfd0;
+  }
+  .map-center::before { left: -21px; }
+  .map-center::after { right: -21px; }
+  .io-core {
+    padding: 18px;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: 16px;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  }
+  .core-title {
+    color: #0b1b49;
+    font-size: 22px;
+    line-height: 1;
+    font-weight: 850;
+    text-align: center;
+  }
+  .core-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .core-cell {
+    padding: 13px 10px;
+    border: 1px solid #cbd9e8;
+    border-radius: 15px;
+    background: #ffffff;
+    text-align: center;
+  }
+  .core-cell strong {
+    display: block;
+    margin-bottom: 6px;
+    color: #0d1730;
+    font-size: 17px;
+    line-height: 1.05;
+    font-weight: 850;
+  }
+  .core-cell span {
+    display: block;
+    color: #31465f;
+    font-size: 14px;
+    line-height: 1.12;
+    font-weight: 620;
+  }
+  .control-row {
+    padding: 12px 14px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    border-color: #f0c47c;
+    background: #fffaf1;
+  }
+  .control {
+    display: grid;
+    place-items: center;
+    color: #7c4b11;
+    font-size: 15px;
+    line-height: 1.05;
+    font-weight: 850;
+    text-align: center;
+  }
   svg {
     fill: none;
     stroke: currentColor;
@@ -410,37 +521,52 @@
       </div>
     </section>
 
-    <section class="panel compact implementation">
+    <section class="panel expanded">
       <div class="section-mark" aria-hidden="true">
         <svg viewBox="0 0 64 64">
-          <path d="M14 18h36M14 32h30M14 46h22"/>
-          <path d="m46 24 8 8-8 8"/>
+          <path d="M14 20h36v9H14zM14 36h36v9H14z"/>
+          <path d="M24 29v7M40 29v7"/>
+          <path d="M22 52h20M32 45v7"/>
         </svg>
       </div>
-      <div class="compact-copy">
-        <h2 class="section-title">ENGINEERING NOTES</h2>
-        <ul>
-          <li><span class="check">&#10003;</span><span>Set modality-specific limits for size, type, and duration.</span></li>
-          <li><span class="check">&#10003;</span><span>Design fallbacks when one modality is missing or weak.</span></li>
-          <li><span class="check">&#10003;</span><span>Validate outputs by format, safety, policy, and action risk.</span></li>
-        </ul>
-      </div>
-    </section>
-
-    <section class="panel compact tooling">
-      <div class="section-mark" aria-hidden="true">
-        <svg viewBox="0 0 64 64">
-          <path d="M14 18h36v10H14zM14 36h36v10H14z"/>
-          <path d="M22 23h1M30 23h12M22 41h1M30 41h12"/>
-        </svg>
-      </div>
-      <div class="compact-copy">
-        <h2 class="section-title">PRACTICAL STACK</h2>
-        <ul>
-          <li><span class="check">&#10003;</span><span>Media intake: upload APIs, codecs, OCR, speech, parsers.</span></li>
-          <li><span class="check">&#10003;</span><span>Model/runtime: multimodal models, routers, tools, queues.</span></li>
-          <li><span class="check">&#10003;</span><span>Output/ops: validators, storage, traces, redaction, alerts.</span></li>
-        </ul>
+      <div class="expanded-copy">
+        <h2 class="section-title">EXPANDED DIAGRAM</h2>
+        <div class="io-map">
+          <div class="io-column">
+            <div class="io-title">Input boundary</div>
+            <div class="io-items">
+              <div class="io-pill"><span class="io-dot"></span>Text</div>
+              <div class="io-pill hot"><span class="io-dot"></span>Images</div>
+              <div class="io-pill"><span class="io-dot"></span>Audio</div>
+              <div class="io-pill"><span class="io-dot"></span>Files</div>
+            </div>
+          </div>
+          <div class="map-center">
+            <div class="io-core">
+              <div class="core-title">Multimodal runtime</div>
+              <div class="core-grid">
+                <div class="core-cell"><strong>Normalize</strong><span>transcode, extract, metadata</span></div>
+                <div class="core-cell"><strong>Route</strong><span>model, tool, pipeline</span></div>
+                <div class="core-cell"><strong>Constrain</strong><span>limits, policy, schema</span></div>
+                <div class="core-cell"><strong>Fallback</strong><span>missing or weak modality</span></div>
+              </div>
+            </div>
+            <div class="control-row">
+              <div class="control">Storage</div>
+              <div class="control">Traces</div>
+              <div class="control">Redaction</div>
+            </div>
+          </div>
+          <div class="io-column">
+            <div class="io-title">Output boundary</div>
+            <div class="io-items">
+              <div class="io-pill"><span class="io-dot"></span>Text</div>
+              <div class="io-pill hot"><span class="io-dot"></span>Media</div>
+              <div class="io-pill"><span class="io-dot"></span>Actions</div>
+              <div class="io-pill"><span class="io-dot"></span>JSON</div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   </div>

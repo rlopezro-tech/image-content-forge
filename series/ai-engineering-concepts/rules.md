@@ -74,6 +74,27 @@ Recommended layout:
 4. Engineering notes.
 5. Practical stack.
 
+Before generating a card, decide whether the default bottom sections are the best teaching format for the specific concept.
+
+Default bottom format:
+
+```text
+4. Engineering notes.
+5. Practical stack.
+```
+
+Use the default when short decision notes and ecosystem/runtime details help the reader apply the concept.
+
+Alternative bottom format:
+
+```text
+4. System map.
+```
+
+Use the alternative when the concept is better explained through a larger visual model than through two short text sections. This can apply to any concept, regardless of category. Good candidates include architecture boundaries, request paths, lifecycle diagrams, control/data-plane splits, validation flows, memory maps, routing maps, failure-mode maps, or matrix-style tradeoffs.
+
+When the alternative format is chosen, remove both `Engineering Notes` and `Practical Stack` so the card has four visible sections total and the system map gets enough vertical space to be useful. Do not squeeze a system map plus the two default bottom sections into the same card.
+
 The card should use the full usable width of the canvas and remain readable on mobile LinkedIn previews.
 
 ## HTML Render Standard
@@ -100,7 +121,7 @@ Template requirements:
 - Use inline SVG for neutral concept icons, arrows, diagrams, and small functional symbols.
 - Do not use external web images, remote fonts, remote stylesheets, or network-dependent assets in the final template.
 - Reference only local assets when an official product or framework logo is required.
-- Use semantic sections for `header`, `overview`, `how it works`, `implementation`, and `tools frameworks`.
+- Use semantic sections for `header`, `overview`, `how it works`, and either the default `engineering notes` plus `practical stack` sections or one alternative `system map` section.
 - Use reusable classes for panels, section labels, step nodes, bullets, badges, and icons.
 - Keep the template readable and maintainable; do not minify it.
 
@@ -151,7 +172,9 @@ Before considering a card complete, verify:
 - The overview remains at or below 100 words.
 - The overview copy should use the full available text area unless a narrower measure clearly improves readability. Use justified text only when word spacing remains natural; otherwise prefer left-aligned paragraph text.
 - The central diagram contains 4-6 nodes and remains legible at feed size.
-- Engineering notes and practical stack contain no more than 3 bullets each.
+- The card uses either the default five-section layout or the alternative four-section layout; do not mix both bottom formats.
+- In the default layout, engineering notes and practical stack contain no more than 3 bullets each.
+- In the alternative layout, the system map has enough vertical space to be readable at feed size and does not depend on dense paragraphs.
 - The header follows the shared series structure and remains visually consistent.
 - All sections have clear boundaries and balanced vertical rhythm.
 - The lowest section ends naturally; do not add a footer or empty spacer.
@@ -179,7 +202,7 @@ Recommended visual treatment:
   - `Framework Notes`: cyan/indigo
   - `Protocol`: violet/cyan
 - Keep the main title compact, generally around `44-48px` for short one-line titles on a `1080px` card, so the header breathes; supporting copy and checklist text should be larger and more readable than decorative labels.
-- Give each section a distinct visual role: overview = editorial summary, how it works = diagram stage, engineering notes = decision checklist, practical stack = ecosystem and runtime checklist.
+- Give each section a distinct visual role: overview = editorial summary, how it works = primary flow or concept diagram, engineering notes = decision checklist, practical stack = ecosystem and runtime checklist, system map = larger visual model when it teaches better than bottom text sections.
 - Do not add vertical accent bars to panel edges; section color should come from headings, icons, badges, checks, borders, and diagram elements.
 - Use a spacing scale and repeat it consistently: 12 / 16 / 24 / 32 px. Never solve visual imbalance with random offsets.
 - Use one primary accent (electric blue) plus up to two functional accents (teal for flow or positive state, amber for caution or operational state). Accents should identify meaning, not decorate every surface.
@@ -201,7 +224,7 @@ Avoid visual clutter:
 
 Before export, verify that:
 
-- The eye lands on the concept title first, then the central diagram, then the two supporting sections.
+- The eye lands on the concept title first, then the central diagram, then either the two supporting sections or the system map.
 - The header has the clearest title contrast and the diagram is the most visually informative region.
 - Every panel has one dominant element; labels, copy, icons, and decoration must not compete equally.
 - Borders are quiet and shadows are soft; if the card looks like a worksheet or comic panel, reduce stroke weight and contrast.
@@ -265,7 +288,7 @@ Header rules:
 
 ## Content Pattern
 
-Use this fixed visible section structure for every card:
+Use this default visible section structure for cards:
 
 ```text
 OVERVIEW
@@ -273,6 +296,22 @@ HOW IT WORKS
 ENGINEERING NOTES
 PRACTICAL STACK
 ```
+
+Before writing the template, evaluate whether the concept would be taught better by replacing the last two sections with one larger visual section.
+
+Use this alternative visible section structure when a larger diagram communicates the concept more clearly:
+
+```text
+OVERVIEW
+HOW IT WORKS
+SYSTEM MAP
+```
+
+The header is still present in both structures, so the alternative layout creates a four-section card overall: header, overview, how it works, and system map.
+
+Choose the alternative layout when the bottom content should be a system map, architecture boundary, request path, lifecycle, validation flow, control/data-plane split, routing map, failure-mode map, memory map, responsibility matrix, or other visual explanation. This decision is concept-specific, not category-specific.
+
+When using `SYSTEM MAP`, do not include `ENGINEERING NOTES` or `PRACTICAL STACK`. The goal is to give the map enough space to be useful instead of compressing all sections.
 
 Do not use "interview" language in the card. The content should read as general AI engineering knowledge while still helping readers build strong technical mental models.
 
@@ -282,9 +321,10 @@ Section rules:
 - `HOW IT WORKS`: use the central diagram or flow; keep it to 4-6 nodes maximum.
 - `ENGINEERING NOTES`: use up to 3 bullets about concrete engineering judgment: key decisions, production risks, constraints, tradeoffs, validation points, or rollout concerns. The bullets should help an engineer decide how to apply the concept safely in a real system.
 - `PRACTICAL STACK`: use up to 3 bullets with the concrete ecosystem needed to apply the concept. Group items by function, such as `Models/APIs:`, `Storage:`, `Runtime:`, `Frameworks:`, `Evals:`, `Observability:`, `Security:`, `Serving:`, `Metrics:`, `Controls:`, or `Protocols:`.
+- `SYSTEM MAP`: use a larger visual explanation with concise labels, directional flow, grouped zones, or a compact matrix. Keep text short enough to remain readable on mobile LinkedIn previews.
 - Do not list tool names without explaining what kind of tool they are. For example, use `Vector DBs: Pinecone, Weaviate, pgvector` instead of only `Pinecone, Weaviate, pgvector`.
 
-For security concepts, keep the same visible structure but adapt the content:
+For security concepts, default to the standard structure but consider the alternative diagram layout when a threat path, control path, or validation flow needs more space:
 
 ```text
 OVERVIEW
@@ -300,7 +340,7 @@ Security content guidance:
 - `ENGINEERING NOTES`: name the practical controls, guardrails, policies, validators, review steps, and failure boundaries.
 - `PRACTICAL STACK`: group real controls, tools, runtime checks, policies, validators, scanners, policy engines, tracing tools, gateways, or guardrail frameworks.
 
-For framework or tool concepts, keep the same visible structure but adapt the content:
+For framework or tool concepts, default to the standard structure but consider the alternative diagram layout when a primitive map, integration map, runtime flow, or tradeoff matrix teaches better:
 
 - `OVERVIEW`: explain what the tool does and where it fits.
 - `HOW IT WORKS`: show its core primitives or runtime flow.
