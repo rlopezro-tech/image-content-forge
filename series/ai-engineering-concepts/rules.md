@@ -45,7 +45,7 @@ The card should feel like a saved engineering note:
 - Eye-catching.
 - Polished enough to feel like a premium technical reference.
 
-Each section must be clearly defined and easy to scan. Use strong layout hierarchy, consistent spacing, subtle borders, restrained shadows, and clear section headers.
+Each section must be clearly defined and easy to scan. Use strong layout hierarchy, consistent spacing, subtle borders, restrained shadows, and clear section headers. Prioritize useful content area over decorative framing.
 
 Avoid:
 
@@ -95,6 +95,8 @@ Use the alternative when the concept is better explained through a larger visual
 
 When the alternative format is chosen, remove both `Engineering Notes` and `Practical Stack` so the card has four visible sections total and the system map gets enough vertical space to be useful. Do not squeeze a system map plus the two default bottom sections into the same card.
 
+The `System Map` section should give the diagram the full usable width of the panel. That space should belong to the diagram unless an icon is an actual labeled node inside the map.
+
 The card should use the full usable width of the canvas and remain readable on mobile LinkedIn previews.
 
 ## HTML Render Standard
@@ -123,6 +125,7 @@ Template requirements:
 - Reference only local assets when an official product or framework logo is required.
 - Use semantic sections for `header`, `overview`, `how it works`, and either the default `engineering notes` plus `practical stack` sections or one alternative `system map` section.
 - Use reusable classes for panels, section labels, step nodes, bullets, badges, and icons.
+- Do not reserve a standalone left-side icon/marker column in content sections. Use the full panel width for the section's actual copy, checklist, flow, matrix, or diagram.
 - Keep the template readable and maintainable; do not minify it.
 
 Rendering requirements:
@@ -174,7 +177,8 @@ Before considering a card complete, verify:
 - The central diagram contains 4-6 nodes and remains legible at feed size.
 - The card uses either the default five-section layout or the alternative four-section layout; do not mix both bottom formats.
 - In the default layout, engineering notes and practical stack contain no more than 3 bullets each.
-- In the alternative layout, the system map has enough vertical space to be readable at feed size and does not depend on dense paragraphs.
+- In the alternative layout, the system map has enough vertical and horizontal space to be readable at feed size and does not depend on dense paragraphs.
+- Every content section uses the full panel content area for information; no unused icon column, decorative marker, or non-explanatory side element should reduce useful space.
 - The header follows the shared series structure and remains visually consistent.
 - All sections have clear boundaries and balanced vertical rhythm.
 - The lowest section ends naturally; do not add a footer or empty spacer.
@@ -204,6 +208,7 @@ Recommended visual treatment:
 - Keep the main title compact, generally around `44-48px` for short one-line titles on a `1080px` card, so the header breathes; supporting copy and checklist text should be larger and more readable than decorative labels.
 - Give each section a distinct visual role: overview = editorial summary, how it works = primary flow or concept diagram, engineering notes = decision checklist, practical stack = ecosystem and runtime checklist, system map = larger visual model when it teaches better than bottom text sections.
 - Do not add vertical accent bars to panel edges; section color should come from headings, icons, badges, checks, borders, and diagram elements.
+- Do not add standalone section icons just to visually balance a panel. Icons should only appear when they are functional: a concept icon in the header, a check/status marker in a list, a labeled node in a diagram, or a symbol that directly clarifies a step.
 - Use a spacing scale and repeat it consistently: 12 / 16 / 24 / 32 px. Never solve visual imbalance with random offsets.
 - Use one primary accent (electric blue) plus up to two functional accents (teal for flow or positive state, amber for caution or operational state). Accents should identify meaning, not decorate every surface.
 - Build icons as crisp 2D inline SVGs with a consistent stroke, geometric construction, and one or two filled details. Prefer recognizable standard symbols (nodes, signal paths, shield, sliders, terminal, magnifier) over generic clip-art. When an official product/framework icon exists and is in scope, use its approved local asset; do not invent a fake “official” logo. For concepts without an official logo, use a neutral standard technical glyph.
@@ -215,6 +220,7 @@ Avoid visual clutter:
 - No heavy gradients, glassmorphism, neon glow, or 3D rendering.
 - No dark full-card backgrounds; reserve dark color for title text, labels, and small functional elements.
 - No random decorative orbs, blobs, bokeh, circuit-board filler, or abstract AI decoration.
+- No decorative section markers or side icons that consume space without adding meaning.
 - No stock-style generated images.
 - No crowded multi-column layouts that reduce mobile readability.
 - No tiny labels that only work at full resolution.
@@ -321,7 +327,7 @@ Section rules:
 - `HOW IT WORKS`: use the central diagram or flow; keep it to 4-6 nodes maximum.
 - `ENGINEERING NOTES`: use up to 3 bullets about concrete engineering judgment: key decisions, production risks, constraints, tradeoffs, validation points, or rollout concerns. The bullets should help an engineer decide how to apply the concept safely in a real system.
 - `PRACTICAL STACK`: use up to 3 bullets with the concrete ecosystem needed to apply the concept. Group items by function, such as `Models/APIs:`, `Storage:`, `Runtime:`, `Frameworks:`, `Evals:`, `Observability:`, `Security:`, `Serving:`, `Metrics:`, `Controls:`, or `Protocols:`.
-- `SYSTEM MAP`: use a larger visual explanation with concise labels, directional flow, grouped zones, or a compact matrix. Keep text short enough to remain readable on mobile LinkedIn previews.
+- `SYSTEM MAP`: use a larger visual explanation with concise labels, directional flow, grouped zones, or a compact matrix. Keep text short enough to remain readable on mobile LinkedIn previews. The diagram should occupy the full usable panel area; do not add a standalone side icon, decorative marker, or filler element that does not directly explain the system.
 - Do not list tool names without explaining what kind of tool they are. For example, use `Vector DBs: Pinecone, Weaviate, pgvector` instead of only `Pinecone, Weaviate, pgvector`.
 
 For security concepts, default to the standard structure but consider the alternative diagram layout when a threat path, control path, or validation flow needs more space:
