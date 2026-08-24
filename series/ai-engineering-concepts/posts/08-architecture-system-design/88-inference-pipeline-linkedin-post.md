@@ -1,15 +1,16 @@
-# Inference is a pipeline, not just a model call
+# Inference is a runtime pipeline, not a single model call
 
-Most production AI features need more than `prompt -> model -> response`. They need request intake, context assembly, model execution, validation, routing, and delivery as one observable path.
+Most production AI features need more than `prompt -> model -> response`. A real inference path usually includes request intake, identity and policy scope, context assembly, model routing, output validation, fallback handling, response delivery, tracing, and evaluation feedback.
 
-That architecture matters because every stage changes quality, latency, cost, and reliability. A slow retriever, a missing validation step, or an untracked fallback can be the real production issue, even when the model itself is working.
+That architecture matters because quality, latency, cost, and reliability are shaped by every stage. A slow retriever, missing schema check, weak fallback, or untracked model route can be the production issue even when the model itself is fine.
 
-Three implementation reminders:
+Implementation reminders:
 
-- Give each stage a latency and cost budget.
-- Validate model outputs before they reach users or tools.
-- Trace the full path so regressions can be debugged by stage.
+- Give each stage a latency, cost, and timeout budget.
+- Validate model outputs before they reach users, tools, or downstream systems.
+- Trace request inputs, context, model choice, validation results, and fallbacks.
+- Feed incidents, evals, and quality metrics back into routing and policy decisions.
 
-A strong inference pipeline makes model behavior easier to control, measure, and improve.
+Which stage usually causes the hardest production bugs in your inference path: retrieval, routing, validation, fallbacks, or observability?
 
 #AIEngineering #AIArchitecture #LLM #SoftwareEngineering #GenerativeAI

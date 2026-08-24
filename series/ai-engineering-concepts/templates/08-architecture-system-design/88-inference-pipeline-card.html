@@ -44,36 +44,41 @@
     flex: 0 0 auto;
     display: grid;
     place-items: center;
-    border: 1px solid rgba(37,99,235,.24);
+    border: 1px solid rgba(37, 99, 235, .24);
     border-radius: 20px;
-    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
     color: #ffffff;
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
     box-shadow: 0 12px 24px rgba(30, 58, 138, .22), inset 0 0 0 1px rgba(255,255,255,.20);
   }
   .concept-icon svg { width: 72px; height: 72px; }
   h1 {
     margin: 0;
     color: #0b1b49;
-    font-size: 43px;
+    font-size: 46px;
     line-height: .96;
     font-weight: 850;
     letter-spacing: 0;
-    text-shadow: 0 2px 8px rgba(11,27,73,.12);
+    text-shadow: 0 2px 8px rgba(11, 27, 73, .12);
+    white-space: nowrap;
   }
   .badge {
     margin-left: auto;
-    padding: 13px 18px;
-    border: 1px solid rgba(37,99,235,.18);
+    padding: 13px 16px;
+    border: 1px solid rgba(37, 99, 235, .18);
     border-radius: 999px;
     color: #ffffff;
     background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 800;
     letter-spacing: .08em;
     white-space: nowrap;
     box-shadow: 0 8px 18px rgba(30, 58, 138, .18);
   }
-  .stack { margin-top: 14px; display: grid; gap: 12px; }
+  .stack {
+    margin-top: 14px;
+    display: grid;
+    gap: 12px;
+  }
   .panel {
     position: relative;
     box-shadow: 0 12px 28px rgba(31, 54, 78, .10), 0 2px 5px rgba(31, 54, 78, .06);
@@ -87,43 +92,47 @@
     letter-spacing: .13em;
   }
   .overview {
-    height: 174px;
-    padding: 22px 28px;
+    height: 190px;
+    padding: 24px 28px;
     display: grid;
-    grid-template-columns: 128px 1fr;
-    gap: 24px;
-    align-items: center;
+    align-content: center;
+    gap: 12px;
   }
-  .section-mark {
-    width: 88px;
-    height: 88px;
-    display: grid;
-    place-items: center;
-    border: 1px solid #a9c4f7;
-    border-radius: 24px;
-    color: #2460d8;
-    background: #edf3ff;
-  }
-  .section-mark svg { width: 58px; height: 58px; stroke-width: 2.8; }
-  .overview-copy,
-  .compact-copy {
-    border-left: 1px solid #d2dde8;
-    padding-left: 24px;
-  }
-  .overview .section-title { margin-bottom: 12px; }
   .overview p {
     margin: 0;
+    max-width: 960px;
     color: #17233d;
     font-size: 24px;
     line-height: 1.18;
-    font-weight: 540;
+    font-weight: 560;
+  }
+  .pipeline-row {
+    display: grid;
+    grid-template-columns: repeat(7, max-content);
+    gap: 10px;
+    align-items: center;
+  }
+  .pipeline-chip {
+    padding: 8px 12px;
+    border: 1px solid #cbd9e8;
+    border-radius: 11px;
+    color: #173b62;
+    background: #f7fbff;
+    font-size: 14px;
+    line-height: 1;
+    font-weight: 800;
+  }
+  .pipeline-chip.hot {
+    color: #0f766e;
+    border-color: #9bd7c9;
+    background: #effaf5;
   }
   .workflow {
-    height: 402px;
-    padding: 23px 20px 20px;
+    height: 326px;
+    padding: 24px 20px 20px;
   }
   .workflow .section-title { margin: 0 0 18px 12px; }
-  .pipeline {
+  .flow {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 14px;
@@ -131,8 +140,10 @@
   .step {
     position: relative;
     min-width: 0;
-    height: 320px;
-    padding: 12px 10px;
+    height: 240px;
+    padding: 12px 10px 14px;
+    display: grid;
+    grid-template-rows: 42px 48px 78px 1fr;
     text-align: center;
     border: 1px solid #b8ccdf;
     border-radius: 18px;
@@ -145,7 +156,7 @@
     z-index: 2;
     width: 28px;
     height: 1px;
-    top: 154px;
+    top: 128px;
     right: -23px;
     background: #45bfd0;
   }
@@ -153,7 +164,7 @@
     content: "";
     position: absolute;
     z-index: 3;
-    top: 150px;
+    top: 124px;
     right: -24px;
     border-left: 7px solid #45bfd0;
     border-top: 5px solid transparent;
@@ -162,166 +173,301 @@
   .num {
     width: 38px;
     height: 38px;
-    margin: -31px auto 14px;
+    margin: -33px auto 0;
     display: grid;
     place-items: center;
     border: 5px solid #fbfdff;
     border-radius: 50%;
-    color: #fff;
+    color: #ffffff;
     background: #2460d8;
     font-size: 18px;
     font-weight: 850;
     box-shadow: 0 0 0 1px #2460d8;
   }
   .step h3 {
-    min-height: 48px;
-    margin: 0 0 13px;
+    margin: 0;
+    align-self: center;
     color: #0d1730;
-    font-size: 22px;
+    font-size: 21px;
     line-height: 1.04;
     font-weight: 850;
   }
   .mini {
     width: 150px;
-    min-height: 124px;
-    margin: 0 auto 12px;
-    padding: 12px 10px;
+    height: 76px;
+    margin: 0 auto;
+    padding: 8px 10px;
     display: grid;
     align-content: center;
-    gap: 8px;
+    gap: 7px;
     border: 1px solid #cbd9e8;
     border-radius: 16px;
     background: #fbfdff;
   }
   .line {
-    height: 14px;
+    height: 10px;
     border-radius: 999px;
     background: #dfe8f2;
   }
   .line.wide { width: 100%; }
   .line.med { width: 74%; }
   .line.short { width: 52%; }
-  .context-chip {
-    height: 30px;
-    padding: 6px 8px;
+  .chip {
+    height: 20px;
+    padding: 3px 8px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
     border: 1px solid #cdd9e8;
-    border-radius: 9px;
+    border-radius: 8px;
+    color: #173b62;
     background: #f7fbff;
-  }
-  .context-chip b {
-    width: 18px;
-    height: 18px;
-    display: grid;
-    place-items: center;
-    border-radius: 6px;
-    color: #fff;
-    background: #16878a;
     font-size: 12px;
     line-height: 1;
+    font-weight: 850;
+    text-align: left;
   }
-  .context-chip span {
-    height: 4px;
+  .chip b {
+    min-width: 18px;
+    height: 14px;
+    padding: 0 4px;
+    display: grid;
+    place-items: center;
+    border-radius: 5px;
+    color: #ffffff;
+    background: #16878a;
+    font-size: 10px;
+    line-height: 1;
+  }
+  .chip span {
+    height: 3px;
     flex: 1;
     border-radius: 999px;
     background: #9aa8b8;
   }
   .model-core {
-    width: 90px;
-    height: 90px;
+    width: 58px;
+    height: 58px;
     margin: 0 auto;
     display: grid;
     place-items: center;
-    border-radius: 24px;
+    border-radius: 18px;
     color: #ffffff;
     background: linear-gradient(135deg, #1d4ed8, #0891b2);
     box-shadow: inset 0 0 0 1px rgba(255,255,255,.25);
   }
-  .model-core svg { width: 56px; height: 56px; }
-  .gate-row {
-    height: 28px;
-    padding: 4px 8px;
+  .model-core svg { width: 38px; height: 38px; }
+  .gate {
+    height: 20px;
+    padding: 3px 8px;
     border: 1px solid #cdd9e8;
     border-radius: 8px;
-    background: #f7fbff;
     color: #173b62;
-    font-size: 14px;
-    font-weight: 800;
+    background: #f7fbff;
+    font-size: 12px;
+    line-height: 1;
+    font-weight: 850;
     text-align: left;
   }
-  .gate-row.warn {
+  .gate.warn {
     color: #8a5b1c;
-    background: #fff8eb;
     border-color: #f0c47c;
+    background: #fff8eb;
   }
-  .deliver {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 9px;
-  }
-  .deliver-box {
-    height: 30px;
-    border-radius: 9px;
-    border: 1px solid #b9cdf3;
-    background: #edf3ff;
-  }
-  .deliver-box.final {
+  .gate.ok {
+    color: #0f766e;
     border-color: #9bd7c9;
     background: #effaf5;
   }
   .step p {
     margin: 0;
+    align-self: end;
     color: #253b54;
-    font-size: 18px;
-    line-height: 1.14;
+    font-size: 16px;
+    line-height: 1.12;
+    font-weight: 530;
   }
-  .compact {
-    height: 248px;
-    padding: 22px 28px;
+  .system-map {
+    height: 596px;
+    padding: 24px 28px;
     display: grid;
-    grid-template-columns: 128px 1fr;
-    gap: 24px;
-    align-items: center;
+    grid-template-rows: auto 1fr;
+    gap: 18px;
   }
-  .compact .section-title { margin-bottom: 18px; }
-  ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 15px;
+  .map {
+    position: relative;
+    min-height: 0;
+    border: 1px solid #cbd9e8;
+    border-radius: 18px;
+    background: linear-gradient(180deg, #fbfdff 0%, #f7fbff 100%);
+    overflow: hidden;
   }
-  li {
-    display: grid;
-    grid-template-columns: 32px 1fr;
-    gap: 14px;
-    align-items: center;
-    color: #17233d;
-    font-size: 24px;
-    line-height: 1.1;
-    font-weight: 540;
-  }
-  .check {
-    width: 28px;
-    height: 28px;
-    display: grid;
-    place-items: center;
-    border-radius: 9px;
-    color: #fff;
-    background: #16878a;
-    font-size: 17px;
+  .map-badge {
+    position: absolute;
+    top: 16px;
+    padding: 7px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    line-height: 1;
     font-weight: 850;
-    box-shadow: 0 3px 0 rgba(22,135,138,.18);
+    letter-spacing: .06em;
   }
-  .tooling .section-mark {
-    border-color: #f0c47c;
-    color: #d98716;
+  .map-badge.left {
+    left: 34px;
+    color: #0f766e;
+    border: 1px solid #9bd7c9;
+    background: #effaf5;
+  }
+  .map-badge.right {
+    right: 34px;
+    color: #8a5b1c;
+    border: 1px solid #f0c47c;
     background: #fff8eb;
   }
-  .tooling .section-title { color: #cf730f; }
-  .tooling .check { background: #d98716; }
+  .main-path {
+    position: absolute;
+    left: 30px;
+    right: 30px;
+    top: 58px;
+    height: 150px;
+    display: grid;
+    grid-template-columns: 1fr 36px 1fr 36px 1fr 36px 1fr;
+    gap: 8px;
+    align-items: center;
+  }
+  .node {
+    min-width: 0;
+    padding: 13px 14px;
+    border: 1px solid #cbd9e8;
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 5px 12px rgba(27, 67, 101, .08);
+  }
+  .main-path .node {
+    height: 106px;
+  }
+  .node strong {
+    display: block;
+    margin-bottom: 7px;
+    color: #0d1730;
+    font-size: 18px;
+    line-height: 1;
+    font-weight: 850;
+  }
+  .node span {
+    display: block;
+    color: #314964;
+    font-size: 13px;
+    line-height: 1.16;
+    font-weight: 620;
+  }
+  .node.good {
+    border-color: #9bd7c9;
+    background: #effaf5;
+  }
+  .node.warn {
+    border-color: #f0c47c;
+    background: #fff8eb;
+  }
+  .node.core {
+    color: #ffffff;
+    border-color: rgba(37, 99, 235, .26);
+    background: linear-gradient(135deg, #1d4ed8, #0891b2);
+  }
+  .node.core strong,
+  .node.core span { color: #ffffff; }
+  .arrow {
+    height: 1px;
+    background: #45bfd0;
+    position: relative;
+  }
+  .arrow::after {
+    content: "";
+    position: absolute;
+    right: -1px;
+    top: -4px;
+    border-left: 7px solid #45bfd0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+  }
+  .control-grid {
+    position: absolute;
+    left: 30px;
+    right: 30px;
+    top: 236px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .control-panel {
+    min-height: 178px;
+    padding: 16px;
+    border: 1px solid #cbd9e8;
+    border-radius: 18px;
+    background: #ffffff;
+  }
+  .control-panel.good {
+    border-color: #9bd7c9;
+    background: #effaf5;
+  }
+  .control-panel.warn {
+    border-color: #f0c47c;
+    background: #fff8eb;
+  }
+  .panel-title {
+    margin: 0 0 14px;
+    color: #0d1730;
+    font-size: 18px;
+    line-height: 1;
+    font-weight: 850;
+    letter-spacing: .06em;
+  }
+  .control-list {
+    display: grid;
+    gap: 10px;
+  }
+  .control-item {
+    min-height: 34px;
+    padding: 9px 10px;
+    border: 1px solid #cbd9e8;
+    border-radius: 10px;
+    color: #173b62;
+    background: #ffffff;
+    font-size: 14px;
+    line-height: 1;
+    font-weight: 850;
+  }
+  .good .control-item {
+    color: #0f766e;
+    border-color: #9bd7c9;
+  }
+  .warn .control-item {
+    color: #8a5b1c;
+    border-color: #f0c47c;
+  }
+  .ops-row {
+    position: absolute;
+    left: 30px;
+    right: 30px;
+    bottom: 24px;
+    height: 58px;
+    display: grid;
+    grid-template-columns: 1fr 38px 1fr 38px 1fr;
+    gap: 8px;
+    align-items: center;
+  }
+  .ops-pill {
+    height: 58px;
+    padding: 12px;
+    border: 1px solid #b9cdf3;
+    border-radius: 14px;
+    color: #0b1b49;
+    background: #edf3ff;
+    font-size: 14px;
+    line-height: 1.12;
+    font-weight: 850;
+    text-align: center;
+  }
   svg {
     fill: none;
     stroke: currentColor;
@@ -336,13 +482,11 @@
   <header class="header">
     <div class="concept-icon" aria-hidden="true">
       <svg viewBox="0 0 72 72">
-        <rect x="10" y="18" width="14" height="36" rx="5"/>
-        <rect x="30" y="18" width="14" height="36" rx="5"/>
-        <rect x="50" y="18" width="12" height="36" rx="5"/>
-        <path d="M24 36h6M44 36h6"/>
-        <path d="m28 30 6 6-6 6M48 30l6 6-6 6"/>
-        <circle cx="17" cy="28" r="2" fill="#5bd5e5"/>
-        <circle cx="37" cy="28" r="2" fill="#5bd5e5"/>
+        <rect x="10" y="16" width="12" height="40" rx="5"/>
+        <rect x="30" y="16" width="12" height="40" rx="5"/>
+        <rect x="50" y="16" width="12" height="40" rx="5"/>
+        <path d="M22 28h8M42 44h8"/>
+        <path d="M30 28l-4-4M42 44l4 4"/>
       </svg>
     </div>
     <h1>INFERENCE PIPELINE</h1>
@@ -351,23 +495,22 @@
 
   <div class="stack">
     <section class="panel overview">
-      <div class="section-mark" aria-hidden="true">
-        <svg viewBox="0 0 64 64">
-          <rect x="10" y="18" width="12" height="28" rx="4"/>
-          <rect x="28" y="18" width="12" height="28" rx="4"/>
-          <rect x="46" y="18" width="8" height="28" rx="4"/>
-          <path d="M22 32h6M40 32h6"/>
-        </svg>
-      </div>
-      <div class="overview-copy">
-        <h2 class="section-title">OVERVIEW</h2>
-        <p>An inference pipeline is the architecture path that turns an application request into a validated model-backed response. It wraps the model with intake, context assembly, execution, checks, routing, and delivery so quality, latency, cost, and reliability can be controlled by stage.</p>
+      <h2 class="section-title">OVERVIEW</h2>
+      <p>An inference pipeline is the runtime path that turns an application request into a validated model-backed response. It wraps the model with intake, context assembly, execution, checks, routing, delivery, tracing, cost controls, and feedback loops.</p>
+      <div class="pipeline-row" aria-hidden="true">
+        <span class="pipeline-chip hot">runtime path</span>
+        <span class="pipeline-chip">intake</span>
+        <span class="pipeline-chip">context</span>
+        <span class="pipeline-chip">model</span>
+        <span class="pipeline-chip">validate</span>
+        <span class="pipeline-chip">deliver</span>
+        <span class="pipeline-chip">trace</span>
       </div>
     </section>
 
     <section class="panel workflow">
       <h2 class="section-title">HOW IT WORKS</h2>
-      <div class="pipeline">
+      <div class="flow">
         <article class="step">
           <div class="num">1</div>
           <h3>Request<br>intake</h3>
@@ -382,9 +525,9 @@
           <div class="num">2</div>
           <h3>Assemble<br>context</h3>
           <div class="mini">
-            <div class="context-chip"><b>R</b><span></span></div>
-            <div class="context-chip"><b>M</b><span></span></div>
-            <div class="context-chip"><b>S</b><span></span></div>
+            <div class="chip"><b>R</b><span></span></div>
+            <div class="chip"><b>M</b><span></span></div>
+            <div class="chip"><b>S</b><span></span></div>
           </div>
           <p>Fetch retrieval, memory, state, and instructions.</p>
         </article>
@@ -394,9 +537,9 @@
           <div class="mini">
             <div class="model-core">
               <svg viewBox="0 0 64 64">
-                <rect x="18" y="18" width="28" height="28" rx="8"/>
-                <path d="M26 32h12M32 26v12"/>
-                <path d="M18 10v8M32 10v8M46 10v8M18 46v8M32 46v8M46 46v8"/>
+                <path d="M18 14v36M46 14v36M32 10v44"/>
+                <rect x="22" y="20" width="20" height="24" rx="8"/>
+                <path d="M28 32h8M32 28v8"/>
               </svg>
             </div>
           </div>
@@ -406,56 +549,77 @@
           <div class="num">4</div>
           <h3>Validate /<br>route</h3>
           <div class="mini">
-            <div class="gate-row">schema check</div>
-            <div class="gate-row">policy check</div>
-            <div class="gate-row warn">fallback path</div>
+            <div class="gate">schema</div>
+            <div class="gate ok">policy</div>
+            <div class="gate warn">fallback</div>
           </div>
           <p>Check output, safety, format, and fallbacks.</p>
         </article>
         <article class="step">
           <div class="num">5</div>
           <h3>Deliver<br>response</h3>
-          <div class="mini deliver">
-            <div class="deliver-box"></div>
-            <div class="deliver-box"></div>
-            <div class="deliver-box final"></div>
+          <div class="mini">
+            <div class="gate">answer</div>
+            <div class="gate">actions</div>
+            <div class="gate ok">trace id</div>
           </div>
           <p>Return answer, citations, actions, and trace IDs.</p>
         </article>
       </div>
     </section>
 
-    <section class="panel compact implementation">
-      <div class="section-mark" aria-hidden="true">
-        <svg viewBox="0 0 64 64">
-          <path d="M12 22h40M12 32h32M12 42h24"/>
-          <path d="M48 26l6 6-6 6"/>
-        </svg>
-      </div>
-      <div class="compact-copy">
-        <h2 class="section-title">ENGINEERING NOTES</h2>
-        <ul>
-          <li><span class="check">&#10003;</span><span>Set latency and cost budgets for every stage.</span></li>
-          <li><span class="check">&#10003;</span><span>Validate schema, policy, citations, and side effects.</span></li>
-          <li><span class="check">&#10003;</span><span>Trace inputs, context, model choice, and fallbacks.</span></li>
-        </ul>
-      </div>
-    </section>
+    <section class="panel system-map">
+      <h2 class="section-title">SYSTEM MAP</h2>
+      <div class="map">
+        <div class="map-badge left">CONTROL BY STAGE</div>
+        <div class="map-badge right">MEASURE END TO END</div>
 
-    <section class="panel compact tooling">
-      <div class="section-mark" aria-hidden="true">
-        <svg viewBox="0 0 64 64">
-          <path d="M14 18h36v10H14zM14 36h36v10H14z"/>
-          <path d="M22 23h1M30 23h12M22 41h1M30 41h12"/>
-        </svg>
-      </div>
-      <div class="compact-copy">
-        <h2 class="section-title">PRACTICAL STACK</h2>
-        <ul>
-          <li><span class="check">&#10003;</span><span>Gateway/runtime: auth, routing, queues, retries, streaming.</span></li>
-          <li><span class="check">&#10003;</span><span>Model/context: prompts, retrievers, memory, tool outputs.</span></li>
-          <li><span class="check">&#10003;</span><span>Quality/ops: validators, evals, tracing, dashboards, alerts.</span></li>
-        </ul>
+        <div class="main-path">
+          <div class="node"><strong>API gateway</strong><span>auth, contract, rate limit, request ID</span></div>
+          <div class="arrow"></div>
+          <div class="node good"><strong>Context builder</strong><span>retrieval, memory, state, instructions</span></div>
+          <div class="arrow"></div>
+          <div class="node core"><strong>Model router</strong><span>model choice, tools, budget, timeout</span></div>
+          <div class="arrow"></div>
+          <div class="node"><strong>Delivery</strong><span>answer, citations, actions, trace ID</span></div>
+        </div>
+
+        <div class="control-grid">
+          <div class="control-panel">
+            <h3 class="panel-title">INPUT AND CONTEXT</h3>
+            <div class="control-list">
+              <div class="control-item">Identity and policy scope</div>
+              <div class="control-item">Prompt and schema contract</div>
+              <div class="control-item">Retriever and memory bounds</div>
+            </div>
+          </div>
+
+          <div class="control-panel good">
+            <h3 class="panel-title">VALIDATION ROUTE</h3>
+            <div class="control-list">
+              <div class="control-item">Output schema check</div>
+              <div class="control-item">Safety and business policy</div>
+              <div class="control-item">Retry, fallback, or review</div>
+            </div>
+          </div>
+
+          <div class="control-panel warn">
+            <h3 class="panel-title">RUNTIME BUDGETS</h3>
+            <div class="control-list">
+              <div class="control-item">Latency per stage</div>
+              <div class="control-item">Token and model cost</div>
+              <div class="control-item">Queue, timeout, retry limits</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ops-row">
+          <div class="ops-pill">Trace inputs, context, model choice, and fallback</div>
+          <div class="arrow"></div>
+          <div class="ops-pill">Monitor quality, latency, cost, and reliability</div>
+          <div class="arrow"></div>
+          <div class="ops-pill">Feed evals and incidents back into routing</div>
+        </div>
       </div>
     </section>
   </div>

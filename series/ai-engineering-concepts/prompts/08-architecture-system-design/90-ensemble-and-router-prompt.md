@@ -16,11 +16,14 @@ Visible card text must be English. Use HTML/CSS as the source of truth and rende
 
 Teaching angle: explain how AI systems use routers and ensembles to choose or combine models based on task type, capability, cost, latency, risk, and confidence. Emphasize that routing and ensembling need explicit policies, observability, and evaluation.
 
+Use the alternative bottom format because this concept is best explained as a model routing and aggregation system map.
+
 Required sections:
 
 - `OVERVIEW`: define ensemble and router architecture and why it matters.
 - `HOW IT WORKS`: show a 5-step flow: classify request, route candidate, run model(s), aggregate/check, return/fallback.
-- `ENGINEERING NOTES`: include three practical checks about routing policies, cost/latency budgets, and evals.
-- `PRACTICAL STACK`: include three grouped stack notes for router, models, and quality/ops.
+- `SYSTEM MAP`: show classifier, routing policy, candidate models, ensemble/judge path, fallback path, response delivery, route metrics, cost and latency budgets, and evaluation feedback.
+
+Do not include `ENGINEERING NOTES` or `PRACTICAL STACK` in the card.
 
 Style: clean technical study-card, light editorial canvas, white panels, restrained shadows, neutral inline SVG icons, slate/blue architecture palette, readable at mobile feed size.

@@ -44,10 +44,10 @@
     flex: 0 0 auto;
     display: grid;
     place-items: center;
-    border: 1px solid rgba(37,99,235,.24);
+    border: 1px solid rgba(37, 99, 235, .24);
     border-radius: 20px;
-    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
     color: #ffffff;
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
     box-shadow: 0 12px 24px rgba(30, 58, 138, .22), inset 0 0 0 1px rgba(255,255,255,.20);
   }
   .concept-icon svg { width: 72px; height: 72px; }
@@ -58,23 +58,27 @@
     line-height: .96;
     font-weight: 850;
     letter-spacing: 0;
-    text-shadow: 0 2px 8px rgba(11,27,73,.12);
+    text-shadow: 0 2px 8px rgba(11, 27, 73, .12);
     white-space: nowrap;
   }
   .badge {
     margin-left: auto;
-    padding: 13px 18px;
-    border: 1px solid rgba(37,99,235,.18);
+    padding: 13px 16px;
+    border: 1px solid rgba(37, 99, 235, .18);
     border-radius: 999px;
     color: #ffffff;
     background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 800;
     letter-spacing: .08em;
     white-space: nowrap;
     box-shadow: 0 8px 18px rgba(30, 58, 138, .18);
   }
-  .stack { margin-top: 14px; display: grid; gap: 12px; }
+  .stack {
+    margin-top: 14px;
+    display: grid;
+    gap: 12px;
+  }
   .panel {
     position: relative;
     box-shadow: 0 12px 28px rgba(31, 54, 78, .10), 0 2px 5px rgba(31, 54, 78, .06);
@@ -88,40 +92,44 @@
     letter-spacing: .13em;
   }
   .overview {
-    height: 174px;
-    padding: 22px 28px;
+    height: 190px;
+    padding: 24px 28px;
     display: grid;
-    grid-template-columns: 128px 1fr;
-    gap: 24px;
-    align-items: center;
+    align-content: center;
+    gap: 12px;
   }
-  .section-mark {
-    width: 88px;
-    height: 88px;
-    display: grid;
-    place-items: center;
-    border: 1px solid #a9c4f7;
-    border-radius: 24px;
-    color: #2460d8;
-    background: #edf3ff;
-  }
-  .section-mark svg { width: 58px; height: 58px; stroke-width: 2.8; }
-  .overview-copy,
-  .compact-copy {
-    border-left: 1px solid #d2dde8;
-    padding-left: 24px;
-  }
-  .overview .section-title { margin-bottom: 12px; }
   .overview p {
     margin: 0;
+    max-width: 960px;
     color: #17233d;
     font-size: 24px;
     line-height: 1.18;
-    font-weight: 540;
+    font-weight: 560;
+  }
+  .modality-row {
+    display: grid;
+    grid-template-columns: repeat(7, max-content);
+    gap: 10px;
+    align-items: center;
+  }
+  .modality-chip {
+    padding: 8px 12px;
+    border: 1px solid #cbd9e8;
+    border-radius: 11px;
+    color: #173b62;
+    background: #f7fbff;
+    font-size: 14px;
+    line-height: 1;
+    font-weight: 800;
+  }
+  .modality-chip.hot {
+    color: #0f766e;
+    border-color: #9bd7c9;
+    background: #effaf5;
   }
   .workflow {
-    height: 402px;
-    padding: 23px 20px 20px;
+    height: 326px;
+    padding: 24px 20px 20px;
   }
   .workflow .section-title { margin: 0 0 18px 12px; }
   .flow {
@@ -132,8 +140,10 @@
   .step {
     position: relative;
     min-width: 0;
-    height: 320px;
-    padding: 12px 10px;
+    height: 240px;
+    padding: 12px 10px 14px;
+    display: grid;
+    grid-template-rows: 42px 48px 78px 1fr;
     text-align: center;
     border: 1px solid #b8ccdf;
     border-radius: 18px;
@@ -146,7 +156,7 @@
     z-index: 2;
     width: 28px;
     height: 1px;
-    top: 154px;
+    top: 128px;
     right: -23px;
     background: #45bfd0;
   }
@@ -154,7 +164,7 @@
     content: "";
     position: absolute;
     z-index: 3;
-    top: 150px;
+    top: 124px;
     right: -24px;
     border-left: 7px solid #45bfd0;
     border-top: 5px solid transparent;
@@ -163,260 +173,283 @@
   .num {
     width: 38px;
     height: 38px;
-    margin: -31px auto 14px;
+    margin: -33px auto 0;
     display: grid;
     place-items: center;
     border: 5px solid #fbfdff;
     border-radius: 50%;
-    color: #fff;
+    color: #ffffff;
     background: #2460d8;
     font-size: 18px;
     font-weight: 850;
     box-shadow: 0 0 0 1px #2460d8;
   }
   .step h3 {
-    min-height: 48px;
-    margin: 0 0 13px;
+    margin: 0;
+    align-self: center;
     color: #0d1730;
-    font-size: 22px;
+    font-size: 21px;
     line-height: 1.04;
     font-weight: 850;
   }
   .mini {
     width: 150px;
-    min-height: 124px;
-    margin: 0 auto 12px;
-    padding: 12px 10px;
+    height: 76px;
+    margin: 0 auto;
+    padding: 8px 10px;
     display: grid;
     align-content: center;
-    gap: 8px;
+    gap: 7px;
     border: 1px solid #cbd9e8;
     border-radius: 16px;
     background: #fbfdff;
   }
   .media-grid {
-    display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
+    gap: 7px;
   }
   .media-tile {
-    height: 42px;
+    height: 28px;
     display: grid;
     place-items: center;
-    border-radius: 12px;
-    color: #1d4ed8;
     border: 1px solid #b9cdf3;
+    border-radius: 10px;
+    color: #1d4ed8;
     background: #edf3ff;
-    font-size: 15px;
+    font-size: 12px;
+    line-height: 1;
     font-weight: 850;
   }
-  .media-tile.hot {
+  .media-tile.warn {
     color: #8a5b1c;
     border-color: #f0c47c;
     background: #fff8eb;
   }
-  .normalize-row,
-  .route-row {
-    height: 28px;
-    padding: 4px 8px;
+  .gate {
+    height: 20px;
+    padding: 3px 8px;
     border: 1px solid #cdd9e8;
     border-radius: 8px;
-    background: #f7fbff;
     color: #173b62;
-    font-size: 14px;
-    font-weight: 800;
+    background: #f7fbff;
+    font-size: 12px;
+    line-height: 1;
+    font-weight: 850;
     text-align: left;
   }
-  .route-row.accent {
+  .gate.ok {
     color: #0f766e;
     border-color: #9bd7c9;
     background: #effaf5;
   }
   .model-core {
-    width: 86px;
-    height: 86px;
+    width: 58px;
+    height: 58px;
     margin: 0 auto;
     display: grid;
     place-items: center;
-    border-radius: 24px;
+    border-radius: 18px;
     color: #ffffff;
     background: linear-gradient(135deg, #1d4ed8, #0891b2);
     box-shadow: inset 0 0 0 1px rgba(255,255,255,.25);
   }
-  .model-core svg { width: 54px; height: 54px; }
-  .output-stack {
-    display: grid;
-    gap: 9px;
-  }
+  .model-core svg { width: 38px; height: 38px; }
   .output-box {
-    height: 29px;
-    border-radius: 9px;
+    height: 18px;
     border: 1px solid #b9cdf3;
+    border-radius: 8px;
     background: #edf3ff;
   }
-  .output-box.final {
+  .output-box.ok {
     border-color: #9bd7c9;
     background: #effaf5;
   }
   .step p {
     margin: 0;
+    align-self: end;
     color: #253b54;
-    font-size: 18px;
-    line-height: 1.14;
+    font-size: 16px;
+    line-height: 1.12;
+    font-weight: 530;
   }
-  .expanded {
-    height: 508px;
-    padding: 24px 28px 26px;
-    display: grid;
-    grid-template-columns: 128px 1fr;
-    gap: 24px;
-    align-items: center;
-  }
-  .expanded-copy {
-    height: 100%;
-    border-left: 1px solid #d2dde8;
-    padding-left: 24px;
+  .system-map {
+    height: 596px;
+    padding: 24px 28px;
     display: grid;
     grid-template-rows: auto 1fr;
     gap: 18px;
   }
-  .expanded .section-title { color: #cf730f; }
-  .expanded .section-mark {
-    border-color: #f0c47c;
-    color: #d98716;
-    background: #fff8eb;
-  }
-  .io-map {
-    height: 382px;
-    display: grid;
-    grid-template-columns: 196px 1fr 196px;
-    gap: 18px;
-    align-items: stretch;
-  }
-  .io-column,
-  .io-core,
-  .control-row {
+  .map {
+    position: relative;
+    min-height: 0;
     border: 1px solid #cbd9e8;
     border-radius: 18px;
-    background: #fbfdff;
+    background: linear-gradient(180deg, #fbfdff 0%, #f7fbff 100%);
+    overflow: hidden;
   }
-  .io-column {
-    padding: 16px 14px;
-    display: grid;
-    grid-template-rows: auto 1fr;
-    gap: 14px;
-  }
-  .io-title {
-    color: #0d1730;
-    font-size: 20px;
+  .map-badge {
+    position: absolute;
+    top: 16px;
+    padding: 7px 10px;
+    border-radius: 999px;
+    font-size: 12px;
     line-height: 1;
     font-weight: 850;
-    text-align: center;
+    letter-spacing: .06em;
   }
-  .io-items {
-    display: grid;
-    gap: 9px;
-    align-content: center;
+  .map-badge.left {
+    left: 34px;
+    color: #0f766e;
+    border: 1px solid #9bd7c9;
+    background: #effaf5;
   }
-  .io-pill {
-    height: 42px;
-    padding: 0 12px;
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    border: 1px solid #b9cdf3;
-    border-radius: 12px;
-    color: #183b66;
-    background: #edf3ff;
-    font-size: 16px;
-    font-weight: 800;
-  }
-  .io-pill.hot {
+  .map-badge.right {
+    right: 34px;
     color: #8a5b1c;
+    border: 1px solid #f0c47c;
+    background: #fff8eb;
+  }
+  .main-path {
+    position: absolute;
+    left: 30px;
+    right: 30px;
+    top: 58px;
+    height: 150px;
+    display: grid;
+    grid-template-columns: 1fr 36px 1fr 36px 1fr 36px 1fr;
+    gap: 8px;
+    align-items: center;
+  }
+  .node {
+    min-width: 0;
+    padding: 13px 14px;
+    border: 1px solid #cbd9e8;
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 5px 12px rgba(27, 67, 101, .08);
+  }
+  .main-path .node {
+    height: 106px;
+  }
+  .node strong {
+    display: block;
+    margin-bottom: 7px;
+    color: #0d1730;
+    font-size: 18px;
+    line-height: 1;
+    font-weight: 850;
+  }
+  .node span {
+    display: block;
+    color: #314964;
+    font-size: 13px;
+    line-height: 1.16;
+    font-weight: 620;
+  }
+  .node.good {
+    border-color: #9bd7c9;
+    background: #effaf5;
+  }
+  .node.warn {
     border-color: #f0c47c;
     background: #fff8eb;
   }
-  .io-dot {
-    width: 11px;
-    height: 11px;
-    flex: 0 0 auto;
-    border-radius: 4px;
-    background: #2460d8;
+  .node.core {
+    color: #ffffff;
+    border-color: rgba(37, 99, 235, .26);
+    background: linear-gradient(135deg, #1d4ed8, #0891b2);
   }
-  .io-pill.hot .io-dot { background: #d98716; }
-  .map-center {
-    position: relative;
-    display: grid;
-    grid-template-rows: 1fr 82px;
-    gap: 14px;
-  }
-  .map-center::before,
-  .map-center::after {
-    content: "";
-    position: absolute;
-    z-index: 3;
-    top: 151px;
-    width: 24px;
+  .node.core strong,
+  .node.core span { color: #ffffff; }
+  .arrow {
     height: 1px;
     background: #45bfd0;
+    position: relative;
   }
-  .map-center::before { left: -21px; }
-  .map-center::after { right: -21px; }
-  .io-core {
-    padding: 18px;
+  .arrow::after {
+    content: "";
+    position: absolute;
+    right: -1px;
+    top: -4px;
+    border-left: 7px solid #45bfd0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+  }
+  .boundary-grid {
+    position: absolute;
+    left: 30px;
+    right: 30px;
+    top: 236px;
     display: grid;
-    grid-template-rows: auto 1fr;
-    gap: 16px;
-    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    grid-template-columns: 1fr 1.1fr 1fr;
+    gap: 14px;
   }
-  .core-title {
-    color: #0b1b49;
-    font-size: 22px;
+  .panel-card {
+    min-height: 180px;
+    padding: 16px;
+    border: 1px solid #cbd9e8;
+    border-radius: 18px;
+    background: #ffffff;
+  }
+  .panel-card.good {
+    border-color: #9bd7c9;
+    background: #effaf5;
+  }
+  .panel-card.warn {
+    border-color: #f0c47c;
+    background: #fff8eb;
+  }
+  .panel-title {
+    margin: 0 0 14px;
+    color: #0d1730;
+    font-size: 18px;
     line-height: 1;
     font-weight: 850;
-    text-align: center;
+    letter-spacing: .06em;
   }
-  .core-grid {
+  .list {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    gap: 10px;
   }
-  .core-cell {
-    padding: 13px 10px;
+  .item {
+    min-height: 34px;
+    padding: 9px 10px;
     border: 1px solid #cbd9e8;
-    border-radius: 15px;
+    border-radius: 10px;
+    color: #173b62;
     background: #ffffff;
-    text-align: center;
-  }
-  .core-cell strong {
-    display: block;
-    margin-bottom: 6px;
-    color: #0d1730;
-    font-size: 17px;
-    line-height: 1.05;
+    font-size: 14px;
+    line-height: 1;
     font-weight: 850;
   }
-  .core-cell span {
-    display: block;
-    color: #31465f;
+  .good .item {
+    color: #0f766e;
+    border-color: #9bd7c9;
+  }
+  .warn .item {
+    color: #8a5b1c;
+    border-color: #f0c47c;
+  }
+  .ops-row {
+    position: absolute;
+    left: 30px;
+    right: 30px;
+    bottom: 24px;
+    height: 58px;
+    display: grid;
+    grid-template-columns: 1fr 38px 1fr 38px 1fr;
+    gap: 8px;
+    align-items: center;
+  }
+  .ops-pill {
+    height: 58px;
+    padding: 12px;
+    border: 1px solid #b9cdf3;
+    border-radius: 14px;
+    color: #0b1b49;
+    background: #edf3ff;
     font-size: 14px;
     line-height: 1.12;
-    font-weight: 620;
-  }
-  .control-row {
-    padding: 12px 14px;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    border-color: #f0c47c;
-    background: #fffaf1;
-  }
-  .control {
-    display: grid;
-    place-items: center;
-    color: #7c4b11;
-    font-size: 15px;
-    line-height: 1.05;
     font-weight: 850;
     text-align: center;
   }
@@ -434,11 +467,10 @@
   <header class="header">
     <div class="concept-icon" aria-hidden="true">
       <svg viewBox="0 0 72 72">
-        <rect x="12" y="16" width="18" height="18" rx="5"/>
-        <path d="M16 48h10l8-12 8 18 8-10h6"/>
-        <path d="M42 18h14v14H42z"/>
-        <path d="M17 23h8M49 25h0"/>
-        <path d="M22 40v18M18 44v10M26 44v10"/>
+        <rect x="13" y="16" width="18" height="16" rx="5"/>
+        <rect x="43" y="16" width="16" height="16" rx="3"/>
+        <path d="M15 50h12l7-12 7 20 8-14h8"/>
+        <path d="M22 38v8M18 42h8"/>
       </svg>
     </div>
     <h1>MULTIMODAL I/O</h1>
@@ -447,16 +479,16 @@
 
   <div class="stack">
     <section class="panel overview">
-      <div class="section-mark" aria-hidden="true">
-        <svg viewBox="0 0 64 64">
-          <rect x="12" y="16" width="16" height="16" rx="4"/>
-          <path d="M14 46h9l7-10 7 14 7-8h6"/>
-          <path d="M40 18h12v12H40z"/>
-        </svg>
-      </div>
-      <div class="overview-copy">
-        <h2 class="section-title">OVERVIEW</h2>
-        <p>Multimodal I/O is the architecture pattern for AI systems that accept or return text, images, audio, video, files, actions, or structured data. It matters because each modality needs its own preprocessing, routing, validation, storage, and fallback behavior.</p>
+      <h2 class="section-title">OVERVIEW</h2>
+      <p>Multimodal I/O is the architecture pattern for AI systems that accept or return text, images, audio, video, files, actions, or structured data. Each modality needs its own preprocessing, routing, validation, storage, delivery, and fallback behavior.</p>
+      <div class="modality-row" aria-hidden="true">
+        <span class="modality-chip hot">multimodal</span>
+        <span class="modality-chip">text</span>
+        <span class="modality-chip">image</span>
+        <span class="modality-chip">audio</span>
+        <span class="modality-chip">files</span>
+        <span class="modality-chip">actions</span>
+        <span class="modality-chip">JSON</span>
       </div>
     </section>
 
@@ -468,7 +500,7 @@
           <h3>Capture<br>inputs</h3>
           <div class="mini media-grid">
             <div class="media-tile">txt</div>
-            <div class="media-tile hot">img</div>
+            <div class="media-tile warn">img</div>
             <div class="media-tile">aud</div>
             <div class="media-tile">file</div>
           </div>
@@ -478,9 +510,9 @@
           <div class="num">2</div>
           <h3>Normalize<br>media</h3>
           <div class="mini">
-            <div class="normalize-row">transcode</div>
-            <div class="normalize-row">extract</div>
-            <div class="normalize-row">metadata</div>
+            <div class="gate">transcode</div>
+            <div class="gate">extract</div>
+            <div class="gate">metadata</div>
           </div>
           <p>Convert media into model-ready representations.</p>
         </article>
@@ -488,9 +520,9 @@
           <div class="num">3</div>
           <h3>Route by<br>modality</h3>
           <div class="mini">
-            <div class="route-row">vision</div>
-            <div class="route-row accent">speech</div>
-            <div class="route-row">text</div>
+            <div class="gate">vision</div>
+            <div class="gate ok">speech</div>
+            <div class="gate">text</div>
           </div>
           <p>Choose models, tools, or pipelines by task fit.</p>
         </article>
@@ -500,9 +532,9 @@
           <div class="mini">
             <div class="model-core">
               <svg viewBox="0 0 64 64">
-                <rect x="18" y="18" width="28" height="28" rx="8"/>
-                <path d="M26 32h12M32 26v12"/>
-                <path d="M18 10v8M32 10v8M46 10v8M18 46v8M32 46v8M46 46v8"/>
+                <path d="M18 14v36M46 14v36M32 10v44"/>
+                <rect x="22" y="20" width="20" height="24" rx="8"/>
+                <path d="M28 32h8M32 28v8"/>
               </svg>
             </div>
           </div>
@@ -511,61 +543,67 @@
         <article class="step">
           <div class="num">5</div>
           <h3>Validate<br>outputs</h3>
-          <div class="mini output-stack">
+          <div class="mini">
             <div class="output-box"></div>
             <div class="output-box"></div>
-            <div class="output-box final"></div>
+            <div class="output-box ok"></div>
           </div>
           <p>Check text, media, files, actions, and schemas.</p>
         </article>
       </div>
     </section>
 
-    <section class="panel expanded">
-      <div class="section-mark" aria-hidden="true">
-        <svg viewBox="0 0 64 64">
-          <path d="M14 20h36v9H14zM14 36h36v9H14z"/>
-          <path d="M24 29v7M40 29v7"/>
-          <path d="M22 52h20M32 45v7"/>
-        </svg>
-      </div>
-      <div class="expanded-copy">
-        <h2 class="section-title">EXPANDED DIAGRAM</h2>
-        <div class="io-map">
-          <div class="io-column">
-            <div class="io-title">Input boundary</div>
-            <div class="io-items">
-              <div class="io-pill"><span class="io-dot"></span>Text</div>
-              <div class="io-pill hot"><span class="io-dot"></span>Images</div>
-              <div class="io-pill"><span class="io-dot"></span>Audio</div>
-              <div class="io-pill"><span class="io-dot"></span>Files</div>
+    <section class="panel system-map">
+      <h2 class="section-title">SYSTEM MAP</h2>
+      <div class="map">
+        <div class="map-badge left">TYPE EVERY BOUNDARY</div>
+        <div class="map-badge right">VALIDATE EVERY OUTPUT</div>
+
+        <div class="main-path">
+          <div class="node"><strong>Input boundary</strong><span>uploads, streams, messages, actions</span></div>
+          <div class="arrow"></div>
+          <div class="node good"><strong>Normalizer</strong><span>transcode, parse, extract, metadata</span></div>
+          <div class="arrow"></div>
+          <div class="node core"><strong>Runtime router</strong><span>vision, speech, text, tool pipeline</span></div>
+          <div class="arrow"></div>
+          <div class="node"><strong>Output boundary</strong><span>text, media, files, JSON, actions</span></div>
+        </div>
+
+        <div class="boundary-grid">
+          <div class="panel-card">
+            <h3 class="panel-title">INPUT CONTROLS</h3>
+            <div class="list">
+              <div class="item">File type, size, and duration</div>
+              <div class="item">PII, malware, and policy scan</div>
+              <div class="item">Source metadata and consent</div>
             </div>
           </div>
-          <div class="map-center">
-            <div class="io-core">
-              <div class="core-title">Multimodal runtime</div>
-              <div class="core-grid">
-                <div class="core-cell"><strong>Normalize</strong><span>transcode, extract, metadata</span></div>
-                <div class="core-cell"><strong>Route</strong><span>model, tool, pipeline</span></div>
-                <div class="core-cell"><strong>Constrain</strong><span>limits, policy, schema</span></div>
-                <div class="core-cell"><strong>Fallback</strong><span>missing or weak modality</span></div>
-              </div>
-            </div>
-            <div class="control-row">
-              <div class="control">Storage</div>
-              <div class="control">Traces</div>
-              <div class="control">Redaction</div>
+
+          <div class="panel-card good">
+            <h3 class="panel-title">MULTIMODAL RUNTIME</h3>
+            <div class="list">
+              <div class="item">OCR, ASR, embedding, captioning</div>
+              <div class="item">Task-specific model route</div>
+              <div class="item">Tool calls with typed artifacts</div>
             </div>
           </div>
-          <div class="io-column">
-            <div class="io-title">Output boundary</div>
-            <div class="io-items">
-              <div class="io-pill"><span class="io-dot"></span>Text</div>
-              <div class="io-pill hot"><span class="io-dot"></span>Media</div>
-              <div class="io-pill"><span class="io-dot"></span>Actions</div>
-              <div class="io-pill"><span class="io-dot"></span>JSON</div>
+
+          <div class="panel-card warn">
+            <h3 class="panel-title">OUTPUT CONTROLS</h3>
+            <div class="list">
+              <div class="item">Schema and media validation</div>
+              <div class="item">Redaction and safety checks</div>
+              <div class="item">Fallback for weak modality</div>
             </div>
           </div>
+        </div>
+
+        <div class="ops-row">
+          <div class="ops-pill">Store raw media, normalized artifacts, and metadata separately</div>
+          <div class="arrow"></div>
+          <div class="ops-pill">Trace modality, route, transformations, and validators</div>
+          <div class="arrow"></div>
+          <div class="ops-pill">Return typed outputs with constraints and fallback state</div>
         </div>
       </div>
     </section>

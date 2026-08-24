@@ -1,15 +1,16 @@
-# Human review is an architecture decision
+# Human-in-the-loop belongs in the architecture, not after the incident
 
-Human-in-the-loop design is not just “send it to a person when unsure.” It is a workflow pattern for adding review, approval, escalation, and auditability around AI actions that carry risk.
+Human review is most useful when it is designed into the AI request path. The system should know when to automate, when to queue a reviewer, what evidence to show, which actions are allowed, and how the final decision is audited.
 
-The key is deciding where human judgment belongs. Some steps can be fully automated. Others need review because the action is costly, irreversible, regulated, customer-facing, or based on weak evidence.
+The architectural decision is not “add a human somewhere.” It is where judgment belongs: before tool execution, before customer delivery, before irreversible actions, or as an escalation path for low-confidence outputs.
 
-Three implementation reminders:
+Implementation reminders:
 
-- Define review triggers before production, not after incidents.
-- Show reviewers the evidence, model output, policy, and recommended action.
-- Log the decision, reviewer, reason, and downstream effect.
+- Define risk gates using confidence, policy, cost, reversibility, and customer impact.
+- Package evidence for reviewers: model output, rationale, sources, policy checks, and history.
+- Constrain reviewer actions to clear choices such as approve, edit, reject, escalate, or roll back.
+- Feed audit traces and reviewer outcomes back into evals and policy updates.
 
-Good human-in-the-loop systems reduce risk without turning every AI feature into a manual process.
+Where should review sit in your AI workflow: before tools, before delivery, before irreversible actions, or only on sampled outputs?
 
 #AIEngineering #AIArchitecture #HumanInTheLoop #LLM #SoftwareEngineering

@@ -12,6 +12,10 @@ images/08-architecture-system-design/82-multi-tenant-ai-systems.png
 posts/08-architecture-system-design/82-multi-tenant-ai-systems-linkedin-post.md
 ```
 
-Teaching angle: isolate data, prompts, retrieval, tools, logs, rate limits, and permissions by tenant.
+Teaching angle: isolate data, prompts, retrieval, memory, tool permissions, logs, quotas, and audit traces by tenant across the AI request path.
 
-Required sections: `OVERVIEW`, `HOW IT WORKS`, `ENGINEERING NOTES`, `PRACTICAL STACK`.
+Use the alternative bottom format because this concept is best explained as an architecture boundary map.
+
+Required sections: `OVERVIEW`, `HOW IT WORKS`, `SYSTEM MAP`.
+
+The `SYSTEM MAP` should show how the tenant context is resolved once and then carried through policy, prompt/context assembly, retrieval filters, memory, tool authorization, model execution, response delivery, logs, quotas, and audit controls. Do not include `ENGINEERING NOTES` or `PRACTICAL STACK` in the card.

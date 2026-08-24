@@ -16,11 +16,14 @@ Visible card text must be English. Use HTML/CSS as the source of truth and rende
 
 Teaching angle: explain the architecture path from request intake to validated response. Emphasize that inference is usually a pipeline around the model, not only one model call.
 
+Use the alternative bottom format because this concept is best explained as a runtime path with control and observability loops.
+
 Required sections:
 
 - `OVERVIEW`: define an inference pipeline and why it matters for AI applications.
 - `HOW IT WORKS`: show a 5-step flow: request intake, context assembly, model inference, validation/routing, response delivery.
-- `ENGINEERING NOTES`: include three practical checks about latency budgets, validation, and observability.
-- `PRACTICAL STACK`: include three grouped stack notes for gateway/runtime, model/context, and quality/operations.
+- `SYSTEM MAP`: show the runtime path from API gateway to context assembly, model router/inference, output validation, fallback routing, response delivery, tracing, metrics, eval feedback, latency budgets, and cost controls.
+
+Do not include `ENGINEERING NOTES` or `PRACTICAL STACK` in the card.
 
 Style: clean technical study-card, light editorial canvas, white panels, restrained shadows, neutral inline SVG icons, slate/blue architecture palette, readable at mobile feed size.

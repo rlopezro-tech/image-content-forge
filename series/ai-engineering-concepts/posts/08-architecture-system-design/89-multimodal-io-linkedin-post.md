@@ -1,15 +1,16 @@
-# Multimodal I/O changes the shape of an AI system
+# Multimodal I/O turns input and output into architecture
 
-Once an application accepts images, audio, video, documents, or structured data, the architecture is no longer just text in and text out.
+Once an AI application accepts images, audio, video, files, actions, or structured data, the system is no longer just text in and text out. Each modality brings its own boundaries, preprocessing, routing, storage, validation, and fallback behavior.
 
-Each modality needs its own handling: upload limits, preprocessing, extraction, routing, storage, validation, and fallback behavior. The model call is only one stage in a larger I/O pipeline.
+The model call is only one part of the path. Production multimodal systems need typed intake, normalization, metadata extraction, modality-specific routing, output validation, redaction, artifact storage, and traces that explain what happened.
 
-Three implementation reminders:
+Implementation reminders:
 
-- Normalize media before it reaches the model.
-- Route by modality, task, size, latency, and risk.
-- Validate outputs differently for text, files, actions, and generated media.
+- Validate file type, size, duration, source metadata, and policy before model execution.
+- Normalize media into model-ready artifacts such as text, captions, embeddings, transcripts, or structured records.
+- Route by modality, task, latency, risk, and available model/tool capability.
+- Validate outputs differently for text, media, files, actions, and JSON.
 
-Good multimodal systems treat I/O as architecture, not as a prompt attachment.
+Where does multimodal complexity usually show up first in your stack: intake limits, preprocessing, routing, storage, or output validation?
 
 #AIEngineering #AIArchitecture #MultimodalAI #LLM #SoftwareEngineering

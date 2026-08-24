@@ -1,15 +1,16 @@
-# Guardrails work best as architecture, not a wrapper
+# Guardrails belong on the request path, not only at the end
 
-Guardrails are stronger when they are placed across the AI request path: input checks, context filtering, tool permissions, output validation, policy decisions, and fallback behavior.
+A common mistake is treating guardrails as one final moderation call after the model responds. That misses risks introduced earlier by user input, retrieved context, tool arguments, state changes, and fallback behavior.
 
-The common mistake is treating guardrails as one final moderation call after the model responds. That misses risks introduced earlier by user input, retrieved text, tool arguments, and state transitions.
+A stronger architecture distributes checks across the system: validate inputs, filter context, authorize tools, validate outputs, route uncertain states to fallback or review, and log every policy decision.
 
-Three implementation reminders:
+Implementation reminders:
 
-- Validate inputs, context, tool calls, and outputs separately.
-- Make policy decisions explicit and traceable.
-- Define fallbacks for blocked, invalid, or uncertain responses.
+- Keep policy checks explicit, versioned, and traceable.
+- Validate inputs, context, tool calls, and outputs as separate control points.
+- Define fallback behavior for blocked, invalid, or uncertain states.
+- Feed traces, audits, alerts, and eval results back into the policy loop.
 
-Good guardrails reduce risk without hiding how the system actually behaves.
+Where do you place the strongest guardrails today: before retrieval, before tool execution, before delivery, or inside an offline evaluation loop?
 
 #AIEngineering #AIArchitecture #Guardrails #LLM #SoftwareEngineering

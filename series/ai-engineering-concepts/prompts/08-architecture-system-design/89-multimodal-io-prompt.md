@@ -16,11 +16,14 @@ Visible card text must be English. Use HTML/CSS as the source of truth and rende
 
 Teaching angle: explain how AI systems accept and return multiple data types such as text, images, audio, video, files, and structured data. Emphasize that multimodal design requires modality-specific preprocessing, routing, validation, storage, and output controls.
 
+Use the alternative bottom format because this concept is best explained as an input/output boundary system map.
+
 Required sections:
 
 - `OVERVIEW`: define multimodal I/O and why it matters in AI application architecture.
 - `HOW IT WORKS`: show a 5-step flow: capture inputs, normalize media, route by modality, model/tool processing, validated outputs.
-- `ENGINEERING NOTES`: include three practical checks about format limits, fallback paths, and safety/validation.
-- `PRACTICAL STACK`: include three grouped stack notes for media intake, model/runtime, and output/ops.
+- `SYSTEM MAP`: show input boundary, modality-specific normalization, metadata extraction, routing, model/tool runtime, storage, output validation, redaction, delivery, and fallback behavior.
+
+Do not include `ENGINEERING NOTES` or `PRACTICAL STACK` in the card.
 
 Style: clean technical study-card, light editorial canvas, white panels, restrained shadows, neutral inline SVG icons, slate/blue architecture palette, readable at mobile feed size.

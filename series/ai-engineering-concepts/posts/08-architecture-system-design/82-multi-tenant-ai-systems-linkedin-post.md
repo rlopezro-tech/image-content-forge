@@ -1,15 +1,16 @@
-# Multi-tenant AI systems need isolation at every layer
+# Multi-tenant AI systems need the tenant boundary inside the model path
 
-In a regular SaaS app, tenancy is usually enforced through data models, auth, and permissions. In an AI system, tenancy also touches prompts, retrieval indexes, tool calls, logs, rate limits, evals, and observability.
+In SaaS, tenancy is often enforced through auth, database scopes, and permissions. In an AI system, that is not enough. The request may assemble prompts, memory, retrieved documents, tool calls, cached state, generated outputs, traces, and quota events before the user ever sees a response.
 
-That matters because tenant leaks can happen through more than database reads. Context assembly, shared vector indexes, prompt templates, cached responses, traces, and tool permissions all become part of the isolation boundary.
+The practical pattern is to resolve tenant context early, attach it to the request, and enforce it at every boundary: context assembly, retrieval filters, tool authorization, response delivery, observability, and billing controls.
 
-Three implementation reminders:
+Implementation reminders:
 
-- Scope prompts, retrieval, tools, memory, and logs by tenant.
-- Enforce tenant filters before retrieval and before tool execution.
-- Test isolation with adversarial queries and cross-tenant regression cases.
+- Treat `tenant_id`, workspace, region, role, and policy as request context, not just database metadata.
+- Filter retrieval before search and rerank, not after evidence has already entered the prompt.
+- Scope tools by tenant so actions and side effects cannot cross workspaces.
+- Test isolation with adversarial cross-tenant prompts and regression cases.
 
-Multi-tenancy is not just storage design once AI is in the request path.
+Where does tenant isolation usually get weakest in your AI stack: retrieval, memory, tools, logs, or quotas?
 
 #AIEngineering #AIArchitecture #SaaS #LLM #SoftwareEngineering

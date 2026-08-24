@@ -1,15 +1,16 @@
-# One model is not always the architecture
+# One model is not always the best architecture
 
-Ensemble and router patterns let an AI system choose or combine models based on the request. A cheap model may handle simple classification. A stronger model may handle complex reasoning. A specialist model may handle vision, coding, retrieval, or safety checks.
+Router and ensemble patterns let an AI system choose or combine models based on the request. A cheap model may handle simple classification. A specialist model may handle domain or modality-specific work. A stronger model may handle complex reasoning. A judge model may score or compare outputs.
 
-The hard part is not calling multiple models. The hard part is deciding when to route, when to combine, when to fallback, and how to measure whether the extra complexity is worth it.
+The architecture challenge is not calling multiple models. It is deciding when to route, when to combine, when to fallback, and how to prove the added complexity improves quality, latency, cost, or risk.
 
-Three implementation reminders:
+Implementation reminders:
 
-- Make routing policies explicit and testable.
-- Track quality, latency, and cost by route.
-- Use evals to compare single-model, routed, and ensemble behavior.
+- Make routing policy explicit: task type, confidence, cost, latency, capability, and risk.
+- Track quality, latency, cost, and error rate by route.
+- Evaluate single-model, routed, and ensemble paths against the same test set.
+- Define fallback behavior for low confidence, policy failure, timeout, or disagreement.
 
-This pattern is useful when capability, cost, latency, or risk varies sharply across request types.
+Where does routing add the most value in your AI systems: cost control, specialist capability, reliability, or quality checks?
 
 #AIEngineering #AIArchitecture #LLM #MachineLearning #SoftwareEngineering

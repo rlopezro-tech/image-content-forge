@@ -44,37 +44,41 @@
     flex: 0 0 auto;
     display: grid;
     place-items: center;
-    border: 1px solid rgba(37,99,235,.24);
+    border: 1px solid rgba(37, 99, 235, .24);
     border-radius: 20px;
-    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
     color: #ffffff;
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
     box-shadow: 0 12px 24px rgba(30, 58, 138, .22), inset 0 0 0 1px rgba(255,255,255,.20);
   }
   .concept-icon svg { width: 72px; height: 72px; }
   h1 {
     margin: 0;
     color: #0b1b49;
-    font-size: 39px;
+    font-size: 46px;
     line-height: .96;
     font-weight: 850;
     letter-spacing: 0;
-    text-shadow: 0 2px 8px rgba(11,27,73,.12);
+    text-shadow: 0 2px 8px rgba(11, 27, 73, .12);
     white-space: nowrap;
   }
   .badge {
     margin-left: auto;
-    padding: 13px 18px;
-    border: 1px solid rgba(37,99,235,.18);
+    padding: 13px 16px;
+    border: 1px solid rgba(37, 99, 235, .18);
     border-radius: 999px;
     color: #ffffff;
     background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 800;
     letter-spacing: .08em;
     white-space: nowrap;
     box-shadow: 0 8px 18px rgba(30, 58, 138, .18);
   }
-  .stack { margin-top: 14px; display: grid; gap: 12px; }
+  .stack {
+    margin-top: 14px;
+    display: grid;
+    gap: 12px;
+  }
   .panel {
     position: relative;
     box-shadow: 0 12px 28px rgba(31, 54, 78, .10), 0 2px 5px rgba(31, 54, 78, .06);
@@ -88,40 +92,44 @@
     letter-spacing: .13em;
   }
   .overview {
-    height: 174px;
-    padding: 22px 28px;
+    height: 190px;
+    padding: 24px 28px;
     display: grid;
-    grid-template-columns: 128px 1fr;
-    gap: 24px;
-    align-items: center;
+    align-content: center;
+    gap: 12px;
   }
-  .section-mark {
-    width: 88px;
-    height: 88px;
-    display: grid;
-    place-items: center;
-    border: 1px solid #a9c4f7;
-    border-radius: 24px;
-    color: #2460d8;
-    background: #edf3ff;
-  }
-  .section-mark svg { width: 58px; height: 58px; stroke-width: 2.8; }
-  .overview-copy,
-  .compact-copy {
-    border-left: 1px solid #d2dde8;
-    padding-left: 24px;
-  }
-  .overview .section-title { margin-bottom: 12px; }
   .overview p {
     margin: 0;
+    max-width: 960px;
     color: #17233d;
     font-size: 24px;
     line-height: 1.18;
-    font-weight: 540;
+    font-weight: 560;
+  }
+  .review-row {
+    display: grid;
+    grid-template-columns: repeat(7, max-content);
+    gap: 10px;
+    align-items: center;
+  }
+  .review-chip {
+    padding: 8px 12px;
+    border: 1px solid #cbd9e8;
+    border-radius: 11px;
+    color: #173b62;
+    background: #f7fbff;
+    font-size: 14px;
+    line-height: 1;
+    font-weight: 800;
+  }
+  .review-chip.hot {
+    color: #8a5b1c;
+    border-color: #f0c47c;
+    background: #fff8eb;
   }
   .workflow {
-    height: 402px;
-    padding: 23px 20px 20px;
+    height: 326px;
+    padding: 24px 20px 20px;
   }
   .workflow .section-title { margin: 0 0 18px 12px; }
   .flow {
@@ -132,8 +140,10 @@
   .step {
     position: relative;
     min-width: 0;
-    height: 320px;
-    padding: 12px 10px;
+    height: 240px;
+    padding: 12px 10px 14px;
+    display: grid;
+    grid-template-rows: 42px 48px 78px 1fr;
     text-align: center;
     border: 1px solid #b8ccdf;
     border-radius: 18px;
@@ -146,7 +156,7 @@
     z-index: 2;
     width: 28px;
     height: 1px;
-    top: 154px;
+    top: 128px;
     right: -23px;
     background: #45bfd0;
   }
@@ -154,7 +164,7 @@
     content: "";
     position: absolute;
     z-index: 3;
-    top: 150px;
+    top: 124px;
     right: -24px;
     border-left: 7px solid #45bfd0;
     border-top: 5px solid transparent;
@@ -163,39 +173,39 @@
   .num {
     width: 38px;
     height: 38px;
-    margin: -31px auto 14px;
+    margin: -33px auto 0;
     display: grid;
     place-items: center;
     border: 5px solid #fbfdff;
     border-radius: 50%;
-    color: #fff;
+    color: #ffffff;
     background: #2460d8;
     font-size: 18px;
     font-weight: 850;
     box-shadow: 0 0 0 1px #2460d8;
   }
   .step h3 {
-    min-height: 48px;
-    margin: 0 0 13px;
+    margin: 0;
+    align-self: center;
     color: #0d1730;
-    font-size: 22px;
+    font-size: 21px;
     line-height: 1.04;
     font-weight: 850;
   }
   .mini {
     width: 150px;
-    min-height: 124px;
-    margin: 0 auto 12px;
-    padding: 12px 10px;
+    height: 76px;
+    margin: 0 auto;
+    padding: 8px 10px;
     display: grid;
     align-content: center;
-    gap: 8px;
+    gap: 7px;
     border: 1px solid #cbd9e8;
     border-radius: 16px;
     background: #fbfdff;
   }
   .draft-line {
-    height: 14px;
+    height: 10px;
     border-radius: 999px;
     background: #dfe8f2;
   }
@@ -203,7 +213,7 @@
   .draft-line.med { width: 74%; }
   .draft-line.short { width: 52%; }
   .risk-meter {
-    height: 13px;
+    height: 10px;
     overflow: hidden;
     border-radius: 999px;
     background: #e7edf5;
@@ -215,111 +225,221 @@
     background: #d98716;
   }
   .reviewer {
-    width: 82px;
-    height: 82px;
+    width: 58px;
+    height: 58px;
     margin: 0 auto;
     display: grid;
     place-items: center;
-    border-radius: 24px;
+    border-radius: 18px;
     color: #ffffff;
     background: linear-gradient(135deg, #1d4ed8, #0891b2);
     box-shadow: inset 0 0 0 1px rgba(255,255,255,.25);
   }
-  .reviewer svg { width: 52px; height: 52px; }
-  .action-chip {
-    height: 32px;
-    padding: 6px 8px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    border: 1px solid #cdd9e8;
-    border-radius: 9px;
-    background: #f7fbff;
-  }
-  .action-chip b {
-    width: 18px;
-    height: 18px;
-    display: grid;
-    place-items: center;
-    border-radius: 6px;
-    color: #fff;
-    background: #16878a;
-    font-size: 12px;
-    line-height: 1;
-  }
-  .action-chip span {
-    height: 4px;
-    flex: 1;
-    border-radius: 999px;
-    background: #9aa8b8;
-  }
-  .audit-row {
-    height: 28px;
-    padding: 4px 8px;
+  .reviewer svg { width: 38px; height: 38px; }
+  .gate {
+    height: 20px;
+    padding: 3px 8px;
     border: 1px solid #cdd9e8;
     border-radius: 8px;
-    background: #f7fbff;
     color: #173b62;
-    font-size: 14px;
-    font-weight: 800;
+    background: #f7fbff;
+    font-size: 12px;
+    line-height: 1;
+    font-weight: 850;
     text-align: left;
   }
-  .audit-row.warn {
+  .gate.warn {
     color: #8a5b1c;
-    background: #fff8eb;
     border-color: #f0c47c;
+    background: #fff8eb;
+  }
+  .gate.ok {
+    color: #0f766e;
+    border-color: #9bd7c9;
+    background: #effaf5;
   }
   .step p {
     margin: 0;
+    align-self: end;
     color: #253b54;
-    font-size: 18px;
-    line-height: 1.14;
+    font-size: 16px;
+    line-height: 1.12;
+    font-weight: 530;
   }
-  .compact {
-    height: 248px;
-    padding: 22px 28px;
+  .system-map {
+    height: 596px;
+    padding: 24px 28px;
     display: grid;
-    grid-template-columns: 128px 1fr;
-    gap: 24px;
-    align-items: center;
+    grid-template-rows: auto 1fr;
+    gap: 18px;
   }
-  .compact .section-title { margin-bottom: 18px; }
-  ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 15px;
+  .map {
+    position: relative;
+    min-height: 0;
+    border: 1px solid #cbd9e8;
+    border-radius: 18px;
+    background: linear-gradient(180deg, #fbfdff 0%, #f7fbff 100%);
+    overflow: hidden;
   }
-  li {
-    display: grid;
-    grid-template-columns: 32px 1fr;
-    gap: 14px;
-    align-items: center;
-    color: #17233d;
-    font-size: 24px;
-    line-height: 1.1;
-    font-weight: 540;
-  }
-  .check {
-    width: 28px;
-    height: 28px;
-    display: grid;
-    place-items: center;
-    border-radius: 9px;
-    color: #fff;
-    background: #16878a;
-    font-size: 17px;
+  .map-badge {
+    position: absolute;
+    top: 16px;
+    padding: 7px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    line-height: 1;
     font-weight: 850;
-    box-shadow: 0 3px 0 rgba(22,135,138,.18);
+    letter-spacing: .06em;
   }
-  .tooling .section-mark {
-    border-color: #f0c47c;
-    color: #d98716;
+  .map-badge.left {
+    left: 34px;
+    color: #0f766e;
+    border: 1px solid #9bd7c9;
+    background: #effaf5;
+  }
+  .map-badge.right {
+    right: 34px;
+    color: #8a5b1c;
+    border: 1px solid #f0c47c;
     background: #fff8eb;
   }
-  .tooling .section-title { color: #cf730f; }
-  .tooling .check { background: #d98716; }
+  .path {
+    position: absolute;
+    left: 30px;
+    right: 30px;
+    top: 58px;
+    height: 184px;
+    display: grid;
+    grid-template-columns: 1fr 36px 1fr 36px 1fr;
+    gap: 8px;
+    align-items: center;
+  }
+  .lower {
+    position: absolute;
+    left: 30px;
+    right: 30px;
+    top: 270px;
+    height: 234px;
+    display: grid;
+    grid-template-columns: 1.08fr .92fr 1fr;
+    gap: 14px;
+  }
+  .node {
+    min-width: 0;
+    padding: 14px 16px;
+    border: 1px solid #cbd9e8;
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 5px 12px rgba(27, 67, 101, .08);
+  }
+  .path .node {
+    height: 118px;
+  }
+  .node strong {
+    display: block;
+    margin-bottom: 8px;
+    color: #0d1730;
+    font-size: 19px;
+    line-height: 1;
+    font-weight: 850;
+  }
+  .node span {
+    display: block;
+    color: #314964;
+    font-size: 14px;
+    line-height: 1.18;
+    font-weight: 620;
+  }
+  .node.good {
+    border-color: #9bd7c9;
+    background: #effaf5;
+  }
+  .node.warn {
+    border-color: #f0c47c;
+    background: #fff8eb;
+  }
+  .node.core {
+    color: #ffffff;
+    border-color: rgba(37, 99, 235, .26);
+    background: linear-gradient(135deg, #1d4ed8, #0891b2);
+  }
+  .node.core strong,
+  .node.core span { color: #ffffff; }
+  .arrow {
+    height: 1px;
+    background: #45bfd0;
+    position: relative;
+  }
+  .arrow::after {
+    content: "";
+    position: absolute;
+    right: -1px;
+    top: -4px;
+    border-left: 7px solid #45bfd0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+  }
+  .decision-panel,
+  .evidence-panel,
+  .ops-panel {
+    min-height: 210px;
+    padding: 16px;
+    border: 1px solid #cbd9e8;
+    border-radius: 18px;
+    background: #ffffff;
+  }
+  .evidence-panel {
+    background: #fbfdff;
+  }
+  .decision-panel {
+    border-color: #9bd7c9;
+    background: #effaf5;
+  }
+  .ops-panel {
+    border-color: #f0c47c;
+    background: #fff8eb;
+  }
+  .panel-title {
+    margin: 0 0 14px;
+    color: #0d1730;
+    font-size: 18px;
+    line-height: 1;
+    font-weight: 850;
+    letter-spacing: .06em;
+  }
+  .packet,
+  .action-grid,
+  .ops-list {
+    display: grid;
+    gap: 10px;
+  }
+  .packet-row,
+  .action,
+  .ops-item {
+    min-height: 34px;
+    padding: 9px 10px;
+    border: 1px solid #cbd9e8;
+    border-radius: 10px;
+    color: #173b62;
+    background: #ffffff;
+    font-size: 14px;
+    line-height: 1;
+    font-weight: 850;
+  }
+  .action {
+    color: #0f766e;
+    border-color: #9bd7c9;
+    background: #ffffff;
+  }
+  .action.warn {
+    color: #8a5b1c;
+    border-color: #f0c47c;
+    background: #fff8eb;
+  }
+  .ops-item {
+    color: #8a5b1c;
+    border-color: #f0c47c;
+  }
   svg {
     fill: none;
     stroke: currentColor;
@@ -347,17 +467,16 @@
 
   <div class="stack">
     <section class="panel overview">
-      <div class="section-mark" aria-hidden="true">
-        <svg viewBox="0 0 64 64">
-          <circle cx="24" cy="22" r="7"/>
-          <path d="M12 48c2-10 7-15 12-15s10 5 12 15"/>
-          <path d="M40 28h12M40 38h8"/>
-          <path d="M38 50l5 5 11-14"/>
-        </svg>
-      </div>
-      <div class="overview-copy">
-        <h2 class="section-title">OVERVIEW</h2>
-        <p>Human-in-the-loop architecture places review, approval, escalation, and audit trails around AI outputs or actions. It matters when decisions are risky, regulated, irreversible, customer-facing, or based on uncertain evidence that needs human judgment.</p>
+      <h2 class="section-title">OVERVIEW</h2>
+      <p>Human-in-the-loop architecture places review, approval, escalation, and audit trails inside the AI request path. Use it when decisions are risky, regulated, irreversible, customer-facing, or based on uncertain evidence that needs human judgment.</p>
+      <div class="review-row" aria-hidden="true">
+        <span class="review-chip hot">risk gate</span>
+        <span class="review-chip">evidence</span>
+        <span class="review-chip">queue</span>
+        <span class="review-chip">reviewer</span>
+        <span class="review-chip">actions</span>
+        <span class="review-chip">audit</span>
+        <span class="review-chip">evals</span>
       </div>
     </section>
 
@@ -395,15 +514,15 @@
               </svg>
             </div>
           </div>
-          <p>Reviewer sees evidence, policy, and model rationale.</p>
+          <p>Reviewer sees evidence, policy, and rationale.</p>
         </article>
         <article class="step">
           <div class="num">4</div>
           <h3>Approved<br>action</h3>
           <div class="mini">
-            <div class="action-chip"><b>OK</b><span></span></div>
-            <div class="action-chip"><b>ED</b><span></span></div>
-            <div class="action-chip"><b>NO</b><span></span></div>
+            <div class="gate ok">approve</div>
+            <div class="gate">edit</div>
+            <div class="gate warn">escalate</div>
           </div>
           <p>Approve, edit, reject, or escalate the outcome.</p>
         </article>
@@ -411,47 +530,61 @@
           <div class="num">5</div>
           <h3>Audit<br>trail</h3>
           <div class="mini">
-            <div class="audit-row">decision</div>
-            <div class="audit-row">reviewer</div>
-            <div class="audit-row warn">reason</div>
+            <div class="gate">decision</div>
+            <div class="gate">reviewer</div>
+            <div class="gate warn">reason</div>
           </div>
-          <p>Log the final decision and downstream effect.</p>
+          <p>Log final decision and downstream effect.</p>
         </article>
       </div>
     </section>
 
-    <section class="panel compact implementation">
-      <div class="section-mark" aria-hidden="true">
-        <svg viewBox="0 0 64 64">
-          <path d="M16 18h32v28H16z"/>
-          <path d="M24 28h16M24 36h10"/>
-          <path d="M40 50l5 5 9-13"/>
-        </svg>
-      </div>
-      <div class="compact-copy">
-        <h2 class="section-title">ENGINEERING NOTES</h2>
-        <ul>
-          <li><span class="check">&#10003;</span><span>Trigger review by risk, confidence, policy, or cost.</span></li>
-          <li><span class="check">&#10003;</span><span>Give reviewers evidence, history, and allowed actions.</span></li>
-          <li><span class="check">&#10003;</span><span>Log decisions, reasons, reviewer IDs, and outcomes.</span></li>
-        </ul>
-      </div>
-    </section>
+    <section class="panel system-map">
+      <h2 class="section-title">SYSTEM MAP</h2>
+      <div class="map">
+        <div class="map-badge left">AUTOMATE WHEN SAFE</div>
+        <div class="map-badge right">ESCALATE WHEN RISKY</div>
 
-    <section class="panel compact tooling">
-      <div class="section-mark" aria-hidden="true">
-        <svg viewBox="0 0 64 64">
-          <path d="M14 18h36v10H14zM14 36h36v10H14z"/>
-          <path d="M22 23h1M30 23h12M22 41h1M30 41h12"/>
-        </svg>
-      </div>
-      <div class="compact-copy">
-        <h2 class="section-title">PRACTICAL STACK</h2>
-        <ul>
-          <li><span class="check">&#10003;</span><span>Workflow: queues, review UI, assignments, escalation.</span></li>
-          <li><span class="check">&#10003;</span><span>Controls: policies, approvals, permissions, rollback paths.</span></li>
-          <li><span class="check">&#10003;</span><span>Observability: audit logs, traces, reviewer metrics, evals.</span></li>
-        </ul>
+        <div class="path">
+          <div class="node"><strong>AI draft</strong><span>answer, decision, tool plan, or workflow action</span></div>
+          <div class="arrow"></div>
+          <div class="node good"><strong>Risk policy</strong><span>confidence, cost, regulation, customer impact</span></div>
+          <div class="arrow"></div>
+          <div class="node warn"><strong>Review route</strong><span>auto-approve, human queue, or escalation</span></div>
+        </div>
+
+        <div class="lower">
+          <div class="evidence-panel">
+            <h3 class="panel-title">EVIDENCE PACKET</h3>
+            <div class="packet">
+              <div class="packet-row">Model output and rationale</div>
+              <div class="packet-row">Retrieved evidence and sources</div>
+              <div class="packet-row">Policy checks and risk score</div>
+              <div class="packet-row">History and previous actions</div>
+            </div>
+          </div>
+
+          <div class="decision-panel">
+            <h3 class="panel-title">REVIEW ACTIONS</h3>
+            <div class="action-grid">
+              <div class="action">Approve</div>
+              <div class="action">Edit</div>
+              <div class="action warn">Reject</div>
+              <div class="action warn">Escalate</div>
+            </div>
+          </div>
+
+          <div class="ops-panel">
+            <h3 class="panel-title">AUDIT AND OPS</h3>
+            <div class="ops-list">
+              <div class="ops-item">Decision, reason, reviewer ID</div>
+              <div class="ops-item">Downstream effect and rollback</div>
+              <div class="ops-item">Reviewer metrics and SLAs</div>
+              <div class="ops-item">Regression and eval datasets</div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </section>
   </div>

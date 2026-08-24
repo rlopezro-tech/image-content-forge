@@ -12,6 +12,10 @@ images/08-architecture-system-design/84-guardrails-architecture.png
 posts/08-architecture-system-design/84-guardrails-architecture-linkedin-post.md
 ```
 
-Teaching angle: place validation and policy checks around inputs, context, tools, and outputs.
+Teaching angle: place validation and policy checks around inputs, retrieved context, tool calls, model outputs, fallback paths, and operational audit loops.
 
-Required sections: `OVERVIEW`, `HOW IT WORKS`, `ENGINEERING NOTES`, `PRACTICAL STACK`.
+Use the alternative bottom format because this concept is best explained through a larger system diagram.
+
+Required sections: `OVERVIEW`, `HOW IT WORKS`, `SYSTEM MAP`.
+
+The `SYSTEM MAP` should show guardrails distributed across the AI request path: input policy, context filtering, model/tool policy, output checks, fallback or human review, policy registry, traces, and evaluation loops. Do not include `ENGINEERING NOTES` or `PRACTICAL STACK` in the card.
