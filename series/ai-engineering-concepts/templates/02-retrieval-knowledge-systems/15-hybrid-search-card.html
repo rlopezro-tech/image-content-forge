@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=1080, initial-scale=1">
-<title>Vector Databases - Tooling Map</title>
+<title>Hybrid Search - Implementation</title>
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; width: 1080px; height: 1350px; }
@@ -42,17 +42,17 @@
     flex: 0 0 auto;
     display: grid;
     place-items: center;
-    border: 1px solid #c4b5fd;
+    border: 1px solid #99f6e4;
     border-radius: 20px;
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    background: linear-gradient(135deg, #0f766e 0%, #10b981 100%);
     color: #ffffff;
-    box-shadow: 0 12px 24px rgba(79, 70, 229, .22), inset 0 0 0 1px rgba(255,255,255,.20);
+    box-shadow: 0 12px 24px rgba(15, 118, 110, .22), inset 0 0 0 1px rgba(255,255,255,.20);
   }
   .concept-icon svg { width: 72px; height: 72px; }
   h1 {
     margin: 0;
     color: #0b1b49;
-    font-size: 46px;
+    font-size: 48px;
     line-height: .96;
     font-weight: 850;
     letter-spacing: 0;
@@ -63,12 +63,12 @@
     padding: 13px 18px;
     border-radius: 999px;
     color: #ffffff;
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    background: linear-gradient(135deg, #0f766e 0%, #10b981 100%);
     font-size: 16px;
     font-weight: 800;
     letter-spacing: .08em;
     white-space: nowrap;
-    box-shadow: 0 8px 18px rgba(79, 70, 229, .18);
+    box-shadow: 0 8px 18px rgba(15, 118, 110, .18);
   }
   .stack { margin-top: 14px; display: grid; gap: 12px; }
   .panel { box-shadow: 0 12px 28px rgba(31, 54, 78, .10), 0 2px 5px rgba(31, 54, 78, .06); }
@@ -117,25 +117,40 @@
   .map {
     height: 414px;
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 14px;
+    grid-template-columns: 178px 232px 188px 178px 178px;
+    grid-template-rows: 1fr 1fr;
+    gap: 18px 16px;
     align-items: stretch;
   }
   .node {
     position: relative;
     min-width: 0;
-    padding: 16px 14px;
-    display: grid;
-    align-content: center;
+    padding: 16px;
     border: 1px solid #c8d7e6;
     border-radius: 18px;
     background: #fbfdff;
     box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 7px 14px rgba(27, 67, 101, .08);
   }
-  .index { border-color: #c4b5fd; background: #f5f3ff; }
-  .filters { border-color: #99f6e4; background: #f0fdfa; }
-  .query { border-color: #bfdbfe; background: #eff6ff; }
-  .results { border-color: #fde68a; background: #fffbeb; }
+  .node h3 {
+    margin: 0 0 8px;
+    color: #0d1730;
+    font-size: 23px;
+    line-height: 1.02;
+    font-weight: 850;
+  }
+  .node p {
+    margin: 0;
+    color: #31465f;
+    font-size: 17px;
+    line-height: 1.15;
+    font-weight: 590;
+  }
+  .query { grid-row: 1 / 3; display: grid; align-content: center; }
+  .keyword { grid-column: 2; grid-row: 1; border-color: #99f6e4; background: #f0fdfa; }
+  .vector { grid-column: 2; grid-row: 2; border-color: #bfdbfe; background: #eff6ff; }
+  .fusion { grid-column: 3; grid-row: 1 / 3; display: grid; align-content: center; border-color: #fde68a; background: #fffbeb; }
+  .rerank { grid-column: 4; grid-row: 1 / 3; display: grid; align-content: center; }
+  .context { grid-column: 5; grid-row: 1 / 3; display: grid; align-content: center; border-color: #99f6e4; background: #f8fffc; }
   .node::before {
     content: attr(data-step);
     width: 36px;
@@ -150,40 +165,36 @@
     font-weight: 850;
     box-shadow: 0 0 0 5px #ffffff;
   }
-  .node:not(:last-child)::after {
+  .query::after, .keyword::after, .vector::after, .fusion::after, .rerank::after {
     content: "";
     position: absolute;
-    z-index: 2;
-    width: 28px;
     height: 2px;
-    right: -28px;
-    top: 58%;
     background: #45bfd0;
   }
-  .node:not(:last-child) .arrow {
+  .query::after { width: 42px; right: -43px; top: 50%; }
+  .keyword::after, .vector::after { width: 34px; right: -34px; top: 50%; }
+  .fusion::after { width: 34px; right: -34px; top: 50%; }
+  .rerank::after { width: 34px; right: -34px; top: 50%; }
+  .query .split {
     position: absolute;
-    z-index: 3;
-    right: -34px;
-    top: calc(58% - 5px);
+    right: -48px;
+    top: 118px;
+    width: 48px;
+    height: 178px;
+    border-top: 2px solid #45bfd0;
+    border-bottom: 2px solid #45bfd0;
+    border-right: 2px solid #45bfd0;
+    border-radius: 0 14px 14px 0;
+  }
+  .arrow {
+    position: absolute;
+    right: -40px;
+    top: calc(50% - 5px);
     width: 0;
     height: 0;
     border-left: 8px solid #45bfd0;
     border-top: 5px solid transparent;
     border-bottom: 5px solid transparent;
-  }
-  .node h3 {
-    margin: 0 0 8px;
-    color: #0d1730;
-    font-size: 22px;
-    line-height: 1.02;
-    font-weight: 850;
-  }
-  .node p {
-    margin: 0;
-    color: #31465f;
-    font-size: 16px;
-    line-height: 1.14;
-    font-weight: 590;
   }
   .signal {
     margin-top: 14px;
@@ -195,31 +206,18 @@
   .bar.mid { width: 76%; }
   .bar.teal { background: #5eead4; }
   .bar.blue { background: #93c5fd; }
-  .bar.violet { background: #a78bfa; }
   .bar.amber { background: #facc15; }
-  .dots {
-    margin-top: 14px;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-  }
-  .dot {
-    height: 28px;
-    border-radius: 10px;
-    background: #ddd6fe;
-    border: 1px solid #c4b5fd;
-  }
   .lower {
     height: 430px;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
   }
-  .checklist, .tools {
+  .checklist, .ops {
     padding: 25px 26px;
     min-width: 0;
   }
-  .checklist .section-title, .tools .section-title { margin-bottom: 18px; }
+  .checklist .section-title, .ops .section-title { margin-bottom: 18px; }
   .bullet {
     min-height: 92px;
     padding: 16px 16px 16px 58px;
@@ -241,10 +239,10 @@
     width: 22px;
     height: 22px;
     border-radius: 8px;
-    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    background: linear-gradient(135deg, #0f766e, #10b981);
     box-shadow: inset 0 0 0 1px rgba(255,255,255,.35);
   }
-  .tools .bullet::before { background: linear-gradient(135deg, #0f766e, #10b981); }
+  .ops .bullet::before { background: linear-gradient(135deg, #f59e0b, #facc15); }
 </style>
 </head>
 <body>
@@ -252,69 +250,70 @@
   <header class="header">
     <div class="concept-icon" aria-hidden="true">
       <svg viewBox="0 0 72 72" fill="none">
-        <ellipse cx="36" cy="18" rx="20" ry="8" stroke="currentColor" stroke-width="4"/>
-        <path d="M16 18v26c0 4.4 9 8 20 8s20-3.6 20-8V18" stroke="currentColor" stroke-width="4"/>
-        <path d="M16 31c0 4.4 9 8 20 8s20-3.6 20-8" stroke="currentColor" stroke-width="4"/>
-        <circle cx="27" cy="28" r="3" fill="currentColor"/>
-        <circle cx="39" cy="41" r="3" fill="currentColor"/>
-        <circle cx="47" cy="29" r="3" fill="currentColor"/>
+        <circle cx="25" cy="25" r="13" stroke="currentColor" stroke-width="5"/>
+        <path d="M34 34l11 11" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+        <path d="M15 52h14M39 20h17M42 30h11M15 62h31" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+        <circle cx="56" cy="20" r="4" fill="currentColor"/>
+        <circle cx="53" cy="30" r="4" fill="currentColor"/>
       </svg>
     </div>
-    <h1>VECTOR DATABASES</h1>
-    <div class="badge">Tooling Map</div>
+    <h1>HYBRID SEARCH</h1>
+    <div class="badge">Implementation</div>
   </header>
 
   <div class="stack">
     <section class="panel overview" aria-labelledby="overview-title">
       <div class="section-mark" aria-hidden="true">
         <svg viewBox="0 0 64 64" fill="none">
-          <ellipse cx="32" cy="18" rx="18" ry="7" stroke="currentColor"/>
-          <path d="M14 18v24c0 3.9 8.1 7 18 7s18-3.1 18-7V18M14 30c0 3.9 8.1 7 18 7s18-3.1 18-7" stroke="currentColor"/>
+          <path d="M14 18h16M14 32h24M14 46h12" stroke="currentColor" stroke-linecap="round"/>
+          <circle cx="45" cy="24" r="8" stroke="currentColor"/>
+          <path d="M51 30l6 6" stroke="currentColor" stroke-linecap="round"/>
         </svg>
       </div>
       <div class="overview-copy">
         <h2 id="overview-title" class="section-title">Overview</h2>
-        <p>Vector databases store embeddings with metadata, indexes, and query controls so applications can retrieve semantically similar records at production speed. In RAG systems, they are the retrieval layer between raw knowledge and model context.</p>
+        <p>Hybrid search combines lexical matching with vector similarity so retrieval can find exact terms and semantic matches in the same request. It is useful when users mix IDs, product names, error codes, synonyms, and natural-language questions.</p>
       </div>
     </section>
 
     <section class="panel workflow" aria-labelledby="workflow-title">
       <h2 id="workflow-title" class="section-title">How It Works</h2>
       <div class="map">
-        <div class="node" data-step="1">
+        <div class="node query" data-step="1">
+          <span class="split" aria-hidden="true"></span>
           <span class="arrow" aria-hidden="true"></span>
-          <h3>Documents</h3>
-          <p>Chunks from files, tickets, pages, or records.</p>
+          <h3>User query</h3>
+          <p>Raw question plus filters and constraints.</p>
           <div class="signal"><span class="bar"></span><span class="bar mid"></span><span class="bar short"></span></div>
         </div>
-        <div class="node" data-step="2">
+        <div class="node keyword" data-step="2">
           <span class="arrow" aria-hidden="true"></span>
-          <h3>Embeddings</h3>
-          <p>Dense vectors that represent meaning.</p>
-          <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-        </div>
-        <div class="node index" data-step="3">
-          <span class="arrow" aria-hidden="true"></span>
-          <h3>Vector index</h3>
-          <p>Approximate nearest-neighbor search at scale.</p>
-          <div class="signal"><span class="bar violet"></span><span class="bar mid"></span></div>
-        </div>
-        <div class="node filters" data-step="4">
-          <span class="arrow" aria-hidden="true"></span>
-          <h3>Metadata filters</h3>
-          <p>Tenant, source, date, type, permissions.</p>
+          <h3>Keyword branch</h3>
+          <p>Exact names, terms, IDs, and codes.</p>
           <div class="signal"><span class="bar teal"></span><span class="bar mid"></span></div>
         </div>
-        <div class="node query" data-step="5">
+        <div class="node vector" data-step="3">
           <span class="arrow" aria-hidden="true"></span>
-          <h3>Similarity query</h3>
-          <p>Find nearest chunks for the request.</p>
+          <h3>Vector branch</h3>
+          <p>Meaning, intent, and paraphrases.</p>
           <div class="signal"><span class="bar blue"></span><span class="bar mid"></span></div>
         </div>
-        <div class="node results" data-step="6">
-          <h3>Ranked results</h3>
-          <p>Return scoped evidence for context.</p>
+        <div class="node fusion" data-step="4">
+          <span class="arrow" aria-hidden="true"></span>
+          <h3>Fuse scores</h3>
+          <p>Normalize and merge candidate sets.</p>
           <div class="signal"><span class="bar amber"></span><span class="bar teal"></span><span class="bar blue"></span></div>
+        </div>
+        <div class="node rerank" data-step="5">
+          <span class="arrow" aria-hidden="true"></span>
+          <h3>Rerank / trim</h3>
+          <p>Keep the most useful evidence.</p>
+          <div class="signal"><span class="bar"></span><span class="bar mid teal"></span></div>
+        </div>
+        <div class="node context" data-step="6">
+          <h3>Context for LLM</h3>
+          <p>Pass compact, ranked sources into generation.</p>
+          <div class="signal"><span class="bar teal"></span><span class="bar mid"></span><span class="bar short"></span></div>
         </div>
       </div>
     </section>
@@ -322,15 +321,15 @@
     <section class="lower" aria-label="Implementation details">
       <div class="panel checklist">
         <h2 class="section-title">Engineering Notes</h2>
-        <div class="bullet">Store vectors with source IDs, permissions, timestamps, and chunk metadata.</div>
-        <div class="bullet">Choose indexing, filtering, updates, and delete behavior for your workload.</div>
-        <div class="bullet">Measure retrieval quality, not only query latency.</div>
+        <div class="bullet">Use keyword search for rare terms, filters, IDs, and exact names.</div>
+        <div class="bullet">Use vector search for paraphrases, intent, and fuzzy language.</div>
+        <div class="bullet">Normalize scores before fusion so one branch does not dominate silently.</div>
       </div>
-      <div class="panel tools">
-        <h2 class="section-title">Practical Stack</h2>
-        <div class="bullet">Postgres + pgvector for app-owned data and simpler ops.</div>
-        <div class="bullet">Qdrant, Weaviate, Milvus, or Pinecone for dedicated vector workloads.</div>
-        <div class="bullet">FAISS for local indexes, experiments, and custom retrieval services.</div>
+      <div class="panel ops">
+        <h2 class="section-title">Production Checks</h2>
+        <div class="bullet">Measure recall before and after fusion.</div>
+        <div class="bullet">Log which branch found each source.</div>
+        <div class="bullet">Tune top-k, filters, and reranking together.</div>
       </div>
     </section>
   </div>

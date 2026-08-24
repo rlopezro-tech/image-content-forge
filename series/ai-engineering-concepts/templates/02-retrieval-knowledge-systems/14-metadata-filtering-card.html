@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=1080, initial-scale=1">
-<title>Vector Databases - Tooling Map</title>
+<title>Metadata Filtering - Implementation</title>
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; width: 1080px; height: 1350px; }
@@ -42,11 +42,11 @@
     flex: 0 0 auto;
     display: grid;
     place-items: center;
-    border: 1px solid #c4b5fd;
+    border: 1px solid #99f6e4;
     border-radius: 20px;
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    background: linear-gradient(135deg, #0f766e 0%, #10b981 100%);
     color: #ffffff;
-    box-shadow: 0 12px 24px rgba(79, 70, 229, .22), inset 0 0 0 1px rgba(255,255,255,.20);
+    box-shadow: 0 12px 24px rgba(15, 118, 110, .22), inset 0 0 0 1px rgba(255,255,255,.20);
   }
   .concept-icon svg { width: 72px; height: 72px; }
   h1 {
@@ -63,12 +63,12 @@
     padding: 13px 18px;
     border-radius: 999px;
     color: #ffffff;
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    background: linear-gradient(135deg, #0f766e 0%, #10b981 100%);
     font-size: 16px;
     font-weight: 800;
     letter-spacing: .08em;
     white-space: nowrap;
-    box-shadow: 0 8px 18px rgba(79, 70, 229, .18);
+    box-shadow: 0 8px 18px rgba(15, 118, 110, .18);
   }
   .stack { margin-top: 14px; display: grid; gap: 12px; }
   .panel { box-shadow: 0 12px 28px rgba(31, 54, 78, .10), 0 2px 5px rgba(31, 54, 78, .06); }
@@ -132,10 +132,10 @@
     background: #fbfdff;
     box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 7px 14px rgba(27, 67, 101, .08);
   }
-  .index { border-color: #c4b5fd; background: #f5f3ff; }
   .filters { border-color: #99f6e4; background: #f0fdfa; }
-  .query { border-color: #bfdbfe; background: #eff6ff; }
-  .results { border-color: #fde68a; background: #fffbeb; }
+  .gate { border-color: #fde68a; background: #fffbeb; }
+  .search { border-color: #bfdbfe; background: #eff6ff; }
+  .context { border-color: #99f6e4; background: #f8fffc; }
   .node::before {
     content: attr(data-step);
     width: 36px;
@@ -195,19 +195,21 @@
   .bar.mid { width: 76%; }
   .bar.teal { background: #5eead4; }
   .bar.blue { background: #93c5fd; }
-  .bar.violet { background: #a78bfa; }
   .bar.amber { background: #facc15; }
-  .dots {
-    margin-top: 14px;
+  .chips {
+    margin-top: 12px;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
+    gap: 7px;
   }
-  .dot {
-    height: 28px;
-    border-radius: 10px;
-    background: #ddd6fe;
-    border: 1px solid #c4b5fd;
+  .chip {
+    min-height: 24px;
+    padding: 5px 8px;
+    border-radius: 8px;
+    background: #d9f99d;
+    color: #14532d;
+    font-size: 13px;
+    line-height: 1;
+    font-weight: 850;
   }
   .lower {
     height: 430px;
@@ -215,11 +217,11 @@
     grid-template-columns: 1fr 1fr;
     gap: 12px;
   }
-  .checklist, .tools {
+  .checklist, .ops {
     padding: 25px 26px;
     min-width: 0;
   }
-  .checklist .section-title, .tools .section-title { margin-bottom: 18px; }
+  .checklist .section-title, .ops .section-title { margin-bottom: 18px; }
   .bullet {
     min-height: 92px;
     padding: 16px 16px 16px 58px;
@@ -241,10 +243,10 @@
     width: 22px;
     height: 22px;
     border-radius: 8px;
-    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    background: linear-gradient(135deg, #0f766e, #10b981);
     box-shadow: inset 0 0 0 1px rgba(255,255,255,.35);
   }
-  .tools .bullet::before { background: linear-gradient(135deg, #0f766e, #10b981); }
+  .ops .bullet::before { background: linear-gradient(135deg, #f59e0b, #facc15); }
 </style>
 </head>
 <body>
@@ -252,29 +254,29 @@
   <header class="header">
     <div class="concept-icon" aria-hidden="true">
       <svg viewBox="0 0 72 72" fill="none">
-        <ellipse cx="36" cy="18" rx="20" ry="8" stroke="currentColor" stroke-width="4"/>
-        <path d="M16 18v26c0 4.4 9 8 20 8s20-3.6 20-8V18" stroke="currentColor" stroke-width="4"/>
-        <path d="M16 31c0 4.4 9 8 20 8s20-3.6 20-8" stroke="currentColor" stroke-width="4"/>
-        <circle cx="27" cy="28" r="3" fill="currentColor"/>
-        <circle cx="39" cy="41" r="3" fill="currentColor"/>
-        <circle cx="47" cy="29" r="3" fill="currentColor"/>
+        <path d="M14 18h44M22 34h28M30 50h12" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+        <circle cx="22" cy="18" r="6" fill="currentColor"/>
+        <circle cx="50" cy="34" r="6" fill="currentColor"/>
+        <circle cx="30" cy="50" r="6" fill="currentColor"/>
       </svg>
     </div>
-    <h1>VECTOR DATABASES</h1>
-    <div class="badge">Tooling Map</div>
+    <h1>METADATA FILTERING</h1>
+    <div class="badge">Implementation</div>
   </header>
 
   <div class="stack">
     <section class="panel overview" aria-labelledby="overview-title">
       <div class="section-mark" aria-hidden="true">
         <svg viewBox="0 0 64 64" fill="none">
-          <ellipse cx="32" cy="18" rx="18" ry="7" stroke="currentColor"/>
-          <path d="M14 18v24c0 3.9 8.1 7 18 7s18-3.1 18-7V18M14 30c0 3.9 8.1 7 18 7s18-3.1 18-7" stroke="currentColor"/>
+          <path d="M12 18h40M18 32h28M25 46h14" stroke="currentColor" stroke-linecap="round"/>
+          <circle cx="18" cy="18" r="4" fill="currentColor"/>
+          <circle cx="46" cy="32" r="4" fill="currentColor"/>
+          <circle cx="25" cy="46" r="4" fill="currentColor"/>
         </svg>
       </div>
       <div class="overview-copy">
         <h2 id="overview-title" class="section-title">Overview</h2>
-        <p>Vector databases store embeddings with metadata, indexes, and query controls so applications can retrieve semantically similar records at production speed. In RAG systems, they are the retrieval layer between raw knowledge and model context.</p>
+        <p>Metadata filtering combines semantic retrieval with exact constraints such as tenant, permissions, source, language, date, product, or document type. It keeps search results relevant, scoped, and safe before the model sees any context.</p>
       </div>
     </section>
 
@@ -283,38 +285,38 @@
       <div class="map">
         <div class="node" data-step="1">
           <span class="arrow" aria-hidden="true"></span>
-          <h3>Documents</h3>
-          <p>Chunks from files, tickets, pages, or records.</p>
+          <h3>User query</h3>
+          <p>Question plus user and app state.</p>
           <div class="signal"><span class="bar"></span><span class="bar mid"></span><span class="bar short"></span></div>
         </div>
-        <div class="node" data-step="2">
+        <div class="node filters" data-step="2">
           <span class="arrow" aria-hidden="true"></span>
-          <h3>Embeddings</h3>
-          <p>Dense vectors that represent meaning.</p>
-          <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+          <h3>Extract filters</h3>
+          <p>Tenant, role, date, source, type.</p>
+          <div class="chips"><span class="chip">tenant</span><span class="chip">date</span><span class="chip">type</span></div>
         </div>
-        <div class="node index" data-step="3">
+        <div class="node gate" data-step="3">
           <span class="arrow" aria-hidden="true"></span>
-          <h3>Vector index</h3>
-          <p>Approximate nearest-neighbor search at scale.</p>
-          <div class="signal"><span class="bar violet"></span><span class="bar mid"></span></div>
+          <h3>Apply constraints</h3>
+          <p>Scope candidates before retrieval.</p>
+          <div class="signal"><span class="bar amber"></span><span class="bar mid"></span></div>
         </div>
-        <div class="node filters" data-step="4">
+        <div class="node search" data-step="4">
           <span class="arrow" aria-hidden="true"></span>
-          <h3>Metadata filters</h3>
-          <p>Tenant, source, date, type, permissions.</p>
-          <div class="signal"><span class="bar teal"></span><span class="bar mid"></span></div>
+          <h3>Search candidates</h3>
+          <p>Run vector, keyword, or hybrid search.</p>
+          <div class="signal"><span class="bar blue"></span><span class="bar teal"></span></div>
         </div>
-        <div class="node query" data-step="5">
+        <div class="node" data-step="5">
           <span class="arrow" aria-hidden="true"></span>
-          <h3>Similarity query</h3>
-          <p>Find nearest chunks for the request.</p>
-          <div class="signal"><span class="bar blue"></span><span class="bar mid"></span></div>
+          <h3>Rank scoped results</h3>
+          <p>Score only allowed evidence.</p>
+          <div class="signal"><span class="bar"></span><span class="bar mid teal"></span></div>
         </div>
-        <div class="node results" data-step="6">
-          <h3>Ranked results</h3>
-          <p>Return scoped evidence for context.</p>
-          <div class="signal"><span class="bar amber"></span><span class="bar teal"></span><span class="bar blue"></span></div>
+        <div class="node context" data-step="6">
+          <h3>Context for LLM</h3>
+          <p>Pass clean, allowed sources.</p>
+          <div class="signal"><span class="bar teal"></span><span class="bar mid"></span><span class="bar short"></span></div>
         </div>
       </div>
     </section>
@@ -322,15 +324,15 @@
     <section class="lower" aria-label="Implementation details">
       <div class="panel checklist">
         <h2 class="section-title">Engineering Notes</h2>
-        <div class="bullet">Store vectors with source IDs, permissions, timestamps, and chunk metadata.</div>
-        <div class="bullet">Choose indexing, filtering, updates, and delete behavior for your workload.</div>
-        <div class="bullet">Measure retrieval quality, not only query latency.</div>
+        <div class="bullet">Filter by tenant, permissions, source, date, and document type.</div>
+        <div class="bullet">Apply access filters before generation, not only after retrieval.</div>
+        <div class="bullet">Keep metadata clean, indexed, and consistent across ingestion runs.</div>
       </div>
-      <div class="panel tools">
-        <h2 class="section-title">Practical Stack</h2>
-        <div class="bullet">Postgres + pgvector for app-owned data and simpler ops.</div>
-        <div class="bullet">Qdrant, Weaviate, Milvus, or Pinecone for dedicated vector workloads.</div>
-        <div class="bullet">FAISS for local indexes, experiments, and custom retrieval services.</div>
+      <div class="panel ops">
+        <h2 class="section-title">Production Checks</h2>
+        <div class="bullet">Test permission boundaries with adversarial queries.</div>
+        <div class="bullet">Log active filters for debugging and audits.</div>
+        <div class="bullet">Watch for over-filtering that hides relevant sources.</div>
       </div>
     </section>
   </div>

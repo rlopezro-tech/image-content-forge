@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1080, initial-scale=1">
+<title>Grounding And Citations - Production Checks</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 1080px; height: 1350px; }
+  body {
+    background: #d7dfe7;
+    color: #0d1730;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  .card {
+    width: 1080px;
+    height: 1350px;
+    padding: 28px 30px;
+    overflow: hidden;
+    background-color: #f2f6fa;
+    background-image:
+      linear-gradient(rgba(24, 78, 119, .022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(24, 78, 119, .022) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .header, .panel {
+    border: 1px solid #d7e1ea;
+    border-radius: 22px;
+    background: #ffffff;
+  }
+  .header {
+    height: 142px;
+    padding: 22px 28px;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    box-shadow: 0 14px 30px rgba(31, 54, 78, .13), inset 0 1px 0 rgba(255,255,255,.9);
+  }
+  .concept-icon {
+    width: 96px;
+    height: 96px;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    border: 1px solid #fed7aa;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+    color: #ffffff;
+    box-shadow: 0 12px 24px rgba(217, 119, 6, .22), inset 0 0 0 1px rgba(255,255,255,.20);
+  }
+  .concept-icon svg { width: 72px; height: 72px; }
+  h1 {
+    margin: 0;
+    color: #0b1b49;
+    font-size: 43px;
+    line-height: .96;
+    font-weight: 850;
+    letter-spacing: 0;
+    text-shadow: 0 2px 8px rgba(11,27,73,.12);
+  }
+  .badge {
+    margin-left: auto;
+    padding: 13px 17px;
+    border-radius: 999px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: .07em;
+    white-space: nowrap;
+    box-shadow: 0 8px 18px rgba(217, 119, 6, .18);
+  }
+  .stack { margin-top: 14px; display: grid; gap: 12px; }
+  .panel { box-shadow: 0 12px 28px rgba(31, 54, 78, .10), 0 2px 5px rgba(31, 54, 78, .06); }
+  .section-title {
+    margin: 0;
+    color: #2460d8;
+    font-size: 20px;
+    line-height: 1;
+    font-weight: 850;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+  }
+  .overview {
+    height: 198px;
+    padding: 24px 28px;
+    display: grid;
+    grid-template-columns: 112px 1fr;
+    gap: 24px;
+    align-items: center;
+  }
+  .section-mark {
+    width: 88px;
+    height: 88px;
+    display: grid;
+    place-items: center;
+    border: 1px solid #a9c4f7;
+    border-radius: 24px;
+    color: #2460d8;
+    background: #edf3ff;
+  }
+  .section-mark svg { width: 58px; height: 58px; stroke-width: 2.8; }
+  .overview-copy { border-left: 1px solid #d2dde8; padding-left: 24px; }
+  .overview .section-title { margin-bottom: 12px; }
+  .overview p {
+    margin: 0;
+    color: #17233d;
+    font-size: 24px;
+    line-height: 1.18;
+    font-weight: 540;
+  }
+  .workflow {
+    height: 220px;
+    padding: 24px;
+  }
+  .workflow .section-title { margin-bottom: 22px; }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+  }
+  .step {
+    position: relative;
+    min-height: 126px;
+    padding: 14px 12px;
+    border: 1px solid #c8d7e6;
+    border-radius: 18px;
+    background: #fbfdff;
+  }
+  .step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    right: -18px;
+    top: 58px;
+    width: 24px;
+    height: 2px;
+    background: #45bfd0;
+  }
+  .step:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    right: -22px;
+    top: 54px;
+    border-left: 8px solid #45bfd0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+  }
+  .step b {
+    width: 34px;
+    height: 34px;
+    margin-bottom: 10px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: #fff;
+    background: #2460d8;
+    font-size: 16px;
+    font-weight: 850;
+  }
+  .step span {
+    display: block;
+    color: #0d1730;
+    font-size: 20px;
+    line-height: 1.05;
+    font-weight: 850;
+  }
+  .system {
+    height: 718px;
+    padding: 24px;
+  }
+  .system-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+  .quality {
+    padding: 10px 14px;
+    border: 1px solid #bbf7d0;
+    border-radius: 999px;
+    background: #f0fdf4;
+    color: #14532d;
+    font-size: 18px;
+    line-height: 1;
+    font-weight: 800;
+  }
+  .trace-map {
+    height: 622px;
+    display: grid;
+    grid-template-columns: 250px 1fr 280px;
+    grid-template-rows: 72px 1fr 92px;
+    gap: 16px;
+  }
+  .lane {
+    padding: 12px 14px;
+    border-radius: 16px;
+    border: 1px solid #d9e4ef;
+    background: #fbfdff;
+    color: #17233d;
+    font-size: 18px;
+    line-height: 1.1;
+    font-weight: 780;
+  }
+  .lane b { color: #0b1b49; }
+  .question {
+    grid-column: 1;
+    grid-row: 1;
+    border-color: #bfdbfe;
+    background: #eff6ff;
+  }
+  .context {
+    grid-column: 2;
+    grid-row: 1;
+    border-color: #99f6e4;
+    background: #f0fdfa;
+  }
+  .sources {
+    grid-column: 3;
+    grid-row: 1;
+    border-color: #fde68a;
+    background: #fffbeb;
+  }
+  .answer {
+    grid-column: 1 / 3;
+    grid-row: 2;
+    padding: 20px;
+    border: 1px solid #c8d7e6;
+    border-radius: 18px;
+    background: #fbfdff;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 7px 14px rgba(27, 67, 101, .08);
+  }
+  .answer-title {
+    margin: 0 0 16px;
+    color: #0d1730;
+    font-size: 25px;
+    line-height: 1;
+    font-weight: 850;
+  }
+  .claim {
+    position: relative;
+    min-height: 92px;
+    margin-top: 12px;
+    padding: 15px 70px 15px 52px;
+    border: 1px solid #d9e4ef;
+    border-radius: 16px;
+    background: #ffffff;
+    color: #17233d;
+    font-size: 20px;
+    line-height: 1.12;
+    font-weight: 660;
+  }
+  .claim::before {
+    content: attr(data-claim);
+    position: absolute;
+    left: 15px;
+    top: 16px;
+    width: 26px;
+    height: 26px;
+    display: grid;
+    place-items: center;
+    border-radius: 8px;
+    color: #fff;
+    background: #2460d8;
+    font-size: 14px;
+    font-weight: 850;
+  }
+  .cite-tag {
+    position: absolute;
+    right: 14px;
+    top: 16px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    background: #fffbeb;
+    border: 1px solid #facc15;
+    color: #78350f;
+    font-size: 15px;
+    line-height: 1;
+    font-weight: 850;
+  }
+  .evidence {
+    grid-column: 3;
+    grid-row: 2;
+    display: grid;
+    gap: 12px;
+  }
+  .chunk {
+    position: relative;
+    padding: 16px 16px 16px 50px;
+    border: 1px solid #d9e4ef;
+    border-radius: 16px;
+    background: #fbfdff;
+    color: #17233d;
+    font-size: 18px;
+    line-height: 1.1;
+    font-weight: 690;
+  }
+  .chunk::before {
+    content: attr(data-src);
+    position: absolute;
+    left: 14px;
+    top: 16px;
+    width: 26px;
+    height: 26px;
+    display: grid;
+    place-items: center;
+    border-radius: 8px;
+    background: #f59e0b;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 850;
+  }
+  .chunk span {
+    display: block;
+    margin-top: 8px;
+    color: #52657a;
+    font-size: 15px;
+    line-height: 1.1;
+    font-weight: 700;
+  }
+  .link-line {
+    position: absolute;
+    right: -46px;
+    width: 46px;
+    height: 2px;
+    background: #45bfd0;
+  }
+  .claim.one .link-line { top: 48px; }
+  .claim.two .link-line { top: 48px; }
+  .claim.three .link-line { top: 48px; }
+  .checks {
+    grid-column: 1 / 4;
+    grid-row: 3;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .check {
+    padding: 15px 14px 15px 44px;
+    position: relative;
+    border: 1px solid #bbf7d0;
+    border-radius: 16px;
+    background: #f0fdf4;
+    color: #17233d;
+    font-size: 18px;
+    line-height: 1.05;
+    font-weight: 760;
+  }
+  .check::before {
+    content: "";
+    position: absolute;
+    left: 14px;
+    top: 17px;
+    width: 18px;
+    height: 18px;
+    border-radius: 7px;
+    background: #10b981;
+  }
+</style>
+</head>
+<body>
+<main class="card">
+  <header class="header">
+    <div class="concept-icon" aria-hidden="true">
+      <svg viewBox="0 0 72 72" fill="none">
+        <path d="M18 20h28a8 8 0 0 1 8 8v2M54 42v2a8 8 0 0 1-8 8H18" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+        <path d="M18 20l8-8M18 20l8 8M54 52l-8-8M54 52l-8 8" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="36" cy="36" r="8" stroke="currentColor" stroke-width="5"/>
+      </svg>
+    </div>
+    <h1>GROUNDING AND CITATIONS</h1>
+    <div class="badge">Production Checks</div>
+  </header>
+
+  <div class="stack">
+    <section class="panel overview" aria-labelledby="overview-title">
+      <div class="section-mark" aria-hidden="true">
+        <svg viewBox="0 0 64 64" fill="none">
+          <path d="M16 20h18M16 32h26M16 44h14" stroke="currentColor" stroke-linecap="round"/>
+          <path d="M42 22l7 7-14 14h-7v-7l14-14Z" stroke="currentColor" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="overview-copy">
+        <h2 id="overview-title" class="section-title">Overview</h2>
+        <p>Grounding connects model answers to retrieved evidence. Citations expose that connection to users and reviewers. In RAG systems, the goal is not just to attach links, but to make every important claim traceable to source chunks the model actually received.</p>
+      </div>
+    </section>
+
+    <section class="panel workflow" aria-labelledby="workflow-title">
+      <h2 id="workflow-title" class="section-title">How It Works</h2>
+      <div class="steps">
+        <div class="step"><b>1</b><span>Retrieve evidence</span></div>
+        <div class="step"><b>2</b><span>Build context</span></div>
+        <div class="step"><b>3</b><span>Generate answer</span></div>
+        <div class="step"><b>4</b><span>Attach citations</span></div>
+        <div class="step"><b>5</b><span>Verify support</span></div>
+        <div class="step"><b>6</b><span>Return answer</span></div>
+      </div>
+    </section>
+
+    <section class="panel system" aria-labelledby="system-title">
+      <div class="system-head">
+        <h2 id="system-title" class="section-title">System Map</h2>
+        <div class="quality">Trace every important claim to evidence</div>
+      </div>
+      <div class="trace-map">
+        <div class="lane question"><b>User question</b><br>Request + constraints</div>
+        <div class="lane context"><b>Context window</b><br>Retrieved chunks the model can use</div>
+        <div class="lane sources"><b>Source documents</b><br>Visible evidence for review</div>
+
+        <div class="answer">
+          <h3 class="answer-title">Generated claims</h3>
+          <div class="claim one" data-claim="A">
+            The refund window is 30 days for standard orders.
+            <span class="cite-tag">[S1]</span><span class="link-line" aria-hidden="true"></span>
+          </div>
+          <div class="claim two" data-claim="B">
+            Enterprise plans require approval before cancellation.
+            <span class="cite-tag">[S2]</span><span class="link-line" aria-hidden="true"></span>
+          </div>
+          <div class="claim three" data-claim="C">
+            Unsupported claims should be removed or marked uncertain.
+            <span class="cite-tag">check</span><span class="link-line" aria-hidden="true"></span>
+          </div>
+        </div>
+
+        <div class="evidence">
+          <div class="chunk" data-src="S1">Policy chunk 04<span>used in context, current version</span></div>
+          <div class="chunk" data-src="S2">Contract chunk 11<span>permission-checked source</span></div>
+          <div class="chunk" data-src="S3">Missing support<span>block, revise, or ask follow-up</span></div>
+        </div>
+
+        <div class="checks">
+          <div class="check">Claim supported</div>
+          <div class="check">Source visible</div>
+          <div class="check">Chunk used</div>
+          <div class="check">Stale evidence blocked</div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+</body>
+</html>

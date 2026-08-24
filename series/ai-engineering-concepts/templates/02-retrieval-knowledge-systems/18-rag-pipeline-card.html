@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1080, initial-scale=1">
+<title>RAG Pipeline - Implementation</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 1080px; height: 1350px; }
+  body {
+    background: #d7dfe7;
+    color: #0d1730;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  .card {
+    width: 1080px;
+    height: 1350px;
+    padding: 28px 30px;
+    overflow: hidden;
+    background-color: #f2f6fa;
+    background-image:
+      linear-gradient(rgba(24, 78, 119, .022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(24, 78, 119, .022) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .header, .panel {
+    border: 1px solid #d7e1ea;
+    border-radius: 22px;
+    background: #ffffff;
+  }
+  .header {
+    height: 142px;
+    padding: 22px 28px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    box-shadow: 0 14px 30px rgba(31, 54, 78, .13), inset 0 1px 0 rgba(255,255,255,.9);
+  }
+  .concept-icon {
+    width: 96px;
+    height: 96px;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    border: 1px solid #99f6e4;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #0f766e 0%, #10b981 100%);
+    color: #ffffff;
+    box-shadow: 0 12px 24px rgba(15, 118, 110, .22), inset 0 0 0 1px rgba(255,255,255,.20);
+  }
+  .concept-icon svg { width: 72px; height: 72px; }
+  h1 {
+    margin: 0;
+    color: #0b1b49;
+    font-size: 48px;
+    line-height: .96;
+    font-weight: 850;
+    letter-spacing: 0;
+    text-shadow: 0 2px 8px rgba(11,27,73,.12);
+  }
+  .badge {
+    margin-left: auto;
+    padding: 13px 18px;
+    border-radius: 999px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #0f766e 0%, #10b981 100%);
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    white-space: nowrap;
+    box-shadow: 0 8px 18px rgba(15, 118, 110, .18);
+  }
+  .stack { margin-top: 14px; display: grid; gap: 12px; }
+  .panel { box-shadow: 0 12px 28px rgba(31, 54, 78, .10), 0 2px 5px rgba(31, 54, 78, .06); }
+  .section-title {
+    margin: 0;
+    color: #2460d8;
+    font-size: 20px;
+    line-height: 1;
+    font-weight: 850;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+  }
+  .overview {
+    height: 198px;
+    padding: 24px 28px;
+    display: grid;
+    grid-template-columns: 112px 1fr;
+    gap: 24px;
+    align-items: center;
+  }
+  .section-mark {
+    width: 88px;
+    height: 88px;
+    display: grid;
+    place-items: center;
+    border: 1px solid #a9c4f7;
+    border-radius: 24px;
+    color: #2460d8;
+    background: #edf3ff;
+  }
+  .section-mark svg { width: 58px; height: 58px; stroke-width: 2.8; }
+  .overview-copy { border-left: 1px solid #d2dde8; padding-left: 24px; }
+  .overview .section-title { margin-bottom: 12px; }
+  .overview p {
+    margin: 0;
+    color: #17233d;
+    font-size: 24px;
+    line-height: 1.18;
+    font-weight: 540;
+  }
+  .workflow {
+    height: 220px;
+    padding: 24px;
+  }
+  .workflow .section-title { margin-bottom: 22px; }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+  }
+  .step {
+    position: relative;
+    min-height: 126px;
+    padding: 14px 12px;
+    border: 1px solid #c8d7e6;
+    border-radius: 18px;
+    background: #fbfdff;
+  }
+  .step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    right: -18px;
+    top: 58px;
+    width: 24px;
+    height: 2px;
+    background: #45bfd0;
+  }
+  .step:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    right: -22px;
+    top: 54px;
+    border-left: 8px solid #45bfd0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+  }
+  .step b {
+    width: 34px;
+    height: 34px;
+    margin-bottom: 10px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: #fff;
+    background: #2460d8;
+    font-size: 16px;
+    font-weight: 850;
+  }
+  .step span {
+    display: block;
+    color: #0d1730;
+    font-size: 21px;
+    line-height: 1.05;
+    font-weight: 850;
+  }
+  .system {
+    height: 718px;
+    padding: 24px;
+  }
+  .system-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+  .quality {
+    padding: 10px 14px;
+    border: 1px solid #fde68a;
+    border-radius: 999px;
+    background: #fffbeb;
+    color: #78350f;
+    font-size: 18px;
+    line-height: 1;
+    font-weight: 800;
+  }
+  .map {
+    height: 622px;
+    display: grid;
+    grid-template-columns: 150px repeat(4, 1fr) 150px;
+    grid-template-rows: 258px 258px 74px;
+    gap: 16px;
+  }
+  .lane {
+    grid-column: 1 / 7;
+    grid-row: 1;
+    align-self: start;
+    padding: 9px 14px;
+    border-radius: 999px;
+    color: #14532d;
+    background: #dcfce7;
+    font-size: 17px;
+    font-weight: 850;
+    z-index: 3;
+  }
+  .lane.online {
+    grid-row: 2;
+    align-self: start;
+    color: #1e3a8a;
+    background: #dbeafe;
+  }
+  .box {
+    position: relative;
+    min-width: 0;
+    padding: 16px 14px;
+    display: grid;
+    align-content: center;
+    border: 1px solid #c8d7e6;
+    border-radius: 18px;
+    background: #fbfdff;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 7px 14px rgba(27, 67, 101, .08);
+  }
+  .box h3 {
+    margin: 0 0 8px;
+    color: #0d1730;
+    font-size: 22px;
+    line-height: 1.02;
+    font-weight: 850;
+  }
+  .box p {
+    margin: 0;
+    color: #31465f;
+    font-size: 16px;
+    line-height: 1.15;
+    font-weight: 590;
+  }
+  .box::before {
+    content: attr(data-key);
+    width: 38px;
+    height: 38px;
+    margin-bottom: 12px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #0f766e, #10b981);
+    font-size: 16px;
+    font-weight: 850;
+  }
+  .online-box::before { background: linear-gradient(135deg, #2563eb, #06b6d4); }
+  .answer::before, .cite::before { background: linear-gradient(135deg, #f59e0b, #facc15); color: #0d1730; }
+  .doc { grid-column: 1; grid-row: 1; margin-top: 44px; }
+  .chunk { grid-column: 2; grid-row: 1; margin-top: 44px; }
+  .embed { grid-column: 3; grid-row: 1; margin-top: 44px; }
+  .index { grid-column: 4; grid-row: 1; margin-top: 44px; }
+  .query { grid-column: 1; grid-row: 2; margin-top: 47px; }
+  .retrieve { grid-column: 2; grid-row: 2; margin-top: 47px; }
+  .rerank { grid-column: 3; grid-row: 2; margin-top: 47px; }
+  .context { grid-column: 4; grid-row: 2; margin-top: 47px; }
+  .answer { grid-column: 5; grid-row: 2; margin-top: 47px; }
+  .cite { grid-column: 6; grid-row: 2; margin-top: 47px; }
+  .arrow-line::after {
+    content: "";
+    position: absolute;
+    right: -24px;
+    top: 50%;
+    width: 24px;
+    height: 2px;
+    background: #45bfd0;
+  }
+  .arrow-line .arrow {
+    position: absolute;
+    z-index: 2;
+    right: -30px;
+    top: calc(50% - 5px);
+    border-left: 8px solid #45bfd0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+  }
+  .index-link {
+    position: relative;
+  }
+  .index-link::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -48px;
+    width: 2px;
+    height: 48px;
+    background: #45bfd0;
+  }
+  .index-link .down {
+    position: absolute;
+    left: calc(50% - 5px);
+    bottom: -56px;
+    border-top: 8px solid #45bfd0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+  }
+  .check-row {
+    grid-column: 1 / 7;
+    grid-row: 3;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .check {
+    padding: 15px 14px;
+    border: 1px solid #fde68a;
+    border-radius: 16px;
+    background: #fffbeb;
+    color: #17233d;
+    font-size: 18px;
+    line-height: 1.05;
+    font-weight: 760;
+  }
+</style>
+</head>
+<body>
+<main class="card">
+  <header class="header">
+    <div class="concept-icon" aria-hidden="true">
+      <svg viewBox="0 0 72 72" fill="none">
+        <path d="M16 18h18v16H16V18ZM38 18h18v16H38V18ZM16 38h18v16H16V38ZM38 38h18v16H38V38Z" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>
+        <path d="M34 26h4M34 46h4M25 34v4M47 34v4" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h1>RAG PIPELINE</h1>
+    <div class="badge">Implementation</div>
+  </header>
+
+  <div class="stack">
+    <section class="panel overview" aria-labelledby="overview-title">
+      <div class="section-mark" aria-hidden="true">
+        <svg viewBox="0 0 64 64" fill="none">
+          <path d="M14 18h16v12H14V18ZM34 18h16v12H34V18ZM24 40h16v12H24V40Z" stroke="currentColor" stroke-linejoin="round"/>
+          <path d="M30 24h4M42 30v10M30 40V30" stroke="currentColor" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="overview-copy">
+        <h2 id="overview-title" class="section-title">Overview</h2>
+        <p>A RAG pipeline connects private or changing knowledge to an LLM by preparing documents, indexing searchable chunks, retrieving relevant evidence, and generating answers grounded in that evidence. The quality of the answer depends on the whole pipeline, not only the model.</p>
+      </div>
+    </section>
+
+    <section class="panel workflow" aria-labelledby="workflow-title">
+      <h2 id="workflow-title" class="section-title">How It Works</h2>
+      <div class="steps">
+        <div class="step"><b>1</b><span>Ingest docs</span></div>
+        <div class="step"><b>2</b><span>Chunk + embed</span></div>
+        <div class="step"><b>3</b><span>Index</span></div>
+        <div class="step"><b>4</b><span>Retrieve</span></div>
+        <div class="step"><b>5</b><span>Rerank</span></div>
+        <div class="step"><b>6</b><span>Generate + cite</span></div>
+      </div>
+    </section>
+
+    <section class="panel system" aria-labelledby="system-title">
+      <div class="system-head">
+        <h2 id="system-title" class="section-title">System Map</h2>
+        <div class="quality">Quality checks: freshness, permissions, recall, grounding</div>
+      </div>
+      <div class="map">
+        <div class="lane">Offline indexing path</div>
+        <div class="lane online">Online answer path</div>
+
+        <div class="box doc arrow-line" data-key="A">
+          <span class="arrow" aria-hidden="true"></span>
+          <h3>Source documents</h3>
+          <p>Files, pages, tickets, records, and knowledge bases.</p>
+        </div>
+        <div class="box chunk arrow-line" data-key="B">
+          <span class="arrow" aria-hidden="true"></span>
+          <h3>Chunking</h3>
+          <p>Split content without losing meaning or structure.</p>
+        </div>
+        <div class="box embed arrow-line" data-key="C">
+          <span class="arrow" aria-hidden="true"></span>
+          <h3>Embeddings</h3>
+          <p>Convert chunks into searchable vectors.</p>
+        </div>
+        <div class="box index index-link" data-key="D">
+          <span class="down" aria-hidden="true"></span>
+          <h3>Vector index</h3>
+          <p>Store vectors with metadata and permissions.</p>
+        </div>
+
+        <div class="box query online-box arrow-line" data-key="E">
+          <span class="arrow" aria-hidden="true"></span>
+          <h3>User query</h3>
+          <p>Question, filters, user state, and intent.</p>
+        </div>
+        <div class="box retrieve online-box arrow-line" data-key="F">
+          <span class="arrow" aria-hidden="true"></span>
+          <h3>Retriever</h3>
+          <p>Find candidate chunks from the index.</p>
+        </div>
+        <div class="box rerank online-box arrow-line" data-key="G">
+          <span class="arrow" aria-hidden="true"></span>
+          <h3>Reranker</h3>
+          <p>Re-score candidates for usefulness.</p>
+        </div>
+        <div class="box context online-box arrow-line" data-key="H">
+          <span class="arrow" aria-hidden="true"></span>
+          <h3>Context builder</h3>
+          <p>Assemble compact evidence for the model.</p>
+        </div>
+        <div class="box answer arrow-line" data-key="I">
+          <span class="arrow" aria-hidden="true"></span>
+          <h3>LLM answer</h3>
+          <p>Generate from retrieved evidence.</p>
+        </div>
+        <div class="box cite" data-key="J">
+          <h3>Citations</h3>
+          <p>Connect claims back to source chunks.</p>
+        </div>
+
+        <div class="check-row">
+          <div class="check">Freshness: re-index changed documents.</div>
+          <div class="check">Permissions: filter before generation.</div>
+          <div class="check">Recall: measure if evidence is found.</div>
+          <div class="check">Grounding: cite supported claims.</div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+</body>
+</html>
