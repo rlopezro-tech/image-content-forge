@@ -46,6 +46,11 @@ Status values:
 | 35 | Retrieval Evals | ready_to_publish | - | `images/04-evaluation-quality/35-retrieval-evals.png` |
 | 36 | LLM-as-a-Judge | ready_to_publish | - | `images/04-evaluation-quality/36-llm-as-a-judge.png` |
 | 37 | Regression Testing for LLM Apps | ready_to_publish | - | `images/04-evaluation-quality/37-regression-testing-llm-apps.png` |
+| 72 | Single-Agent System | ready_to_publish | - | `images/07-agents-orchestration/72-single-agent-system.png` |
+| 73 | Multi-Agent Systems | ready_to_publish | - | `images/07-agents-orchestration/73-multi-agent-systems.png` |
+| 74 | Sequential Agent Orchestration | ready_to_publish | - | `images/07-agents-orchestration/74-sequential-agent-orchestration.png` |
+| 75 | Concurrent Agent Orchestration | ready_to_publish | - | `images/07-agents-orchestration/75-concurrent-agent-orchestration.png` |
+| 76 | Handoff Agent Orchestration | ready_to_publish | - | `images/07-agents-orchestration/76-handoff-agent-orchestration.png` |
 | 48 | LLM Observability | ready_to_publish | - | `images/05-production-operations/48-llm-observability.png` |
 | 49 | Tracing LLM Calls | ready_to_publish | - | `images/05-production-operations/49-tracing-llm-calls.png` |
 | 50 | Prompt and Version Tracking | ready_to_publish | - | `images/05-production-operations/50-prompt-and-version-tracking.png` |

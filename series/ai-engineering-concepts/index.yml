@@ -73,3 +73,23 @@ items:
     slug: regression-testing-llm-apps
     title: Regression Testing for LLM Apps
     status: ready
+  - number: 72
+    slug: single-agent-system
+    title: Single-Agent System
+    status: ready
+  - number: 73
+    slug: multi-agent-systems
+    title: Multi-Agent Systems
+    status: ready
+  - number: 74
+    slug: sequential-agent-orchestration
+    title: Sequential Agent Orchestration
+    status: ready
+  - number: 75
+    slug: concurrent-agent-orchestration
+    title: Concurrent Agent Orchestration
+    status: ready
+  - number: 76
+    slug: handoff-agent-orchestration
+    title: Handoff Agent Orchestration
+    status: ready
