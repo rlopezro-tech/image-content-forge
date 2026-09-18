@@ -39,7 +39,16 @@ Status values:
 
 | Roadmap # | Concept | Status | LinkedIn date | Image |
 |---:|---|---|---|---|
-| - | - | - | - | - |
+| 16 | Query Rewriting | ready_to_publish | - | `images/02-retrieval-knowledge-systems/16-query-rewriting.png` |
+| 20 | RAG Failure Modes | ready_to_publish | - | `images/02-retrieval-knowledge-systems/20-rag-failure-modes.png` |
+| 33 | LLM Evals | ready_to_publish | - | `images/04-evaluation-quality/33-llm-evals.png` |
+| 34 | Golden Datasets | ready_to_publish | - | `images/04-evaluation-quality/34-golden-datasets.png` |
+| 35 | Retrieval Evals | ready_to_publish | - | `images/04-evaluation-quality/35-retrieval-evals.png` |
+| 36 | LLM-as-a-Judge | ready_to_publish | - | `images/04-evaluation-quality/36-llm-as-a-judge.png` |
+| 37 | Regression Testing for LLM Apps | ready_to_publish | - | `images/04-evaluation-quality/37-regression-testing-llm-apps.png` |
+| 48 | LLM Observability | ready_to_publish | - | `images/05-production-operations/48-llm-observability.png` |
+| 49 | Tracing LLM Calls | ready_to_publish | - | `images/05-production-operations/49-tracing-llm-calls.png` |
+| 50 | Prompt and Version Tracking | ready_to_publish | - | `images/05-production-operations/50-prompt-and-version-tracking.png` |
 
 ## Notes
 

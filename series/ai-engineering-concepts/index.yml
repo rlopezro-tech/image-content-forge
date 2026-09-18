@@ -53,3 +53,23 @@ items:
     slug: freshness-management
     title: Freshness Management
     status: ready
+  - number: 33
+    slug: llm-evals
+    title: LLM Evals
+    status: ready
+  - number: 34
+    slug: golden-datasets
+    title: Golden Datasets
+    status: ready
+  - number: 35
+    slug: retrieval-evals
+    title: Retrieval Evals
+    status: ready
+  - number: 36
+    slug: llm-as-a-judge
+    title: LLM-as-a-Judge
+    status: ready
+  - number: 37
+    slug: regression-testing-llm-apps
+    title: Regression Testing for LLM Apps
+    status: ready

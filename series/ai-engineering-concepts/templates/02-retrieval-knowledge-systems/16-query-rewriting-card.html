@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1080, initial-scale=1">
+<title>Query Rewriting - Implementation</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 1080px; height: 1350px; }
+  body { background: #d8e0e8; color: #0d1730; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  .card { width: 1080px; height: 1350px; padding: 28px 30px; overflow: hidden; background-color: #f2f6fa; background-image: linear-gradient(rgba(24,78,119,.022) 1px, transparent 1px), linear-gradient(90deg, rgba(24,78,119,.022) 1px, transparent 1px); background-size: 32px 32px; }
+  .header, .panel { border: 1px solid #d7e1ea; border-radius: 22px; background: #fff; box-shadow: 0 12px 28px rgba(31,54,78,.10), 0 2px 5px rgba(31,54,78,.06); }
+  .header { height: 142px; padding: 22px 28px; display: flex; align-items: center; gap: 24px; box-shadow: 0 14px 30px rgba(31,54,78,.13), inset 0 1px 0 rgba(255,255,255,.9); }
+  .concept-icon { width: 96px; height: 96px; flex: 0 0 auto; display: grid; place-items: center; border: 1px solid rgba(14,165,233,.24); border-radius: 20px; color: #fff; background: linear-gradient(135deg, #0891b2 0%, #2563eb 100%); box-shadow: 0 12px 24px rgba(8,145,178,.22), inset 0 0 0 1px rgba(255,255,255,.20); }
+  .concept-icon svg { width: 72px; height: 72px; fill: none; stroke: currentColor; stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; }
+  h1 { margin: 0; color: #0b1b49; font-size: 44px; line-height: .95; font-weight: 850; max-width: 600px; letter-spacing: 0; text-shadow: 0 2px 8px rgba(11,27,73,.12); }
+  .badge { margin-left: auto; padding: 13px 18px; border: 1px solid rgba(14,165,233,.18); border-radius: 999px; color: #fff; background: linear-gradient(135deg, #0891b2 0%, #2563eb 100%); font-size: 15px; font-weight: 800; letter-spacing: .08em; white-space: nowrap; box-shadow: 0 8px 18px rgba(8,145,178,.18); }
+  .stack { margin-top: 14px; display: grid; gap: 12px; }
+  .section-title { margin: 0 0 12px; color: #2460d8; font-size: 20px; line-height: 1; font-weight: 850; letter-spacing: .13em; }
+  .overview { padding: 24px 28px; display: grid; gap: 12px; min-height: 174px; align-content: center; }
+  .overview p { margin: 0; color: #17233d; font-size: 24px; line-height: 1.18; font-weight: 540; }
+  .workflow { padding: 24px 20px 20px; min-height: 402px; }
+  .steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+  .step { position: relative; height: 306px; padding: 12px 10px 14px; display: grid; grid-template-rows: 40px 54px 1fr; text-align: center; border: 1px solid #b8ccdf; border-radius: 18px; background: #fff; box-shadow: 0 7px 14px rgba(27,67,101,.10), inset 0 1px 0 rgba(255,255,255,.9); }
+  .step:not(:last-child)::after { content: ""; position: absolute; z-index: 2; width: 28px; height: 1px; top: 150px; right: -23px; background: #45bfd0; }
+  .step:not(:last-child)::before { content: ""; position: absolute; z-index: 3; top: 146px; right: -24px; border-left: 7px solid #45bfd0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
+  .num { width: 38px; height: 38px; margin: -31px auto 0; display: grid; place-items: center; border: 5px solid #fbfdff; border-radius: 50%; color: #fff; background: #2460d8; font-size: 18px; font-weight: 850; box-shadow: 0 0 0 1px #2460d8; }
+  .step h3 { margin: 0; align-self: center; color: #0d1730; font-size: 22px; line-height: 1.05; font-weight: 850; }
+  .mini { margin: 0 auto; width: 150px; padding: 14px 12px; border: 1px solid #cbd9e8; border-radius: 16px; background: #fbfdff; display: grid; gap: 12px; align-content: start; min-height: 176px; }
+  .mini-title { color: #173b62; font-size: 17px; line-height: 1.08; font-weight: 840; }
+  .mini-copy { color: #34475e; font-size: 18px; line-height: 1.18; }
+  .compact { padding: 22px 28px; display: grid; gap: 16px; min-height: 214px; }
+  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+  li { display: grid; grid-template-columns: 28px 1fr; gap: 14px; align-items: start; color: #17233d; font-size: 23px; line-height: 1.14; font-weight: 540; }
+  .check { width: 26px; height: 26px; display: grid; place-items: center; border-radius: 8px; color: #fff; background: #16878a; font-size: 16px; font-weight: 850; box-shadow: 0 3px 0 rgba(22,135,138,.18); margin-top: 1px; }
+  .tooling .section-title { color: #cf730f; }
+  .tooling .check { background: #d98716; box-shadow: 0 3px 0 rgba(217,135,22,.18); }
+</style>
+</head>
+<body>
+<main class="card">
+  <header class="header">
+    <div class="concept-icon" aria-hidden="true"><svg viewBox="0 0 72 72"><path d="M16 18h24l10 10v26a8 8 0 0 1-8 8H24a8 8 0 0 1-8-8z"/><path d="M40 18v10h10"/><path d="M23 34h14M23 43h10"/><path d="m44 44 12 12"/><circle cx="39" cy="39" r="11"/></svg></div>
+    <h1>QUERY REWRITING</h1>
+    <div class="badge">IMPLEMENTATION</div>
+  </header>
+  <div class="stack">
+    <section class="panel overview">
+      <h2 class="section-title">OVERVIEW</h2>
+      <p>Query rewriting transforms a user's question into a better retrieval query without changing the original intent. The goal is to improve recall and precision before the model answers.</p>
+    </section>
+    <section class="panel workflow">
+      <h2 class="section-title">HOW IT WORKS</h2>
+      <div class="steps"><article class="step"><div class="num">1</div><h3>User question</h3><div class="mini"><div class="mini-title">Ask in natural language</div><div class="mini-copy">Need refund rule for enterprise contracts?</div></div></article><article class="step"><div class="num">2</div><h3>Rewrite query</h3><div class="mini"><div class="mini-title">Remove ambiguity</div><div class="mini-copy">enterprise contract refund policy terms</div></div></article><article class="step"><div class="num">3</div><h3>Add context</h3><div class="mini"><div class="mini-title">Insert domain clues</div><div class="mini-copy">billing + contracts + policy</div></div></article><article class="step"><div class="num">4</div><h3>Search again</h3><div class="mini"><div class="mini-title">Run improved retrieval</div><div class="mini-copy">hybrid search + filters + rerank</div></div></article><article class="step"><div class="num">5</div><h3>Better evidence</h3><div class="mini"><div class="mini-title">Send stronger context</div><div class="mini-copy">higher recall, cleaner matches</div></div></article></div>
+    </section>
+    <section class="panel compact implementation">
+      <h2 class="section-title">IMPLEMENTATION</h2>
+      <ul><li><span class="check">✓</span><span>Preserve intent and remove ambiguity.</span></li><li><span class="check">✓</span><span>Add domain terms, synonyms, and constraints.</span></li><li><span class="check">✓</span><span>Keep the rewritten query grounded in the original question.</span></li></ul>
+    </section>
+    <section class="panel compact tooling">
+      <h2 class="section-title">TOOLS / FRAMEWORKS</h2>
+      <ul><li><span class="check">✓</span><span>Retrieval: query rewriters, prompt transforms, search pipelines.</span></li><li><span class="check">✓</span><span>Frameworks: LlamaIndex, LangChain, Haystack.</span></li><li><span class="check">✓</span><span>Evals: recall checks, retrieval quality tests, RAG eval suites.</span></li></ul>
+    </section>
+  </div>
+</main>
+</body>
+</html>
